@@ -7,14 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/css/main.css}">
     <title>FitFusion</title>
 </head>
 <body>
 <section layout:fragment="content" class="main">
     <h1>FitFusion</h1>
     <p>AI와 함께 맞춤 피트니스 여정을 시작해 보세요</p>
-    <button class="btn">시작하기</button>
+    <a th:href="@{/}" class="button">시작하기</a>
     <img th:src="@{/images/hero.png}" alt="hero">
 
     <div class="section" id="exercises">

@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'IBM Plex Sans KR', sans-serif;
 }
 
 body {
@@ -15,22 +15,45 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 30px 26px;
 }
 
 nav a {
+    font-family: 'IBM Plex Sans KR', sans-serif;
     color: #aaa;
     text-decoration: none;
-    margin: 0 15px;
     font-weight: 600;
+    display: inline-block;
 }
 
 nav .logo {
-    width: 100%;              /* Let it scale horizontally */
-    height: auto;             /* Maintain aspect ratio */
-    min-height: 200px;        /* Set your desired min height */
-    max-height: 500px;        /* Set your desired max height */
-    object-fit: contain;      /* Optional: keeps the whole image visible */
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.nav-items, .login-buttons {
+    margin: 0 10px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.nav-items ul, .login-buttons ul {
+    list-style: none;
+    display: flex;
+    margin: 0 20px;
+    padding: 0;
+    gap: 30px;
+}
+
+.nav-items ul {
+    gap: 50px;
+}
+
+.nav-items a:hover, .login-buttons a:hover {
+    color: #00d084;
 }
 
 .main {
@@ -42,6 +65,7 @@ nav .logo {
 }
 
 .main h1 {
+    font-family: 'Inter', sans-serif;
     font-size: 32px;
     font-weight: 800;
     margin-bottom: 10px;
@@ -52,7 +76,8 @@ nav .logo {
     margin-bottom: 20px;
 }
 
-.btn {
+.button {
+    text-decoration: none;
     background-color: #00d084;
     color: #fff;
     padding: 10px 20px;
@@ -61,6 +86,7 @@ nav .logo {
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: 30px;
+    display: inline-block;
 }
 
 .main img {
@@ -110,10 +136,12 @@ nav .logo {
     height: 100%;
     object-fit: cover;
     display: block;
+    margin: 0;
     clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
 }
 
 .card-row.reverse .card-image img {
+    margin: 0;
     clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
 }
 
