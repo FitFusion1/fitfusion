@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <title>FitFusion</title>
+</head>
+<body>
+<section layout:fragment="content" class="main">
+    <h1>FitFusion</h1>
+    <p>AI와 함께 맞춤 피트니스 여정을 시작해 보세요</p>
+    <button class="btn">시작하기</button>
+    <img th:src="@{/images/hero.png}" alt="hero">
+
+    <div class="section" id="exercises">
+        <h2>맞춤 운동 탐험하기</h2>
+        <div class="card-row">
+            <div class="card-image">
+                <img src="https://images.unsplash.com/photo-1591311630200-ffa9120a540f" alt="운동 목록">
+            </div>
+            <div class="card-text">
+                <div class="title">운동 목록</div>
+                <div class="desc">운동 루틴 조회하기</div>
+            </div>
+        </div>
+        <div class="card-row reverse">
+            <div class="card-image">
+                <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b" alt="나만의 루틴">
+            </div>
+            <div class="card-text">
+                <div class="title">나만의 루틴</div>
+                <div class="desc">맞춤 루틴 생성하기</div>
+            </div>
+        </div>
+        <div class="card-row">
+            <div class="card-image">
+                <img src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1" alt="헬스장 찾기">
+            </div>
+            <div class="card-text">
+                <div class="title">헬스장 찾기</div>
+                <div class="desc">주변 헬스장 확인하기</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="meals">
+        <h2>맞춤 식단 탐험하기</h2>
+        <div class="card-row reverse">
+            <div class="card-image">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836" alt="식단 기록하기">
+            </div>
+            <div class="card-text">
+                <div class="title">식단 기록하기</div>
+                <div class="desc">나의 식단 기록</div>
+            </div>
+        </div>
+        <div class="card-row">
+            <div class="card-image">
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd" alt="나만의 식단">
+            </div>
+            <div class="card-text">
+                <div class="title">나만의 식단</div>
+                <div class="desc">맞춤 식단 추천받기</div>
+            </div>
+        </div>
+        <div class="card-row reverse">
+            <div class="card-image">
+                <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2" alt="식단 루틴">
+            </div>
+            <div class="card-text">
+                <div class="title">나만의 루틴</div>
+                <div class="desc">맞춤 루틴 생성하기</div>
+            </div>
+        </div>
+    </div>
+
+    <p><a href="/pose">페이지로</a></p>
+</section>
+</body>
+</html>

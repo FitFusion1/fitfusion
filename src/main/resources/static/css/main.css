@@ -1,0 +1,145 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    color: #fff;
+}
+
+header {
+    width: -webkit-fill-available;
+    background-color: #121212;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+}
+
+nav a {
+    color: #aaa;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: 600;
+}
+
+nav .logo {
+    width: 100%;              /* Let it scale horizontally */
+    height: auto;             /* Maintain aspect ratio */
+    min-height: 200px;        /* Set your desired min height */
+    max-height: 500px;        /* Set your desired max height */
+    object-fit: contain;      /* Optional: keeps the whole image visible */
+}
+
+.main {
+    margin: auto;
+    background-color: #fff;
+    color: #000;
+    padding: 40px;
+    max-width: 80%;
+}
+
+.main h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.main p {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.btn {
+    background-color: #00d084;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+.main img {
+    width: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    margin: auto;
+}
+
+.section {
+    margin: 80px 0;
+}
+
+.section h2 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.card-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: #fff;
+    color: #000;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.card-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.card-image, .card-text {
+    flex: 1;
+    min-width: 280px;
+    position: relative;
+    max-height: 12em;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+}
+
+.card-row.reverse .card-image img {
+    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.card-text {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-text .title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.card-text .desc {
+    font-size: 15px;
+    color: #444;
+}
+
+footer {
+    background-color: #121212;
+    padding: 30px 40px;
+    color: #666;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}

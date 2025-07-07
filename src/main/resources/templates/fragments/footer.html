@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- fragments/footer.html -->
+<footer th:fragment="footer-fragment" class="mt-auto" style="background-color: #222; color: #fff;">
+  <div class="container py-4">
+    <div class="row mb-4">
+      <div class="col-12 text-center mb-3">
+        <img th:src="@{/images/fitfusion_logo_full.png}" alt="FitFusion" style="height:40px;">
+      </div>
+      <div class="col-12 text-center">
+        <h5 class="fw-bold mb-3" style="color:#111;">T-BOX SNS Channel</h5>
+        <div class="d-flex justify-content-center gap-4 mb-4">
+          <a th:href="@{https://www.youtube.com}" class="text-danger fs-2" target="_blank">
+            <i class="bi bi-youtube"></i>
+            <div style="font-size:14px;">YouTube</div>
+          </a>
+          <a th:href="@{https://blog.naver.com}" class="text-success fs-2" target="_blank">
+            <i class="bi bi-chat-dots"></i>
+            <div style="font-size:14px;">Naver Blog</div>
+          </a>
+          <a th:href="@{https://www.instagram.com}" class="text-warning fs-2" target="_blank">
+            <i class="bi bi-instagram"></i>
+            <div style="font-size:14px;">Instagram</div>
+          </a>
+          <a th:href="@{https://www.kakao.com/talk}" class="text-warning fs-2" target="_blank">
+            <i class="bi bi-chat-left-dots"></i>
+            <div style="font-size:14px;">kakaoTalk</div>
+          </a>
+          <a th:href="@{https://play.google.com/store/apps/details?id=your.app}" class="text-info fs-2" target="_blank">
+            <i class="bi bi-app"></i>
+            <div style="font-size:14px;">Download App</div>
+          </a>
+        </div>
+
+        <h5 class="fw-bold mb-3" style="color:#111;">T-BOX Family Channel</h5>
+        <div class="d-flex justify-content-center gap-4 mb-4">
+          <span>서학교</span>
+          <span>을지대학교</span>
+          <span>국민체육진흥공단</span>
+          <span>Billy</span>
+          <span>기술보증기금</span>
+          <span>한국교원대</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 text-center small" style="color:#FFD600;">
+        플랫폼 소개 | 사이트이용약관 | 개인정보처리방침 | 멤버십 약관<br>
+        (주)더좋은운동으로 | 대표: 신남현 사업자등록번호: 279-81-01114<br>
+        통신판매업신고번호: 제 2019-인천연수구-0267호 | 개인정보책임자: (주)더좋은운동으로<br>
+        주소: 인천 연수구 컨벤시아대로 204 인스타 302호 | Tel : 032-459-2220 | Fax : 032-459-2221<br>
+        Copyright (c) T-BOX MEDIA. All Rights Reserved.
+        E-mail : <a th:href="'mailto:' + 'tboxtop@tbox.media'" style="color:#00BFFF;">tboxtop@tbox.media</a>
+      </div>
+    </div>
+  </div>
+</footer>
+</html>
