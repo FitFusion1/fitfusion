@@ -1,0 +1,188 @@
+/* Registration Card Styles */
+.registration-container {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.registration-form {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+    display: flex;
+}
+
+.registration-card {
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    padding: 2rem 2rem 1rem 2rem;
+    margin: 0 auto;
+    display: none;
+    flex-direction: column;
+    gap: 1.2rem;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    width: 100%;
+    min-width: 100%;
+    opacity: 0;
+    visibility: hidden;
+    flex-shrink: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.registration-card.active {
+    display: flex;
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+}
+
+.registration-card.slide-left {
+    transform: translateX(-100%);
+}
+
+.registration-card.slide-right {
+    transform: translateX(100%);
+}
+
+.registration-card.slide-in-right {
+    transform: translateX(100%);
+    opacity: 1;
+    visibility: visible;
+}
+
+.registration-card.slide-in-left {
+    transform: translateX(-100%);
+    opacity: 1;
+    visibility: visible;
+}
+
+.registration-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.registration-card label {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    color: #444;
+    gap: 0.3rem;
+}
+
+.registration-card input,
+.registration-card select {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fafbfc;
+    margin-top: 0.2rem;
+    transition: border 0.2s;
+}
+
+.registration-card input:focus,
+.registration-card select:focus {
+    border-color: #00d084;
+    outline: none;
+}
+
+.next-btn, .back-btn, .submit-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    background: #00d084;
+    color: #fff;
+    transition: background 0.2s;
+    position: relative;
+    z-index: 10;
+    width: 80px;
+    height: 36px;
+}
+
+.back-btn {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.next-btn:hover, .submit-btn:hover {
+    background: #00b374;
+}
+
+.back-btn:hover {
+    background: #bdbdbd;
+}
+
+/* Button container for positioning */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Hide all steps except the active one */
+.step {
+    display: none;
+    transform: translateX(100%);
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.step.active {
+    display: flex;
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.step.prev {
+    transform: translateX(-100%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.step.next {
+    transform: translateX(100%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.registration-card.prev,
+.registration-card.next {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+}
+
+.registration-card.prev {
+    transform: translateX(-100%);
+}
+
+.registration-card.next {
+    transform: translateX(100%);
+}
+
+.registration-card.slide-left {
+    transform: translateX(-100%);
+}
+
+.registration-card.slide-right {
+    transform: translateX(100%);
+}
