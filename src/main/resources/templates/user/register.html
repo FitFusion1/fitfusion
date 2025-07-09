@@ -1,22 +1,34 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{/layout/base}">
-<head>
-    <link th:href="@{/css/register.css}" rel="stylesheet">
-    <title>회원가입</title>
-</head>
-<body>
+
+<title>회원가입</title>
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+</th:block>
+
 <div class="registration-container" layout:fragment="content">
     <form th:action="@{/register}" method="post"
-          class="registration-form">
+          th:object="${registerForm}" class="registration-form">
         <!-- Step 1: Account Info -->
         <div class="registration-card step step-1 active">
             <h2>회원가입 정보</h2>
-            <label>아이디<input type="text" name="username" required></label>
-            <label>이메일<input type="email" name="email" required></label>
-            <label>비밀번호<input type="password" name="password" required></label>
+            <label>아이디
+                <input type="text" th:field="*{username}">
+                <span class="error-message"
+                      data-username-error="length">아이디는 3글자 이상이어야 합니다.</span>
+                <span class="error-message"
+                      data-username-error="invalid-chars">아이디는 영문 대소문자, 숫자, '-', '_'만 가능합니다.</span>
+                <span class="error-message"
+                      data-username-error="duplicate">중복된 아이디입니다.</span>
+            </label>
+            <label>이메일
+                <input type="email" th:field="*{email}">
+            </label>
+            <label>비밀번호
+                <input type="password" th:field="*{password}">
+            </label>
             <div class="button-container">
                 <div></div>
                 <button type="button" class="next-btn">다음</button>
@@ -54,23 +66,10 @@
             </label>
             <div class="button-container">
                 <button type="button" class="back-btn">뒤로</button>
-                <button type="button" class="next-btn">다음</button>
-            </div>
-        </div>
-        <!-- Step 4: Confirmation -->
-        <div class="registration-card step step-4">
-            <h2>Confirm Details</h2>
-            <p>Please review your information before submitting.</p>
-            <!-- Summary fields can be filled with JS later -->
-            <div class="button-container">
-                <button type="button" class="back-btn">뒤로</button>
-                <button type="submit" class="submit-btn">회원가입</button>
+                <button type="button" class="submit-btn">회원가입</button>
             </div>
         </div>
     </form>
 </div>
-<th:block layout:fragment="script">
-    <script th:src="@{/js/register.js}"></script>
-</th:block>
-</body>
+<script layout:fragment="script" th:src="@{/js/register.js}"></script>
 </html>
