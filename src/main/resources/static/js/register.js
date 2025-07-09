@@ -97,18 +97,27 @@ document.addEventListener('DOMContentLoaded', function () {
     // Validate current step
     function validateCurrentStep() {
         const currentCard = document.querySelector(`.step-${currentStep}`);
-        const inputs = currentCard.querySelectorAll('input[required], select[required]');
+        const inputs = currentCard.querySelectorAll('input, select');
         let isValid = true;
 
         inputs.forEach(input => {
             if (!input.value.trim()) {
                 isValid = false;
                 input.style.borderColor = '#ff4444';
-                input.addEventListener('input', function () {
-                    this.style.borderColor = '#e0e0e0';
-                }, {once: true});
+                input.focus();
+                input.parentNode.querySelector('span[data-username-error="length"]').classList.add('invalid');
+                // input.addEventListener('input', function () {
+                //     this.style.borderColor = '#e0e0e0';
+                // }, {once: true});
             }
         });
+
+        if (currentStep === 1) {
+            let usernameField = currentCard.querySelector('input[name="username"]');
+            if (usernameField.value.trim().length < 3) {
+                isValid = false;
+            }
+        }
 
         return isValid;
     }
@@ -151,6 +160,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 nextStep();
             }
         });
+
+        // username 필드 영어 대소문자, '-', '_' 이외의 문자는
+        // 입력 감지 시에 ''로 대체
+        const usernameInput = document.querySelector('input[name="username"]');
+        const invalidCharMessage = document.querySelector('[data-username-error="invalid-chars"]');
+        const invalidLengthMessage = document.querySelector('[data-username-error="length"]');
+
+        usernameInput.addEventListener('input', () => {
+            const value = usernameInput.value;
+            const validOnly = value.replace(/[^0-9a-zA-Z-_]/g, '');
+
+            if (value !== validOnly) {
+                usernameInput.value = validOnly;
+                invalidCharMessage.classList.add('invalid');
+            } else {
+                invalidCharMessage.classList.remove('invalid');
+            }
+
+            if (value.length < 3) {
+                invalidLengthMessage.classList.add('invalid');
+            } else {
+                invalidLengthMessage.classList.remove('invalid');
+            }
+        });
+
     }
 
     // Initialize the form
