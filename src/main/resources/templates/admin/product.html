@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon"/>
+    <title>회원 목록 조회 - FitFusion</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+<section layout:fragment="content" class="main">
+    <!-- 헤더 -->
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1><i class="fas fa-box"></i> 음식 제품 관리</h1>
+            <p class="admin-subtitle">/admin/products</p>
+        </div>
+        <div class="admin-header-right">
+            <a th:href="@{/admin/products/add}" class="admin-btn admin-btn-primary">
+                <i class="fas fa-plus"></i> 제품 추가
+            </a>
+        </div>
+    </div>
+
+    <!-- 통계 카드 -->
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon"><i class="fas fa-box"></i></div>
+            <div class="admin-stat-content">
+                <h3 th:text="${productCount}">2</h3>
+                <p>총 제품 수</p>
+            </div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon"><i class="fas fa-tags"></i></div>
+            <div class="admin-stat-content">
+                <h3 th:text="${categoryCount}">2</h3>
+                <p>카테고리 수</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 제품 테이블 -->
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+            <tr>
+                <th>제품 ID</th>
+                <th>제품명</th>
+                <th>카테고리</th>
+                <th>브랜드</th>
+                <th>칼로리</th>
+                <th>단백질</th>
+                <th>등록일</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.id}">301</td>
+                <td th:text="${product.name}">닭가슴살 슬라이스</td>
+                <td th:text="${product.category}">닭가슴살</td>
+                <td th:text="${product.brand}">헬스푸드</td>
+                <td th:text="${product.calorie}">120 kcal</td>
+                <td th:text="${product.protein}">24g</td>
+                <td th:text="${#dates.format(product.createdAt, 'yyyy-MM-dd')}">2025-06-01</td>
+                <td>
+                    <form th:action="@{'/admin/products/' + ${product.id} + '/delete'}" method="post" style="display:inline;">
+                        <button type="submit" class="admin-btn admin-btn-danger" style="padding:6px 14px; font-size:14px;">
+                            <i class="fas fa-trash"></i> 삭제
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(products)}">
+                <td colspan="8" class="admin-empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>등록된 제품이 없습니다.</p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

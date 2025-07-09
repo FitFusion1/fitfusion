@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon"/>
+    <title>회원 목록 조회 - FitFusion</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+<section layout:fragment="content" class="main">
+    <!-- 헤더 -->
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1><i class="fas fa-film"></i> 운동 루틴 & 영상 콘텐츠 관리</h1>
+            <p class="admin-subtitle">/admin/routines, /admin/videos</p>
+        </div>
+    </div>
+
+    <!-- 운동 루틴 관리 -->
+    <div class="admin-section">
+        <div class="admin-section-title"><i class="fas fa-dumbbell"></i> 운동 루틴 관리</div>
+        <div class="admin-table-actions" style="margin-bottom:16px;">
+            <a href="#" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> 루틴 추가</a>
+        </div>
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>루틴 ID</th>
+                    <th>루틴명</th>
+                    <th>카테고리</th>
+                    <th>등록일</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>101</td>
+                    <td>상체 근력 루틴</td>
+                    <td>근력</td>
+                    <td>2025-06-01</td>
+                    <td>
+                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>102</td>
+                    <td>유산소 루틴</td>
+                    <td>유산소</td>
+                    <td>2025-06-10</td>
+                    <td>
+                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 운동 영상 콘텐츠 관리 -->
+    <div class="admin-section">
+        <div class="admin-section-title"><i class="fas fa-video"></i> 운동 영상 콘텐츠 관리</div>
+        <div class="admin-table-actions" style="margin-bottom:16px;">
+            <a href="#" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> 영상 추가</a>
+        </div>
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>영상 ID</th>
+                    <th>제목</th>
+                    <th>카테고리</th>
+                    <th>길이</th>
+                    <th>등록일</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>201</td>
+                    <td>푸쉬업 가이드</td>
+                    <td>상체</td>
+                    <td>4:32</td>
+                    <td>2025-06-03</td>
+                    <td>
+                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>202</td>
+                    <td>유산소 점핑잭</td>
+                    <td>전신</td>
+                    <td>3:15</td>
+                    <td>2025-06-07</td>
+                    <td>
+                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
