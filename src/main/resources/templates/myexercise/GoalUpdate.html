@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">목표 수정</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="GoalUpdate">
+        <div class="GoalUpdate-container">
+            <h1 class="GoalUpdate-title">운동 목표 수정</h1>
+
+            <form class="GoalUpdate-form">
+                <label for="goalType" class="GoalUpdate-label">목표 유형</label>
+                <select id="goalType" name="goalType" class="GoalUpdate-select">
+                    <option value="LOSS_WEIGHT">체중 감량</option>
+                    <option value="GAIN_WEIGHT">체중 증가</option>
+                    <option value="MAINTAIN_WEIGHT">체중 유지</option>
+                    <option value="GAIN_MUSCLE">근육 증가</option>
+                    <option value="IMPROVE_HEALTH">건강한 생활습관 개선</option>
+                </select>
+
+                <label for="targetWeight" class="GoalUpdate-label">목표 체중 (kg)</label>
+                <input type="number" id="targetWeight" name="targetWeight" class="GoalUpdate-input" value="65">
+
+                <label for="targetDate" class="GoalUpdate-label">목표 달성 날짜</label>
+                <input type="date" id="targetDate" name="targetDate" class="GoalUpdate-input" value="2025-09-30">
+
+                <div class="GoalUpdate-button-group">
+                    <button type="button" class="GoalUpdate-button GoalUpdate-cancel" onclick="history.back()">취소</button>
+                    <button type="submit" class="GoalUpdate-button GoalUpdate-save">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</html>

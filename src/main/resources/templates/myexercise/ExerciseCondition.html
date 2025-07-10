@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">운동 조건 조사</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div class="ExerciseCondition">
+<div layout:fragment="content">
+<div class="ExerciseCondition-container">
+    <h1 class="ExerciseCondition-title">오늘 운동 조건을 선택해주세요</h1>
+    <form action="/recommend-routine" method="post">
+        <!-- 피하고 싶은 부위 -->
+        <div class="ExerciseCondition-form-group">
+            <label class="ExerciseCondition-label">1. 피하고 싶은 부위가 있다면 선택해주세요</label>
+            <div class="ExerciseCondition-grid">
+                <label class="ExerciseCondition-option"><input type="checkbox" name="avoidParts" value="SHOULDER" /> 어깨</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="avoidParts" value="BACK" /> 등</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="avoidParts" value="LOWER_BACK" /> 허리</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="avoidParts" value="KNEE" /> 무릎</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="avoidParts" value="WRIST" /> 손목</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="avoidParts" value="NONE" /> 없음</label>
+            </div>
+        </div>
+
+        <!-- 하고 싶은 부위 -->
+        <div class="ExerciseCondition-form-group">
+            <label class="ExerciseCondition-label">2. 오늘 운동하고 싶은 부위를 선택해주세요</label>
+            <div class="ExerciseCondition-grid">
+                <label class="ExerciseCondition-option"><input type="checkbox" name="targetParts" value="CHEST" /> 가슴</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="targetParts" value="ABS" /> 복부</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="targetParts" value="BACK" /> 등</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="targetParts" value="QUADRICEPS" /> 허벅지</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="targetParts" value="GLUTES" /> 엉덩이</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="targetParts" value="BICEPS" /> 이두</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="targetParts" value="TRICEPS" /> 삼두</label>
+                <label class="ExerciseCondition-option"><input type="checkbox" name="targetParts" value="CALVES" /> 종아리</label>
+            </div>
+        </div>
+
+        <!-- 컨디션 상태 -->
+        <div class="ExerciseCondition-form-group">
+            <label class="ExerciseCondition-label">3. 오늘 컨디션은 어떤가요?</label>
+            <div class="ExerciseCondition-radio-group">
+                <label class="ExerciseCondition-radio"><input type="radio" name="condition" value="GOOD" required /> 😊 좋음</label>
+                <label class="ExerciseCondition-radio"><input type="radio" name="condition" value="NORMAL" /> 😐 보통</label>
+                <label class="ExerciseCondition-radio"><input type="radio" name="condition" value="BAD" /> 😵 나쁨</label>
+            </div>
+        </div>
+
+        <button type="submit" class="ExerciseCondition-submit-btn">루틴 추천 받기</button>
+    </form>
+</div>
+</div>
+</div>
+</html>

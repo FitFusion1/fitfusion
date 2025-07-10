@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">나의 운동 대시보드</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+<div class="MyExercise-container">
+    <h1 class="MyExercise-title">나의 운동</h1>
+
+    <!-- 🎯 운동 목표 -->
+    <div class="MyExercise-section">
+        <div class="MyExercise-section-header">
+            <h2>🎯 운동 목표</h2>
+            <button onclick="location.href='/exercisegoal'">전체보기</button>
+        </div>
+        <div class="MyExercise-highlight" onclick="location.href='/exercisegoal/detail/1'" style="cursor:pointer;">
+            체중 감량 - 목표: 65kg → 현재: 70kg (달성률: 40%)
+        </div>
+    </div>
+
+    <!-- 💪 최근 루틴 -->
+    <div class="MyExercise-section">
+        <div class="MyExercise-section-header">
+            <h2>💪 최근 루틴</h2>
+            <button onclick="location.href='/routinelist'">전체보기</button>
+        </div>
+        <div class="MyExercise-card-container">
+            <div class="MyExercise-card" onclick="location.href='/routinedetail/1'">
+                <strong>상체 강화 루틴</strong>
+                완료율: 80%<br>
+                최근 수행: 2일 전
+            </div>
+            <div class="MyExercise-card" onclick="location.href='/routinedetail/2'">
+                <strong>하체 집중 루틴</strong>
+                완료율: 50%<br>
+                최근 수행: 5일 전
+            </div>
+        </div>
+    </div>
+
+    <!-- 📋 최근 수행 운동 요약 -->
+    <div class="MyExercise-section">
+        <div class="MyExercise-section-header">
+            <h2>📋 최근 수행 운동</h2>
+            <button onclick="location.href='/exerciselog'">전체보기</button>
+        </div>
+        <div class="MyExercise-card-container">
+            <div class="MyExercise-card">
+                <strong>스쿼트</strong>
+                총 3세트 / 36회
+                <div class="MyExercise-bar" style="width: 72%;"></div>
+            </div>
+            <div class="MyExercise-card">
+                <strong>랫풀다운</strong>
+                총 4세트 / 40회
+                <div class="MyExercise-bar" style="width: 80%;"></div>
+            </div>
+            <div class="MyExercise-card">
+                <strong>벤치프레스</strong>
+                총 2세트 / 24회
+                <div class="MyExercise-bar" style="width: 48%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 운동 통계 -->
+    <div class="MyExercise-section">
+        <div class="MyExercise-section-header">
+            <h2>📊 운동 통계</h2>
+            <button onclick="location.href='/exercisestats'">전체보기</button>
+        </div>
+        <ul class="MyExercise-stat-list">
+            <li>주간 루틴 수행률: 60%</li>
+            <li>가장 많이 사용한 부위: 하체</li>
+            <li>총 운동 시간: 3시간 40분</li>
+        </ul>
+    </div>
+
+    <!-- 📉 부족한 운동 부위 -->
+    <div class="MyExercise-section">
+        <div class="MyExercise-section-header">
+            <h2>📉 부족한 운동 부위</h2>
+            <button onclick="location.href='/targetrecommendation'">전체보기</button>
+        </div>
+        <div class="MyExercise-highlight">
+            최근 등 운동이 부족합니다!<br><br>
+            <button class="MyExercise-btn" onclick="location.href='/recommendroutine'">추천 루틴 보기</button>
+        </div>
+    </div>
+</div>
+</div>
+</html>
