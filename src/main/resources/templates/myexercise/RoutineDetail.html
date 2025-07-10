@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">운동 루틴 상세</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+<div class="RoutineDetail-container">
+    <h1 class="RoutineDetail-title">하체 강화 루틴</h1>
+    <div class="RoutineDetail-info">
+        <p>🏋️ 루틴 목적: 근력 향상 / ⏱ 총 소요 시간: 약 50분 / 🧩 구성: 5개 운동 × 3세트</p>
+    </div>
+
+    <div class="RoutineDetail-card">
+        <h3 class="RoutineDetail-name">스쿼트 (Squat)</h3>
+        <div class="RoutineDetail-meta">카테고리: 하체 / 부위: 대퇴사두, 둔근 / 장비: 없음 / 피로도: 2</div>
+        <div class="RoutineDetail-set">세트: 3 / 반복: 20회 / 중량: 체중</div>
+        <div class="RoutineDetail-desc">
+            다리를 어깨 너비로 벌리고, 등을 곧게 편 상태에서 엉덩이를 뒤로 빼며 앉았다 일어납니다.<br>
+            무릎이 발끝을 넘지 않도록 주의합니다.
+        </div>
+    </div>
+
+    <div class="RoutineDetail-card">
+        <h3 class="RoutineDetail-name">런지 (Lunge)</h3>
+        <div class="RoutineDetail-meta">카테고리: 하체 / 부위: 햄스트링, 둔근 / 장비: 없음 / 피로도: 2</div>
+        <div class="RoutineDetail-set">세트: 3 / 반복: 12회 (각 다리) / 중량: 체중</div>
+        <div class="RoutineDetail-desc">
+            한쪽 다리를 앞으로 내디디며 무릎을 굽혀 앉았다가 다시 일어납니다.<br>
+            허리를 곧게 유지하며 균형을 잡는 것이 중요합니다.
+        </div>
+    </div>
+
+    <div class="RoutineDetail-card">
+        <h3 class="RoutineDetail-name">레그 프레스 (Leg Press)</h3>
+        <div class="RoutineDetail-meta">카테고리: 하체 / 부위: 대퇴사두 / 장비: 레그프레스 기구 / 피로도: 3</div>
+        <div class="RoutineDetail-set">세트: 3 / 반복: 15회 / 중량: 40kg</div>
+        <div class="RoutineDetail-desc">
+            기구에 앉아 다리를 어깨 너비로 벌리고, 무릎을 굽혔다가 펴며 다리로 무게를 밀어냅니다.<br>
+            허리가 들리지 않도록 고정합니다.
+        </div>
+    </div>
+
+    <div class="RoutineDetail-card">
+        <h3 class="RoutineDetail-name">레그 컬 (Leg Curl)</h3>
+        <div class="RoutineDetail-meta">카테고리: 하체 / 부위: 햄스트링 / 장비: 레그컬 머신 / 피로도: 2</div>
+        <div class="RoutineDetail-set">세트: 3 / 반복: 15회 / 중량: 25kg</div>
+        <div class="RoutineDetail-desc">
+            기구에 앉거나 엎드려서 다리를 굽혀 햄스트링을 수축시킵니다.<br>
+            반동 없이 천천히 움직이는 것이 중요합니다.
+        </div>
+    </div>
+
+    <div class="RoutineDetail-card">
+        <h3 class="RoutineDetail-name">카프 레이즈 (Calf Raise)</h3>
+        <div class="RoutineDetail-meta">카테고리: 하체 / 부위: 종아리 / 장비: 덤벨 / 피로도: 1</div>
+        <div class="RoutineDetail-set">세트: 3 / 반복: 20회 / 중량: 10kg</div>
+        <div class="RoutineDetail-desc">
+            양손에 덤벨을 들고, 발뒤꿈치를 들어 종아리를 수축합니다.<br>
+            천천히 내려오며 반복합니다.
+        </div>
+    </div>
+
+    <div class="RoutineDetail-buttonbox">
+        <button class="RoutineDetail-btn RoutineDetail-primary">수행하기</button>
+        <button class="RoutineDetail-btn RoutineDetail-secondary">수정</button>
+        <button class="RoutineDetail-btn RoutineDetail-secondary">루틴 저장하기</button>
+        <button class="RoutineDetail-btn RoutineDetail-secondary">다시 추천받기</button>
+        <button class="RoutineDetail-btn RoutineDetail-secondary">삭제</button>
+    </div>
+</div>
+</div>
+</html>
