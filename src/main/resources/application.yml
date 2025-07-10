@@ -6,6 +6,9 @@ spring:
     url: jdbc:oracle:thin:@localhost:1521:xe
     username: fitfusion
     password: zxcv1234
+  config:
+    import:
+      - classpath:securekey.yml
 server:
   port: 80
 mybatis:
