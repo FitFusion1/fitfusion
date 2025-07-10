@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">운동 목표 관리</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+<div class="ExerciseGoal-container">
+    <h1 class="ExerciseGoal-title">운동 목표 관리</h1>
+    <div class="ExerciseGoal-description">
+        나의 목표를 설정하고 관리해보세요. 한 번에 하나의 목표만 적용됩니다.
+    </div>
+
+    <div class="ExerciseGoal-goalList">
+        <!-- 선택된 목표 -->
+        <div class="ExerciseGoal-goalCard ExerciseGoal-selected">
+            <div class="ExerciseGoal-goalInfo">
+                <h3>
+                    체중 감량 (5kg)
+                    <span class="ExerciseGoal-progressText">목표까지 2.3kg 남았습니다</span>
+                </h3>
+                <p>기간: 2025.07.01 ~ 2025.08.31</p>
+            </div>
+            <div class="ExerciseGoal-goalActions">
+                <button class="ExerciseGoal-selectButton ExerciseGoal-active">이 목표 선택됨</button>
+                <button class="ExerciseGoal-selectButton">수정</button>
+                <button class="ExerciseGoal-selectButton">삭제</button>
+            </div>
+        </div>
+
+        <!-- 미선택 목표 -->
+        <div class="ExerciseGoal-goalCard">
+            <div class="ExerciseGoal-goalInfo">
+                <h3>
+                    근육량 증가 (3kg)
+                    <span class="ExerciseGoal-progressText">목표까지 1.1kg 남았습니다</span>
+                </h3>
+                <p>기간: 2025.07.01 ~ 2025.09.01</p>
+            </div>
+            <div class="ExerciseGoal-goalActions">
+                <button class="ExerciseGoal-selectButton">이 목표 선택</button>
+                <button class="ExerciseGoal-selectButton">수정</button>
+                <button class="ExerciseGoal-selectButton">삭제</button>
+            </div>
+        </div>
+
+        <div class="ExerciseGoal-goalCard">
+            <div class="ExerciseGoal-goalInfo">
+                <h3>
+                    건강한 생활습관 개선
+                    <span class="ExerciseGoal-progressText">목표까지 12일 남았습니다</span>
+                </h3>
+                <p>기간: 2025.07.01 ~ 2025.10.15</p>
+            </div>
+            <div class="ExerciseGoal-goalActions">
+                <button class="ExerciseGoal-selectButton">이 목표 선택</button>
+                <button class="ExerciseGoal-selectButton">수정</button>
+                <button class="ExerciseGoal-selectButton">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="ExerciseGoal-addGoalButton">+ 새 목표 추가</button>
+</div>
+</div>
+</html>

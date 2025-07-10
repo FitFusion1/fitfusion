@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">추천 루틴</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div class="RoutineRecommendation">
+<div layout:fragment="content">
+<h1 class="RoutineRecommendation-title">오늘의 맞춤 추천 루틴</h1>
+<div class="RoutineRecommendation-description">
+    당신의 목표와 상태에 맞춰 추천된 루틴입니다. 아래 운동을 순서대로 수행해보세요!
+</div>
+
+<div class="RoutineRecommendation-list">
+    <div class="RoutineRecommendation-card">
+        <h2>푸쉬업</h2>
+        <div class="RoutineRecommendation-info">
+            <span>운동 부위: 가슴</span>
+            <span>난이도: 중</span>
+            <span>세트 수: 3세트</span>
+            <span>반복 수: 12회</span>
+        </div>
+    </div>
+
+    <div class="RoutineRecommendation-card">
+        <h2>스쿼트</h2>
+        <div class="RoutineRecommendation-info">
+            <span>운동 부위: 하체</span>
+            <span>난이도: 중</span>
+            <span>세트 수: 4세트</span>
+            <span>반복 수: 15회</span>
+        </div>
+    </div>
+
+    <div class="RoutineRecommendation-card">
+        <h2>플랭크</h2>
+        <div class="RoutineRecommendation-info">
+            <span>운동 부위: 코어</span>
+            <span>난이도: 하</span>
+            <span>세트 수: 3세트</span>
+            <span>시간: 30초 유지</span>
+        </div>
+    </div>
+
+    <div class="RoutineRecommendation-card">
+        <h2>풀업</h2>
+        <div class="RoutineRecommendation-info">
+            <span>운동 부위: 등</span>
+            <span>난이도: 상</span>
+            <span>세트 수: 3세트</span>
+            <span>반복 수: 8회</span>
+        </div>
+    </div>
+</div>
+
+<div class="RoutineRecommendation-buttons">
+    <button onclick="alert('루틴 저장 기능은 추후 구현 예정입니다.')">루틴 저장하기</button>
+    <button onclick="location.reload()">루틴 새로고침</button>
+</div>
+</div>
+</div>
+</html>
