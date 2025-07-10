@@ -13,3 +13,7 @@ mybatis:
   configuration:
     jdbc-type-for-null: null
   type-aliases-package: com.fitfusion.vo
+
+kakao:
+  rest-api-key: 258fb141165b1f58e8cb1847169c112f
+  redirect-uri: http://localhost:8080/oauth/kakao/callback

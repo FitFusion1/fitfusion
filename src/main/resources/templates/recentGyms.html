@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>헬스장 비교</title>
+    <link rel="stylesheet" th:href="@{/css/compareGyms.css}">
+</head>
+
+<body>
+<main layout:fragment="content" class="container py-5">
+    <h2 class="mb-4 text-center fw-bold">최근 찾아본 헬스장</h2>
+
+    <form id="compareForm">
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th></th>
+                <th>이름</th>
+                <th>주소</th>
+                <th>⭐ 평균 별점</th>
+                <th>❤️ 찜 수</th>
+                <th>💬 리뷰 수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input type="checkbox" name="gym" value="1"></td>
+                <td>강남피트니스</td>
+                <td>서울 강남구 테헤란로 123</td>
+                <td>4.5</td>
+                <td>12</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="gym" value="2"></td>
+                <td>홍대짐</td>
+                <td>서울 마포구 어딘가 55</td>
+                <td>4.2</td>
+                <td>8</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" name="gym" value="3"></td>
+                <td>잠실헬스존</td>
+                <td>서울 송파구 잠실로 88</td>
+                <td>3.9</td>
+                <td>5</td>
+                <td>2</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-success px-4 me-3" onclick="compareGyms()">비교하기</button>
+            <a href="" class="btn btn-secondary px-4">이전으로</a>
+        </div>
+    </form>
+</main>
+
+<script>
+    function compareGyms() {
+        const checked = document.querySelectorAll('input[name="gym"]:checked');
+        if (checked.length < 2 || checked.length > 3) {
+            alert("비교할 헬스장을 2개 이상, 최대 3개까지 선택해주세요.");
+            return;
+        }
+
+        const ids = Array.from(checked).map(cb => cb.value);
+        alert("선택된 헬스장 ID: " + ids.join(', '));
+        // TODO: 선택된 ID를 기반으로 비교 결과 페이지로 이동하거나 Ajax 호출 처리
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+  <title>헬스장 상세정보</title>
+  <link rel="stylesheet" th:href="@{/css/gym-detail.css}">
+</head>
+
+<body>
+<main layout:fragment="content" class="container py-5">
+
+  <div class="wrapper">
+
+    <!-- 상단 이미지 + 찜 버튼 -->
+    <div class="gym-header">
+      <img src="/images/healthGym.jpg" alt="헬스장 이미지">
+      <button class="like-button">🤍 찜하기</button>
+    </div>
+
+    <!-- 지도 페이지로 돌아가기 버튼 -->
+    <div class="back-button-container">
+      <button onclick="location.href='/map'" class="back-button">← 지도 페이지로</button>
+    </div>
+
+    <!-- 상세 정보 박스 -->
+    <div class="gym-container">
+      <h2>아현 247휘트니스&필라테스</h2>
+      <p><strong>주소:</strong> 서울특별시 서대문구 신촌로37길 20 1층</p>
+      <p><strong>전화번호:</strong> 02-123-4567</p>
+      <p><strong>위도/경도:</strong> 37.5567, 126.9458</p>
+
+      <hr>
+
+      <!-- ⭐ 평균 평점 박스 -->
+      <h3 class="section-title">⭐ 이용 후기</h3>
+      <div class="rating-box">
+        <div class="average-rating">
+          <strong>4.9</strong> <span class="review-count">(94개)</span>
+          <div class="star-icons">⭐⭐⭐⭐⭐</div>
+        </div>
+      </div>
+
+      <!-- ✍️ 리뷰 작성 버튼 -->
+      <div class="write-review-box">
+        <button class="write-review-button" onclick="alert('작성 기능은 추후 연결 예정입니다.')">
+          ✍️ 리뷰 작성하기
+        </button>
+      </div>
+
+      <!-- 📝 리뷰 카드 목록 -->
+      <div id="review-list">
+        <div class="review-card">
+          <div class="review-header">
+            <img class="avatar" src="/images/default-avatar.png" alt="프로필">
+            <div>
+              <p class="username">leehai97</p>
+              <p class="stars">⭐⭐⭐⭐⭐</p>
+            </div>
+            <span class="review-date">1일 전</span>
+          </div>
+          <div class="review-content">
+            <p>시설이 정말 깔끔하고 기구도 다양해요! 직원분들도 친절해서 만족스럽습니다.</p>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <img class="avatar" src="/images/default-avatar.png" alt="프로필">
+            <div>
+              <p class="username">fituser01</p>
+              <p class="stars">⭐⭐⭐⭐</p>
+            </div>
+            <span class="review-date">3일 전</span>
+          </div>
+          <div class="review-content">
+            <p>저렴한 가격에 만족할 수 있는 구성입니다. 샤워실도 깨끗하고 헬스 초보에게 추천해요.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 무한 스크롤 로딩 텍스트 -->
+      <p class="loading">리뷰를 불러오는 중...</p>
+
+      <hr>
+
+      <!-- 지도 영역 -->
+      <h3>📍 위치</h3>
+      <div class="map-placeholder">
+        <!-- 지도 위치 들어올 부분 -->
+      </div>
+    </div>
+
+  </div>
+
+</main>
+</body>
+</html>

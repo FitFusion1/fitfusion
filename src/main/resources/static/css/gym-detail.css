@@ -1,0 +1,212 @@
+/* ✅ 전체 페이지 가운데 정렬용 래퍼 (최대 너비 지정) */
+.wrapper {
+    max-width: 900px;
+    margin: 40px auto; /* 수직 여백 + 가운데 정렬 */
+}
+
+/* ✅ 상단 헬스장 이미지 영역 (고정 높이) */
+.gym-header {
+    position: relative;           /* 찜 버튼 위치 조정용 */
+    width: 100%;
+    height: 400px;
+    overflow: hidden;            /* 이미지 넘치는 부분 숨김 */
+    border-radius: 12px 12px 0 0; /* 위쪽만 라운드 처리 */
+}
+
+/* ✅ 헬스장 이미지 스타일 - 비율 유지하며 꽉 채움 */
+.gym-header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* 비율 유지 + 채우기 (잘릴 수 있음) */
+    display: block;
+}
+
+/* ✅ 찜하기 버튼 - 하얀색 배경 + 그림자 + 라운드 */
+.like-button {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* ✅ 찜 버튼에 마우스 올렸을 때 배경 살짝 핑크로 */
+.like-button:hover {
+    background-color: #ffecec;
+}
+
+/* ✅ '지도 페이지로' 돌아가기 버튼 박스 */
+.back-button-container {
+    margin: 20px 0;
+}
+
+/* ✅ 뒤로가기 버튼 기본 스타일 */
+.back-button {
+    background-color: #eee;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* ✅ 뒤로가기 버튼 마우스 호버 시 */
+.back-button:hover {
+    background-color: #ddd;
+}
+
+/* ✅ 헬스장 상세 정보 박스 스타일 */
+.gym-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+}
+
+/* ✅ '이용 후기' 제목 스타일 */
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+/* ✅ 평균 평점 박스 스타일 */
+.rating-box {
+    background-color: #f9fafb;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.average-rating {
+    text-align: center;
+}
+
+.average-rating strong {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+}
+
+.review-count {
+    font-size: 16px;
+    color: #777;
+    margin-left: 6px;
+}
+
+.star-icons {
+    color: gold;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+/* ✅ 전체 리뷰 리스트 감싸는 컨테이너 (리뷰 간 간격 설정) */
+#review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 리뷰 카드 간 간격 */
+}
+
+/* ✅ 개별 리뷰 카드 스타일 (테두리 + 그림자 + 라운드) */
+.review-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* ✅ 리뷰 상단 (프로필 + 이름 + 별점 + 날짜) 정렬 */
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+/* ✅ 사용자 프로필 이미지 (동그랗게) */
+.review-header .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* ✅ 사용자 이름 (리뷰 카드 내) */
+.review-header .username {
+    font-weight: bold;
+    margin: 0;
+}
+
+/* ✅ 리뷰 카드 내 별점 (오렌지 색) */
+.review-header .stars {
+    color: #f5a623;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ✅ 작성 날짜 우측 정렬 (회색 글씨) */
+.review-header .review-date {
+    margin-left: auto;
+    color: #888;
+    font-size: 13px;
+}
+
+/* ✅ 리뷰 본문 글 (가독성 좋은 줄간격) */
+.review-content p {
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ✅ "리뷰 불러오는 중..." 문구 스타일 */
+.loading {
+    color: gray;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 14px;
+}
+
+/* ✅ 지도 박스 스타일 (임시 박스) */
+.map-placeholder {
+    width: 100%;
+    height: 300px;
+    background-color: #ddd;
+    border-radius: 10px;
+}
+
+/* ✅ 리뷰 작성 버튼 감싸는 박스 - 우측 정렬 및 여백 */
+.write-review-container {
+    text-align: right;     /* 버튼을 오른쪽 정렬 */
+    margin: 10px 0 30px;   /* 위 10px, 아래 30px 여백 */
+}
+
+/* ✅ 리뷰 작성 버튼 스타일 */
+.write-review-btn {
+    background-color: #4CAF50;  /* 녹색 계열 배경 */
+    color: white;               /* 텍스트는 흰색 */
+    border: none;               /* 테두리 제거 */
+    padding: 10px 16px;         /* 안쪽 여백 */
+    border-radius: 8px;         /* 둥근 버튼 */
+    font-size: 14px;            /* 폰트 크기 */
+    cursor: pointer;            /* 마우스 커서: 손가락 모양 */
+    transition: background-color 0.2s;  /* 호버 시 색 전환 부드럽게 */
+}
+
+/* ✅ 버튼 마우스 올렸을 때 색 약간 어둡게 */
+.write-review-btn:hover {
+    background-color: #45a049;
+}
+
