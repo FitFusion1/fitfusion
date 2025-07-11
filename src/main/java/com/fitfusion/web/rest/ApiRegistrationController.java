@@ -1,5 +1,9 @@
 package com.fitfusion.web.rest;
 
+import com.fitfusion.service.UserService;
+import com.fitfusion.web.response.ApiResponse;
+import com.fitfusion.web.response.ResponseEntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -7,9 +11,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/registration")
 public class ApiRegistrationController {
 
-    @GetMapping("/check-username")
-    public ResponseEntity<Void> checkUsername(@RequestParam String username) {
+    @Autowired
+    private UserService userService;
 
-        return ResponseEntity.ok().build();
+    /*
+     * 요청 방식 : GET
+     * 요청 URI : /api/registration/validation
+     * 옵션 : ?type=username
+     *       ?type=email
+     */
+    @GetMapping("/validation")
+    public ResponseEntity<ApiResponse<Boolean>> checkDuplicate(
+            @RequestParam("type") String type,
+            @RequestParam("value") String value) {
+        Boolean exists = userService.checkExists(type, value);
+
+        return ResponseEntityUtils.ok(exists);
     }
 }
