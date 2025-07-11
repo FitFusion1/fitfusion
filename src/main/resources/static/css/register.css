@@ -97,7 +97,7 @@
 }
 
 .next-btn, .back-btn, .submit-btn {
-    padding: 0.5rem 1rem;
+    padding: 10px;
     border: none;
     border-radius: 6px;
     font-size: 0.9rem;
@@ -108,7 +108,7 @@
     transition: background 0.2s;
     position: relative;
     z-index: 10;
-    width: 80px;
+    width: auto;
     height: 36px;
 }
 
@@ -186,6 +186,14 @@
     transform: translateX(100%);
 }
 
+.message-container {
+    display: inline-block;
+    min-height: 1em;
+    width: 100%;
+    position: relative;
+    margin-top: 2px;
+}
+
 .error-message {
     display: none;
     font-size: smaller;
@@ -193,5 +201,15 @@
 }
 
 .error-message.invalid {
+    display: block;
+}
+
+.valid-message {
+    display: none;
+    font-size: smaller;
+    color: blue;
+}
+
+.valid-message.active {
     display: block;
 }

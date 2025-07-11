@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--suppress SqlNoDataSourceInspection -->
 <mapper namespace="com.fitfusion.mapper.UserMapper">
+    <!--
+        boolean checkUsernameExists(String username);
+    -->
+    <select id="checkUsernameExists" resultType="boolean">
+        SELECT CASE WHEN EXISTS (
+            SELECT 1 FROM FITFUSION_USERS
+            WHERE USERNAME = #{username}
+        ) THEN 1 ELSE 0 END
+        FROM DUAL
+    </select>
+
+    <!--
+        boolean checkEmailExists(String email);
+    -->
+    <select id="checkEmailExists" resultType="boolean">
+        SELECT CASE WHEN EXISTS (
+            SELECT 1 FROM FITFUSION_USERS
+            WHERE EMAIL = #{email}
+        ) THEN 1 ELSE 0 END
+        FROM DUAL
+    </select>
 
 </mapper>

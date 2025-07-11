@@ -101,41 +101,39 @@ document.addEventListener('DOMContentLoaded', function () {
         let isValid = true;
 
         inputs.forEach(input => {
+            let invalidEmptyMessage = input.parentNode.querySelector('[data-error-cat="empty"]');
+            invalidEmptyMessage.classList.remove('invalid');
             if (!input.value.trim()) {
                 isValid = false;
                 input.style.borderColor = '#ff4444';
-                input.focus();
-                input.parentNode.querySelector('span[data-username-error="length"]').classList.add('invalid');
-                // input.addEventListener('input', function () {
-                //     this.style.borderColor = '#e0e0e0';
-                // }, {once: true});
+                input.parentNode.querySelector('[data-error-cat="empty"]').classList.add('invalid');
+                input.addEventListener('input', function () {
+                    this.style.removeProperty('border-color');
+                }, {once: true});
+            } else {
+                input.dispatchEvent(new Event('input'));
+                const errorMessages = input.parentNode.querySelectorAll('.error-message.invalid');
+                if (errorMessages.length !== 0) {
+                    isValid = false;
+                    input.style.borderColor = '#ff4444';
+                }
             }
         });
-
-        if (currentStep === 1) {
-            let usernameField = currentCard.querySelector('input[name="username"]');
-            if (usernameField.value.trim().length < 3) {
-                isValid = false;
-            }
-        }
 
         return isValid;
     }
 
-    // Handle form submission
-    function handleSubmit(e) {
-        e.preventDefault();
-        if (validateCurrentStep()) {
-            // Collect all form data
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-
-            // Here you would typically send the data to your server
-            console.log('Registration data:', data);
-
-            // Show success message or redirect
-            alert('Registration successful!');
-        }
+    function checkDuplicateValue(type, inputField) {
+        $.getJSON("/api/registration/validation", `type=${type}`, function (result) {
+            const duplicateExists = result.data;
+            if (duplicateExists) {
+                inputField.parentNode.querySelector('[data-error-cat="duplicate"]')
+                    .classList.add('invalid');
+            } else {
+                inputField.parentNode.querySelector('.valid-message')
+                    .classList.add('active');
+            }
+        });
     }
 
     // Add event listeners
@@ -150,9 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.addEventListener('click', prevStep);
         });
 
-        // Form submission
-        form.addEventListener('submit', handleSubmit);
-
         // Enter key navigation
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && currentStep < totalSteps) {
@@ -161,30 +156,106 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // username 필드 영어 대소문자, '-', '_' 이외의 문자는
-        // 입력 감지 시에 ''로 대체
-        const usernameInput = document.querySelector('input[name="username"]');
-        const invalidCharMessage = document.querySelector('[data-username-error="invalid-chars"]');
-        const invalidLengthMessage = document.querySelector('[data-username-error="length"]');
-
-        usernameInput.addEventListener('input', () => {
-            const value = usernameInput.value;
-            const validOnly = value.replace(/[^0-9a-zA-Z-_]/g, '');
-
-            if (value !== validOnly) {
-                usernameInput.value = validOnly;
-                invalidCharMessage.classList.add('invalid');
-            } else {
-                invalidCharMessage.classList.remove('invalid');
-            }
-
-            if (value.length < 3) {
-                invalidLengthMessage.classList.add('invalid');
-            } else {
-                invalidLengthMessage.classList.remove('invalid');
-            }
+        document.addEventListener('submit', function (e) {
+           if (!validateCurrentStep()) {
+               e.preventDefault();
+           }
         });
 
+        document.addEventListener('input', (e) => {
+            const inputElement = e.target;
+            const invalidEmptyMessage = inputElement.parentNode.querySelector('[data-error-cat="empty"]');
+            invalidEmptyMessage.classList.remove('invalid');
+            inputElement.parentNode.querySelector('.valid-message')
+                ?.classList.remove('active');
+            const inputValue = inputElement.value;
+
+            if (inputElement.getAttribute('name') === 'username') {
+                const filteredInput = inputValue.replace(/[^0-9a-zA-Z-_]/g, '');
+                const invalidCharMessage = inputElement.parentNode.querySelector('[data-error-cat="format"]');
+                const invalidLengthMessage = inputElement.parentNode.querySelector('[data-error-cat="length"]');
+
+                if (inputValue !== filteredInput) {
+                    inputElement.value = filteredInput;
+                    invalidCharMessage.classList.add('invalid');
+                } else {
+                    invalidCharMessage.classList.remove('invalid');
+                }
+
+                if (inputValue.length < 3) {
+                    invalidLengthMessage.classList.add('invalid');
+                } else {
+                    invalidLengthMessage.classList.remove('invalid');
+                }
+
+                const invalidMessages = inputElement.parentNode.querySelectorAll('.error-message.invalid');
+                if (invalidMessages.length === 0) {
+                    checkDuplicateValue('username', inputElement);
+                }
+            }
+
+            if (inputElement.getAttribute('name') === 'email') {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                const invalidFormatMessage = inputElement.parentNode.querySelector('[data-error-cat="format"]');
+                if (!emailRegex.test(inputValue)) {
+                    invalidFormatMessage.classList.add('invalid');
+                } else {
+                    invalidFormatMessage.classList.remove('invalid');
+                    checkDuplicateValue('email', inputElement);
+                }
+            }
+
+            if (inputElement.getAttribute('name') === 'password') {
+                const filteredInput = inputValue.replace(/\s/g, '');
+                const invalidLengthMessage = inputElement.parentNode.querySelector('[data-error-cat="length"]');
+                if (inputValue !== filteredInput) {
+                    inputElement.value = filteredInput;
+                }
+                if (inputValue.length < 6) {
+                    invalidLengthMessage.classList.add('invalid');
+                } else {
+                    invalidLengthMessage.classList.remove('invalid');
+                }
+            }
+
+            if (inputElement.getAttribute('name') === 'name') {
+                const validInput = /^[가-힣]{2,}$/;
+                const invalidFormatMessage = inputElement.parentNode.querySelector('[data-error-cat="format"]');
+                if (!validInput.test(inputValue)) {
+                    invalidFormatMessage.classList.add('invalid');
+                } else {
+                    invalidFormatMessage.classList.remove('invalid');
+                }
+            }
+
+            if (inputElement.getAttribute('name') === 'height') {
+                inputElement.value = inputValue.replace(/[^0-9]/g, '');
+                const invalidFormatMessage = inputElement.parentNode.querySelector('[data-error-cat="format"]');
+                if (inputValue < 80 || inputValue > 222) {
+                    invalidFormatMessage.classList.add('invalid');
+                } else {
+                    invalidFormatMessage.classList.remove('invalid');
+                }
+            }
+
+            if (inputElement.getAttribute('name') === 'weight') {
+                inputElement.value = inputValue.replace(/[^0-9]/g, '');
+                const invalidFormatMessage = inputElement.parentNode.querySelector('[data-error-cat="format"]');
+                if (inputValue < 20 || inputValue > 500) {
+                    invalidFormatMessage.classList.add('invalid');
+                } else {
+                    invalidFormatMessage.classList.remove('invalid');
+                }
+            }
+
+            // 부적절한 입력값이 있는지 확인하고 있으면 붉은색 테두리 추가하기
+            const invalidMessages = inputElement.parentNode.querySelectorAll('.error-message.invalid');
+            if (invalidMessages.length !== 0) {
+                inputElement.style.borderColor = '#ff4444';
+            } else {
+                inputElement.style.removeProperty('border-color');
+            }
+        });
     }
 
     // Initialize the form
