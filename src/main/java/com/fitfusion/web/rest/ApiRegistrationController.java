@@ -22,8 +22,9 @@ public class ApiRegistrationController {
      */
     @GetMapping("/validation")
     public ResponseEntity<ApiResponse<Boolean>> checkDuplicate(
-            @RequestParam("type") String type) {
-        Boolean exists = userService.checkExists(type);
+            @RequestParam("type") String type,
+            @RequestParam("value") String value) {
+        Boolean exists = userService.checkExists(type, value);
 
         return ResponseEntityUtils.ok(exists);
     }

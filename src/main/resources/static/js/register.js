@@ -124,12 +124,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function checkDuplicateValue(type, inputField) {
-        $.getJSON("/api/registration/validation", `type=${type}`, function (result) {
+        inputField.parentNode.querySelector('.valid-message')
+            ?.classList.remove('active');
+        $.getJSON("/api/registration/validation", `type=${type}&value=${inputField.value}`,
+            function (result) {
             const duplicateExists = result.data;
             if (duplicateExists) {
                 inputField.parentNode.querySelector('[data-error-cat="duplicate"]')
                     .classList.add('invalid');
+                inputField.style.borderColor = '#ff4444';
             } else {
+                inputField.parentNode.querySelector('[data-error-cat="duplicate"]')
+                    .classList.remove('invalid');
+                inputField.style.removeProperty('border-color');
                 inputField.parentNode.querySelector('.valid-message')
                     .classList.add('active');
             }
@@ -164,6 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.addEventListener('input', (e) => {
             const inputElement = e.target;
+            inputElement.style.removeProperty('border-color');
             const invalidEmptyMessage = inputElement.parentNode.querySelector('[data-error-cat="empty"]');
             invalidEmptyMessage.classList.remove('invalid');
             inputElement.parentNode.querySelector('.valid-message')
@@ -174,22 +182,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 const filteredInput = inputValue.replace(/[^0-9a-zA-Z-_]/g, '');
                 const invalidCharMessage = inputElement.parentNode.querySelector('[data-error-cat="format"]');
                 const invalidLengthMessage = inputElement.parentNode.querySelector('[data-error-cat="length"]');
+                let duplicateCheckViable = true;
 
                 if (inputValue !== filteredInput) {
                     inputElement.value = filteredInput;
                     invalidCharMessage.classList.add('invalid');
+                    duplicateCheckViable = false;
                 } else {
                     invalidCharMessage.classList.remove('invalid');
                 }
 
                 if (inputValue.length < 3) {
                     invalidLengthMessage.classList.add('invalid');
+                    duplicateCheckViable = false;
                 } else {
                     invalidLengthMessage.classList.remove('invalid');
                 }
 
-                const invalidMessages = inputElement.parentNode.querySelectorAll('.error-message.invalid');
-                if (invalidMessages.length === 0) {
+                if (duplicateCheckViable) {
                     checkDuplicateValue('username', inputElement);
                 }
             }

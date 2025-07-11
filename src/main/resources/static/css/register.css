@@ -18,6 +18,7 @@
 }
 
 .registration-card {
+    color: black;
     background-color: #ffffff;
     border-radius: 12px;
     padding: 2rem 2rem 1rem 2rem;
@@ -96,7 +97,7 @@
     outline: none;
 }
 
-.next-btn, .back-btn, .submit-btn {
+.next-btn, .back-btn, .submit-btn, .login-btn {
     padding: 10px;
     border: none;
     border-radius: 6px;
@@ -123,6 +124,13 @@
 
 .back-btn:hover {
     background: #bdbdbd;
+}
+
+.login-btn {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Button container for positioning */

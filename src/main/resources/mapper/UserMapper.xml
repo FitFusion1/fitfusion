@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!--suppress SqlNoDataSourceInspection -->
 <mapper namespace="com.fitfusion.mapper.UserMapper">
     <!--
-        boolean checkUsernameExists(String username);
+        int checkUsernameExists(String username);
     -->
-    <select id="checkUsernameExists" resultType="boolean">
+    <select id="checkUsernameExists" resultType="int">
         SELECT CASE WHEN EXISTS (
             SELECT 1 FROM FITFUSION_USERS
             WHERE USERNAME = #{username}
@@ -14,14 +13,61 @@
     </select>
 
     <!--
-        boolean checkEmailExists(String email);
+        int checkEmailExists(String email);
     -->
-    <select id="checkEmailExists" resultType="boolean">
+    <select id="checkEmailExists" resultType="int">
         SELECT CASE WHEN EXISTS (
             SELECT 1 FROM FITFUSION_USERS
             WHERE EMAIL = #{email}
         ) THEN 1 ELSE 0 END
         FROM DUAL
     </select>
+
+    <!--
+        void insertUser(User user);
+    -->
+    <insert id="insertUser" parameterType="User">
+        <selectKey keyProperty="userId"
+                   resultType="int"
+                   order="BEFORE">
+            SELECT FITFUSION_USER_SEQ.nextval
+            FROM DUAL
+        </selectKey>
+        INSERT INTO FITFUSION_USERS
+            ( USER_ID
+            , USERNAME
+            , PASSWORD
+            , NAME
+            , EMAIL
+            , GENDER
+            , HEIGHT
+            , WEIGHT
+            , BIRTH_DATE
+            , EXPERIENCE_LEVEL
+            )
+        VALUES
+            ( #{userId}
+            , #{username}
+            , #{password}
+            , #{name}
+            , #{email}
+            , #{gender}
+            , #{height}
+            , #{weight}
+            , #{birthDate}
+            , #{experienceLevel}
+            )
+    </insert>
+    
+    <!--
+        void insertUserRole(@Param("userId") int userId,
+                        @Param("roleName") String roleName);
+    -->
+    <insert id="insertUserRole">
+        INSERT INTO FITFUSION_USER_ROLES
+            (USER_ID, ROLE_NAME)
+        VALUES
+            (#{userId}, #{roleName})
+    </insert>
 
 </mapper>
