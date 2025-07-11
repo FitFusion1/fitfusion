@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko"
+      class="createexercisegoal"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">운동 목표 설정 | step1</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="createexercisegoal-container">
+        <form th:action="@{/exercisegoal/step1}" method="post" th:object="${exerciseGoalForm}">
+            <div class="createexercisegoal-step createexercisegoal-step-active">
+                <div class="createexercisegoal-question">운동 목표를 선택해주세요</div>
+
+                <div class="createexercisegoal-radio-group">
+                    <input type="radio" id="goal1" th:field="*{goalType}" value="LOSS_WEIGHT" hidden />
+                    <label for="goal1" class="createexercisegoal-option-btn">뚜렷한 체중 감량</label>
+
+                    <input type="radio" id="goal2" th:field="*{goalType}" value="GAIN_WEIGHT" hidden />
+                    <label for="goal2" class="createexercisegoal-option-btn">뚜렷한 체중 증가</label>
+
+                    <input type="radio" id="goal3" th:field="*{goalType}" value="MAINTAIN_WEIGHT" hidden />
+                    <label for="goal3" class="createexercisegoal-option-btn">체중 유지 또는 건강한 습관</label>
+
+                    <input type="radio" id="goal4" th:field="*{goalType}" value="IMPROVE_HEALTH" hidden />
+                    <label for="goal4" class="createexercisegoal-option-btn">건강한 생활 습관 개선</label>
+                </div>
+
+                <div th:if="${#fields.hasErrors('goalType')}" th:errors="*{goalType}" class="error-message"></div>
+                <div class="createexercisegoal-btn-group">
+                    <button type="submit" class="createexercisegoal-next-btn">다음</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

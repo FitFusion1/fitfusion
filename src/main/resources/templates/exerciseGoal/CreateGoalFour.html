@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko"
+      class="createexercisegoal"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">운동 목표 설정 | step4</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="createexercisegoal-container">
+        <form th:action="@{/exercisegoal/step4}" method="post" th:object="${exerciseGoalForm}">
+            <div class="createexercisegoal-step createexercisegoal-step-active">
+                <div class="createexercisegoal-question">목표에 대한 설명을 작성해주세요</div>
+
+                <textarea th:field="*{goalDescription}"  placeholder="예: 3개월 동안 70kg까지 감량하고 싶어요. 식단도 병행할 예정입니다." ></textarea>
+                <div th:if="${#fields.hasErrors('goalDescription')}" th:errors="*{goalDescription}" class="error-message"></div>
+
+                <div class="createexercisegoal-btn-group">
+                    <a th:href="@{/exercisegoal/step3}" class="createexercisegoal-prev-btn">이전</a>
+                    <button type="submit" class="createexercisegoal-next-btn">입력 완료</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

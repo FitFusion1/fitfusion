@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko"
+      class="createexercisegoal"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">운동 목표 설정 | step2</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="createexercisegoal-container">
+        <form th:action="@{/exercisegoal/step2}" method="post" th:object="${exerciseGoalForm}">
+            <div class="createexercisegoal-step createexercisegoal-step-active">
+                <div class="createexercisegoal-question">현재 체중과 목표 체중을 입력해주세요</div>
+
+                <div th:if="${#fields.hasErrors('startWeight')}" th:errors="*{startWeight}" class="error-message"></div>
+                <input type="number" th:field="*{startWeight}"  placeholder="현재 체중 (kg)" required />
+
+                <div th:if="${#fields.hasErrors('targetWeight')}" th:errors="*{targetWeight}" class="error-message"></div>
+                <input type="number" th:field="*{targetWeight}" placeholder="목표 체중 (kg)" required />
+
+                <div class="createexercisegoal-btn-group">
+                    <a th:href="@{/exercisegoal/step1}" class="createexercisegoal-prev-btn">이전</a>
+                    <button type="submit" class="createexercisegoal-next-btn">다음</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fitfusion.mapper.ExerciseGoalMapper">
+
+    <insert id="insertUserGoal" parameterType="ExerciseGoal">
+        insert into FITFUSION_USER_GOALS (
+            goal_id
+          , goal_name
+          , goal_desc
+          , start_weight
+          , target_weight
+          , start_date
+          , end_date
+          , user_id
+          , progress_id
+        ) values (
+          EXERCISE_GOAL_SEQ.NEXTVAL
+          , #{goalType}
+          , #{goalDescription}
+          , #{startWeight}
+          , #{targetWeight}
+          , #{startDate}
+          , #{endDate}
+          , #{userId}
+          , #{progressId}
+        )
+    </insert>
+</mapper>

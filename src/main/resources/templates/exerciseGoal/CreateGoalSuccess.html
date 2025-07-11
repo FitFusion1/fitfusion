@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko"
+      class="createexercisegoal"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">목표 설정 완료</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="createexercisegoal-container">
+        <div class="createexercisegoal-step createexercisegoal-step-active">
+            <div class="createexercisegoal-question">
+                운동 목표가 성공적으로 저장되었습니다! 🎉
+            </div>
+            <div class="createexercisegoal-btn-group">
+                <a th:href="@{/myexercise}" class="createexercisegoal-next-btn">나의 운동으로 이동</a>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

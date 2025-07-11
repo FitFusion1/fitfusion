@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fitfusion.mapper.ExerciseMapper">
+
+    <insert id="insertExercise" parameterType="Exercise">
+        INSERT INTO FITFUSION_EXERCISES (
+            EXERCISE_ID,
+            NAME,
+            DESCRIPTION,
+            EQUIPMENT,
+            MAIN_PARTS,
+            CATEGORY,
+            FATIGUE_LEVEL
+        ) VALUES (
+                     EXERCISE_SEQ.NEXTVAL,
+                     #{name},
+                     #{description},
+                     #{equipment},
+                     #{mainParts},
+                     #{category},
+                     #{fatigueLevel}
+                 )
+    </insert>
+
+</mapper>
