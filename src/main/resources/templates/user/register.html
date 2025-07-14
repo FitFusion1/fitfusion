@@ -1,22 +1,58 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{/layout/base}">
+
 <head>
-    <link th:href="@{/css/register.css}" rel="stylesheet">
     <title>회원가입</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/register.css}">
+    </th:block>
 </head>
-<body>
+
 <div class="registration-container" layout:fragment="content">
-    <form th:action="@{/register}" method="post"
-          class="registration-form">
+    <form th:action="@{/user/register}" method="post"
+          th:object="${registerForm}" class="registration-form">
         <!-- Step 1: Account Info -->
         <div class="registration-card step step-1 active">
             <h2>회원가입 정보</h2>
-            <label>아이디<input type="text" name="username" required></label>
-            <label>이메일<input type="email" name="email" required></label>
-            <label>비밀번호<input type="password" name="password" required></label>
+            <label th:with="field='아이디'">아이디
+                <input type="text" th:field="*{username}">
+                <span class="message-container">
+                    <span class="error-message" data-error-cat="empty"
+                        th:text="|${field}을(를) 입력해주세요.|"></span>
+                    <span class="error-message"
+                          data-error-cat="length">아이디는 3글자 이상 입력해주세요.</span>
+                    <span class="error-message"
+                          data-error-cat="format">아이디는 영문 대소문자, 숫자, '-', '_'만 가능합니다.</span>
+                    <span class="error-message"
+                          data-error-cat="duplicate">중복된 아이디입니다.</span>
+                    <span class="valid-message"
+                          data-valid-cat="username">사용가능한 아이디입니다.</span>
+                </span>
+            </label>
+            <label th:with="field='이메일'">이메일
+                <input type="email" th:field="*{email}">
+                <span class="message-container">
+                    <span class="error-message" data-error-cat="empty"
+                          th:text="|${field}을(를) 입력해주세요.|"></span>
+                    <span class="error-message"
+                          data-error-cat="format">올바른 이메일 형식을 입력해주세요.</span>
+                    <span class="error-message"
+                          data-error-cat="duplicate">중복된 이메일입니다.</span>
+                    <span class="valid-message"
+                          data-valid-cat="email">사용가능한 이메일입니다.</span>
+                </span>
+            </label>
+            <label th:with="field='비밀번호'">비밀번호
+                <input type="password" th:field="*{password}">
+                <span class="message-container">
+                    <span class="error-message" data-error-cat="empty"
+                          th:text="|${field}을(를) 입력해주세요.|"></span>
+                    <span class="error-message"
+                          data-error-cat="length">비밀번호는 6글자 이상 입력해주세요.</span>
+                </span>
+            </label>
             <div class="button-container">
                 <div></div>
                 <button type="button" class="next-btn">다음</button>
@@ -25,14 +61,30 @@
         <!-- Step 2: Personal Details -->
         <div class="registration-card step step-2">
             <h2>개인 정보</h2>
-            <label>이름<input type="text" name="name" required></label>
-            <label>생년월일<input type="date" name="birthdate" required></label>
-            <label>성별
-                <select name="gender" required>
+            <label th:with="field='이름'">이름
+                <input type="text" th:field="*{name}">
+                <span class="message-container">
+                    <span class="error-message" data-error-cat="empty"
+                          th:text="|${field}을(를) 입력해주세요.|"></span>
+                    <span class="error-message"
+                          data-error-cat="format">올바른 한글 이름 형식을 입력해주세요.</span>
+                </span>
+            </label>
+            <label th:with="field='생년월일'">생년월일
+                <input type="date" th:field="*{birthDate}"
+                       th:min="1900-01-01"
+                       th:max="${#dates.format(currentDate, 'yyyy-MM-dd')}">
+                <span class="error-message" data-error-cat="empty"
+                      th:text="|${field}을(를) 입력해주세요.|"></span>
+            </label>
+            <label th:with="field='성별'">성별
+                <select th:field="*{gender}">
                     <option value="">선택</option>
                     <option value="M">남성</option>
                     <option value="F">여성</option>
                 </select>
+                <span class="error-message" data-error-cat="empty"
+                      th:text="|${field}을(를) 입력해주세요.|"></span>
             </label>
             <div class="button-container">
                 <button type="button" class="back-btn">뒤로</button>
@@ -42,26 +94,32 @@
         <!-- Step 3: Physical Info -->
         <div class="registration-card step step-3">
             <h2>신체 정보</h2>
-            <label>신장 (cm)<input type="number" name="height" min="0" required></label>
-            <label>체중 (kg)<input type="number" name="weight" min="0" required></label>
-            <label>숙련도
-                <select name="experience-level" required>
+            <label th:with="field='신장'">신장 (cm)
+                <input type="text" th:field="*{height}"
+                       inputmode="numeric" pattern="[0-9]*">
+                <span class="error-message" data-error-cat="empty"
+                      th:text="|${field}을(를) 입력해주세요.|"></span>
+                <span class="error-message"
+                      data-error-cat="format">올바른 값을 입력해주세요.</span>
+            </label>
+            <label th:with="field='체중'">체중 (kg)
+                <input type="text" th:field="*{weight}"
+                       inputmode="numeric" pattern="[0-9]*">
+                <span class="error-message" data-error-cat="empty"
+                      th:text="|${field}을(를) 입력해주세요.|"></span>
+                <span class="error-message"
+                      data-error-cat="format">올바른 값을 입력해주세요.</span>
+            </label>
+            <label th:with="field='숙련도'">숙련도
+                <select th:field="*{experienceLevel}">
                     <option value="">선택</option>
                     <option value="beginner">초급</option>
                     <option value="intermediate">중급</option>
                     <option value="advanced">고급</option>
                 </select>
+                <span class="error-message" data-error-cat="empty"
+                      th:text="|${field}을(를) 선택해주세요.|"></span>
             </label>
-            <div class="button-container">
-                <button type="button" class="back-btn">뒤로</button>
-                <button type="button" class="next-btn">다음</button>
-            </div>
-        </div>
-        <!-- Step 4: Confirmation -->
-        <div class="registration-card step step-4">
-            <h2>Confirm Details</h2>
-            <p>Please review your information before submitting.</p>
-            <!-- Summary fields can be filled with JS later -->
             <div class="button-container">
                 <button type="button" class="back-btn">뒤로</button>
                 <button type="submit" class="submit-btn">회원가입</button>
@@ -69,8 +127,5 @@
         </div>
     </form>
 </div>
-<th:block layout:fragment="script">
-    <script th:src="@{/js/register.js}"></script>
-</th:block>
-</body>
+<script layout:fragment="script" th:src="@{/js/register.js}"></script>
 </html>
