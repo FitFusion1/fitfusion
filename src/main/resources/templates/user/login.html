@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
 
-</body>
+<head>
+    <title>로그인</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/login.css}">
+    </th:block>
+</head>
+
+<div class="login-container" layout:fragment="content">
+    <div class="login-card">
+        <h2>로그인</h2>
+        <form th:action="@{/user/login}" method="post" class="login-form">
+            <label>아이디
+                <input type="text" name="username" required autocomplete="username">
+            </label>
+            <label>비밀번호
+                <input type="password" name="password" required autocomplete="current-password">
+            </label>
+            <button type="submit" class="login-submit">로그인</button>
+        </form>
+        <div class="login-footer">
+            <p>계정이 없으신가요? <a th:href="@{/user/register}" class="register-link">회원가입</a></p>
+        </div>
+    </div>
+</div>
 </html>

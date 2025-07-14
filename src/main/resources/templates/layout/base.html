@@ -16,14 +16,16 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <th:block layout:fragment="css" />
-    <title layout:title-pattern="$CONTENT_TITLE - FitFusion">FitFusion</title>
-
+    <title layout:title-pattern="$CONTENT_TITLE">FitFusion</title>
 </head>
 
 <body>
 
 <!-- 헤더 -->
 <header th:replace="~{fragments/header :: navbar-fragment}"></header>
+
+<!-- 로그인 모달 -->
+<div th:replace="~{fragments/modal-login :: modal-login}"></div>
 
 <!-- 본문 -->
 <main>
@@ -44,6 +46,7 @@
         xhr.setRequestHeader(header, token);
     });
 </script>
+<script th:src="@{/js/modal-login.js}"></script>
 
 <!-- 페이지 전용 스크립트 -->
 <th:block layout:fragment="script"></th:block>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="modal-login" class="login-modal-overlay" style="display:none;">
+    <div class="login-modal">
+        <button class="login-modal-close" aria-label="Close">&times;</button>
+        <h2>로그인</h2>
+        <form th:action="@{/user/login}" method="post"
+              class="login-modal-form" id="modal-login-form">
+            <label>아이디
+                <input type="text" name="username" id="username-field"
+                       required autocomplete="username">
+                <small class="field-error" id="username-invalid-message"></small>
+            </label>
+            <label>비밀번호
+                <input type="password" name="password" id="password-field"
+                       required autocomplete="current-password">
+                <small class="field-error" id="password-invalid-message"></small>
+            </label>
+            <button type="submit" id="login-modal-submit" class="login-modal-submit">로그인</button>
+            <small class="field-error" id="login-error-message"></small>
+        </form>
+    </div>
+</div>
