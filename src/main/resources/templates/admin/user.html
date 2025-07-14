@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='admin'">
+<head>
+    <meta charset="UTF-8" />
+    <title>회원 관리 - FitFusion</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/admin.css}">
+    </th:block>
+</head>
+
+<section layout:fragment="content" class="main">
+    <!-- 헤더 -->
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1><i class="fas fa-users"></i> 회원 관리</h1>
+            <p class="admin-subtitle">/admin/users</p>
+        </div>
+        <div class="admin-header-right">
+
+            <a th:href="@{/admin}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
+            <a href="#" class="admin-btn admin-btn-secondary">
+                <!-- 추후 만들 예정 -->
+                <i class="fas fa-download"></i> 엑셀 다운로드
+            </a>
+        </div>
+    </div>
+
+    <!-- 통계 카드 -->
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon"><i class="fas fa-user"></i></div>
+            <div class="admin-stat-content">
+                <h3 th:text="${countActiveUsers}">2</h3>
+                <p>총 회원 수</p>
+            </div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon"><i class="fas fa-user-slash"></i></div>
+            <div class="admin-stat-content">
+                <h3 th:text="${countDeletedUsers}">0</h3>
+                <p>정지 회원</p>
+            </div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon"><i class="fas fa-user-plus"></i></div>
+            <div class="admin-stat-content">
+                <h3 th:text="${countTodayUsers}">0</h3>
+                <p>오늘 가입</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 검색바 -->
+    <form action="#" method="get" class="admin-search-bar">
+        <input type="text" name="keyword" placeholder="회원 이름 또는 이메일 검색...">
+        <button type="submit" class="admin-btn admin-btn-primary"><i class="fas fa-search"></i> 검색</button>
+    </form>
+
+    <!-- 테이블 -->
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+            <tr>
+                <th>회원번호</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>가입일</th>
+                <th>상태</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${!users.isEmpty()}"
+                th:each="user, stat : ${users}">
+                <td th:text="${user.userId}"></td>
+                <td th:text="${user.name}">홍길동</td>
+                <td th:text="${user.username}">hong@example.com</td>
+                <td th:text="${#dates.format(user.createdDate, 'yyyy-MM-dd HH:mm:ss')}">2025-06-01</td>
+
+
+                <td th:if="${user.deleted == 'N'}"><span class="admin-badge admin-badge-active">정상</span></td>
+                <td th:if="${user.deleted == 'Y'}"><span class="admin-badge admin-badge-blocked">삭제</span></td>
+
+
+                <td class="admin-actions">
+                    <a th:href="@{/admin/user/{id}(id=${user.userId})}" class="admin-btn admin-btn-primary"><i class="fas fa-eye"></i> 상세</a>
+
+                    <th:block th:if="${user.deleted} == 'N'">
+                        <form th:action="@{/admin/user/softDelete/{id}(id=${user.userId})}"
+                              method="post">
+                            <button type="submit"
+                                    class="admin-btn admin-btn-danger">
+                                <i class="fas fa-ban"></i> 정지
+                            </button>
+                        </form>
+                    </th:block>
+                    <th:block th:if="${user.deleted} == 'Y'">
+                        <form th:action="@{/admin/user/softRestore/{id}(id=${user.userId})}"
+                              method="post">
+                            <button type="submit"
+                                    class="admin-btn admin-btn-danger">
+                                <i class="fas fa-ban"></i> 복구
+                            </button>
+                        </form>
+                    </th:block>
+
+<!--                    <button class="admin-btn admin-btn-danger"><i class="fas fa-ban"></i> 삭제</button>-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</html>
