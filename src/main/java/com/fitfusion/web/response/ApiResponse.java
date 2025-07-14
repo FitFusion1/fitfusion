@@ -17,6 +17,10 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
+    public static ApiResponse<Void> success() {
+        return new ApiResponse<>(true, 200, null, null);
+    }
+
     // 성공 응답 - status:200, message:메세지, data:null
     public static ApiResponse<Void> success(String message) {
         return new ApiResponse<>(true, 200, message, null);
