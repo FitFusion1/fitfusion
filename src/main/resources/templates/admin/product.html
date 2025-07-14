@@ -2,17 +2,15 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{/layout/base}">
+      layout:decorate="~{/layout/base}" th:with="menu='admin'">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/images/favicon.ico" type="image/x-icon"/>
-    <title>회원 목록 조회 - FitFusion</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>음식 제품 관리 - FitFusion</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/admin.css}">
+    </th:block>
 </head>
 
-<body>
 <section layout:fragment="content" class="main">
     <!-- 헤더 -->
     <div class="admin-header">
@@ -87,5 +85,4 @@
         </table>
     </div>
 </section>
-</body>
 </html>

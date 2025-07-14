@@ -3,6 +3,89 @@
 <mapper namespace="com.fitfusion.mapper.AdminMapper">
 
     <!--
+        User getUserById(int id);
+    -->
+    <select id="getUserById" resultType="User">
+        SELECT
+            user_id             userId,
+            username,
+            password,
+            name,
+            email,
+            gender,
+            height,
+            weight,
+            birth_date          birthDate,
+            created_date        createdDate,
+            updated_date        updatedDate,
+            deleted,
+            deleted_date        deletedDate,
+            experience_level    experienceLevel
+        FROM
+            fitfusion_users
+        WHERE
+            user_id = #{id}
+    </select>
+
+    <!--
+        User getUserByIdWithRoleNames(int id);
+    -->
+    <resultMap id="getUserByIdWithRoleNames" type="User">
+        <id column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+        <result column="height" property="height"/>
+        <result column="weight" property="weight"/>
+        <result column="birth_date" property="birthDate"/>
+        <result column="created_date" property="createdDate"/>
+        <result column="updated_date" property="updatedDate"/>
+        <result column="deleted" property="deleted"/>
+        <result column="deleted_date" property="deletedDate"/>
+        <result column="experience_level" property="experienceLevel"/>
+        <collection property="roleNames"
+                    column="user_id"
+                    ofType="string"
+                    select="getRoleNamesById"/>
+    </resultMap>
+
+    <select id="getUserByIdWithRoleNames" resultMap="getUserByIdWithRoleNames">
+        SELECT
+            user_id,
+            username,
+            password,
+            name,
+            email,
+            gender,
+            height,
+            weight,
+            birth_date,
+            created_date,
+            updated_date,
+            deleted,
+            deleted_date,
+            experience_level
+        FROM
+            fitfusion_users
+        WHERE
+            user_id = #{id}
+    </select>
+
+    <!--
+        List<String> getRoleNamesById(int id);
+    -->
+    <select id="getRoleNamesById" resultType="string">
+        SELECT
+            role_name
+        FROM
+            fitfusion_user_roles
+        where
+            user_id = #{id}
+    </select>
+
+    <!--
         List<User> getAllUsers();
     -->
     <select id="getAllUsers" resultType="User">
@@ -24,5 +107,56 @@
         FROM
             fitfusion_users
     </select>
+
+    <!--
+        int countActiveUsers();
+    -->
+    <select id="countActiveUsers" resultType="int">
+        SELECT COUNT(*)
+        FROM fitfusion_users
+        WHERE deleted = 'N'
+    </select>
+
+    <!--
+        int countDeletedUsers();
+    -->
+    <select id="countDeletedUsers" resultType="int">
+        SELECT COUNT(*)
+        FROM fitfusion_users
+        WHERE deleted = 'Y'
+    </select>
+
+    <!--
+        int countTodayUsers();
+    -->
+    <select id="countTodayUsers" resultType="int">
+        SELECT COUNT(*)
+        FROM fitfusion_users
+        WHERE TRUNC(created_date) = TRUNC(SYSDATE)
+          AND deleted = 'N'
+    </select>
+
+    <!--
+        void softDeleteUserById(int id);
+    -->
+    <update id="softDeleteUserById" parameterType="int">
+        UPDATE fitfusion_users
+        SET
+            deleted = 'Y'
+        WHERE
+            user_id = #{id}
+    </update>
+
+    <!--
+        void softRestoreUserById(int id);
+    -->
+    <update id="softRestoreUserById" parameterType="int">
+        UPDATE fitfusion_users
+        SET
+            deleted = 'N'
+        WHERE
+            user_id = #{id}
+    </update>
+
 
 </mapper>
