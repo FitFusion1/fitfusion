@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.GymMapper">
+
+    <!--
+         void insert(GymDataDto gymplaceData);
+    -->
+    <insert id="insert" parameterType="GymDataDto">
+        insert into FITFUSION_GYMS
+        (GYM_ID, NAME, ADDRESS, PHONE, LATITUDE, LONGITUDE, KAKAO_PLACE_ID, AVERAGE_RATING)
+        values
+            (FITFUSION_GYM_SEQ.NEXTVAL, #{name}, #{address}, #{phone}, #{latitude}, #{longitude}, #{kakaoPlaceId}, #{averageRating})
+    </insert>
+
+    <!--
+        GymDataDto select(@Param("kakaoPlaceId") String kakaoPlaceId);
+    -->
+    <select id="select" resultType="GymDataDto">
+        select
+            GYM_ID          AS gymId
+             ,   NAME
+             ,   ADDRESS
+             ,   LATITUDE
+             ,   LONGITUDE
+             ,   PHONE
+             ,   KAKAO_PLACE_ID  AS kakaoPlaceId
+             ,   AVERAGE_RATING  AS averageRating
+        from FITFUSION_GYMS
+        where KAKAO_PLACE_ID = #{kakaoPlaceId}
+    </select>
+
+    <!--
+        <resultMap id="detailDataMap" type="DetailDataDto">
+    -->
+    <resultMap id="detailDataMap" type="DetailDataDto">
+        <id property="gymId" column="GYM_ID"></id>
+        <result property="name" column="NAME"></result>
+        <result property="address" column="ADDRESS"></result>
+        <result property="phone" column="PHONE"></result>
+        <result property="latitude" column="LATITUDE"></result>
+        <result property="longitude" column="LONGITUDE"></result>
+        <result property="averageRating" column="AVERAGE_RATING"></result>
+
+        <collection property="gymReviews" ofType="GymReviewDto">
+            <result property="reviewId" column="REVIEW_ID"></result>
+            <result property="rating" column="RATING"></result>
+            <result property="content" column="CONTENT"></result>
+            <result property="createdDate" column="CREATED_DATE"></result>
+            <result property="updatedDate" column="UPDATED_DATE"></result>
+
+            <association property="user" javaType="User">
+              <id property="userId" column="USER_ID"/>
+              <result property="username" column="USERNAME"/>
+            </association>
+        </collection>
+    </resultMap>
+
+
+    <!--
+        DetailDataDto detailData(int gymId);
+    -->
+    <select id="detailData" resultMap="detailDataMap">
+        select
+            G.GYM_ID
+             ,  G.NAME
+             ,  G.ADDRESS
+             ,  G.PHONE
+             ,  G.LATITUDE
+             ,  G.LONGITUDE
+             ,  G.AVERAGE_RATING
+             ,  R.REVIEW_ID
+             ,  R.RATING
+             ,  R.CONTENT
+             ,  R.CREATED_DATE
+             ,  R.UPDATED_DATE
+             ,  U.USER_ID
+             ,  U.USERNAME
+        from FITFUSION_GYMS G, FITFUSION_GYM_REVIEWS R, FITFUSION_USERS U
+        WHERE U.USER_ID = R.USER_ID(+)
+          AND   G.GYM_ID = R.GYM_ID(+)
+          AND   G.GYM_ID = #{gymId}
+    </select>
+
+</mapper>

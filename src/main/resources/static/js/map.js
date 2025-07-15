@@ -61,6 +61,7 @@ window.onload = function () {
         // 생성자 함수로 만들어진 ps로 ketwordSerarch 메소드를 실행할 수 있다
         // 이 기능은 입력한 키워드로 장소를 검색
         ps.keywordSearch(keyword, function (data, status) {
+            console.log('data2:', data , status);
             if (status === kakao.maps.services.Status.OK && data.length > 0) {
                 initMap(parseFloat(data[0].y), parseFloat(data[0].x));
             } else {
@@ -87,12 +88,11 @@ window.onload = function () {
 
                 // ④ 여기에 헬스장 마커 찍는 로직이 들어감
                 data.forEach(place => {
+                    console.log('data :', data);
                     const name = place.place_name;
                     const x = place.x;
                     const y = place.y;
                     const kakaoPlaceId = name + "_" + x + "_" + y;
-
-                    if (!name || !x || !y || kakaoPlaceId.includes("undefined")) return;
 
                     const marker = new kakao.maps.Marker({
                         map: map,
@@ -120,13 +120,16 @@ window.onload = function () {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(gymData)
+
                         })
                             .then(res => res.json())
                             .then(savedGym => {
-                                if (!savedGym.id) return;
+                                console.log('savedGym :', savedGym);
+                                if (!savedGym.gymId) return;
 
                                 if (openOverlay) openOverlay.setMap(null);
 
+                                console.log('gymData :', gymData);
                                 const content = document.createElement('div');
                                 content.style.padding = '10px';
                                 content.style.fontSize = '14px';
@@ -160,10 +163,26 @@ window.onload = function () {
                                 content.appendChild(document.createElement('br'));
 
                                 const link = document.createElement('a');
-                                link.href = '/gyms/detail/' + savedGym.id;
+                                link.href = '/gyms/detail/' + savedGym.gymId;
                                 link.innerText = '상세정보 보기';
                                 link.style.color = 'blue';
                                 content.appendChild(link);
+
+                                const compareBtn = document.createElement('button');
+                                compareBtn.innerText = '비교하기';
+                                compareBtn.style.marginTop = '5px';
+                                compareBtn.style.padding = '4px 8px';
+                                compareBtn.style.border = '1px solid #333';
+                                compareBtn.style.borderRadius = '4px';
+                                compareBtn.style.background = '#f0f0f0';
+                                compareBtn.style.cursor = 'pointer';
+
+                                compareBtn.onclick = () => {
+
+                                };
+
+                                content.appendChild(document.createElement('br')); // 줄바꿈
+                                content.appendChild(compareBtn);
 
                                 const overlay = new kakao.maps.CustomOverlay({
                                     map: map,
@@ -171,9 +190,11 @@ window.onload = function () {
                                     content: content,
                                     yAnchor: 1
                                 });
-
+                                console.log("savedGym.lat/lon:", savedGym.latitude, savedGym.longitude);
                                 overlay.setMap(map);
+                                console.log('오버레이 출력됨');
                                 openOverlay = overlay;
+
                             });
                     });
                 });

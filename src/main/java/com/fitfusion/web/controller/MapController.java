@@ -1,21 +1,35 @@
 package com.fitfusion.web.controller;
 
-import com.fitfusion.dto.KakaoSearchResponseDto;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.fitfusion.dto.DetailDataDto;
+import com.fitfusion.dto.GymDataDto;
+import com.fitfusion.dto.KakaoplaceDto;
+import com.fitfusion.service.KakaoGymSearchService;
+import com.fitfusion.service.KakaoShowGymData;
+import lombok.RequiredArgsConstructor;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class MapController {
 
-    // 카카오 api 정보를 json형태로 불러와서 위도 경도 정보를 넘겨줌
-    @GetMapping("/api/kakao/gyms")
-    public List<KakaoSearchResponseDto> userNearByGyms(@RequestParam("lat") Double latitude, @RequestParam("lon") Double longitude) {
+    private final KakaoGymSearchService kakaoGymSearchService;
+    private final KakaoShowGymData kakaoShowGymData;
 
-        return null;
+    @GetMapping("/api/kakao/gyms")
+    public List<KakaoplaceDto> UserNearByGyms(@RequestParam("lat") Double latitude, @RequestParam("lon") Double longitude) {
+        String keyword = "헬스장";
+        return kakaoGymSearchService.searchGym(keyword, latitude, longitude);
     }
 
+    @PostMapping("/api/gyms")
+    public GymDataDto saveGym(@RequestBody GymDataDto gymDataDto) {
+
+        kakaoShowGymData.insertGym(gymDataDto);
+        System.out.println("gymDataDto: " + gymDataDto);
+        System.out.println("kakaoPlaceId: " + gymDataDto.getKakaoPlaceId());
+        return kakaoShowGymData.selectByKakaoPlaceId(gymDataDto.getKakaoPlaceId());
+    }
 }
