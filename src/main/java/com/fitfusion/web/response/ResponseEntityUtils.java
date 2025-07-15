@@ -4,6 +4,12 @@ import org.springframework.http.ResponseEntity;
 
 public class ResponseEntityUtils {
 
+    public static ResponseEntity<ApiResponse<Void>> ok() {
+        return ResponseEntity
+                .status(200)
+                .body(ApiResponse.success());
+    }
+
     public static ResponseEntity<ApiResponse<Void>> ok(String message) {
         return ResponseEntity
                 .status(200)
@@ -22,7 +28,7 @@ public class ResponseEntityUtils {
                 .body(ApiResponse.success(message, data));
     }
 
-    public static ResponseEntity<ApiResponse<Void>> fail(int status, String message) {
+    public static <T> ResponseEntity<ApiResponse<T>> fail(int status, String message) {
         return ResponseEntity
                 .status(status)
                 .body(ApiResponse.fail(status, message));
