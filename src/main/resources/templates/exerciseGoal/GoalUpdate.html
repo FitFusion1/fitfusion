@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">목표 수정</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="GoalUpdate">
+        <div class="GoalUpdate-container">
+            <h1 class="GoalUpdate-title">운동 목표 수정</h1>
+
+            <form class="GoalUpdate-form" th:action="@{/exercisegoal/goalupdate}" method="post" th:object="${exerciseGoalForm}">
+                <label for="goalType" class="GoalUpdate-label">목표 유형</label>
+                <select id="goalType" name="goalType" class="GoalUpdate-select" th:field="*{goalType}">
+                    <option th:each="goal : ${goalTypes}"
+                            th:value="${goal.name()}"
+                            th:text="${goal.goalName}">
+                    </option>
+
+                </select>
+
+                <label for="startWeight" class="GoalUpdate-label">현재 체중 (kg)</label>
+                <input type="number" id="startWeight" name="startWeight" class="GoalUpdate-input" th:value="*{startWeight}">
+
+                <label for="targetWeight" class="GoalUpdate-label">목표 체중 (kg)</label>
+                <input type="number" id="targetWeight" name="targetWeight" class="GoalUpdate-input" th:value="*{targetWeight}">
+
+                <label class="GoalUpdate-label">목표 시작 날짜</label>
+                <input type="date" class="GoalUpdate-input" th:field="*{startDate}">
+
+                <label class="GoalUpdate-label">목표 달성 날짜</label>
+                <input type="date" class="GoalUpdate-input" th:field="*{endDate}">
+
+                <label class="GoalUpdate-label">목표 설명</label>
+                <textarea class="GoalUpdate-input GoalUpdate-textarea" th:field="*{goalDescription}"></textarea>
+
+
+                <input type="hidden" th:field="*{goalId}">
+                <div class="GoalUpdate-button-group">
+                    <button type="submit" class="GoalUpdate-button GoalUpdate-save">저장</button>
+                        <button type="submit" class="GoalUpdate-button GoalUpdate-delete">삭제</button>
+                    <button type="button" class="GoalUpdate-button GoalUpdate-cancel" onclick="history.back()">취소</button>
+                </div>
+            </form>
+                    <form th:action="@{/exercisegoal/goaldelete}" method="post" style="all: unset; display: contents;">
+                        <input type="hidden" name="goalId" th:value="*{goalId}" th:object="${exerciseGoalForm}" />
+                    </form>
+        </div>
+    </div>
+</div>
+</html>

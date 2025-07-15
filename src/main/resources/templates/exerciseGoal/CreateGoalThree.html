@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko"
+      class="createexercisegoal"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">운동 목표 설정 | step3</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="createexercisegoal-container">
+        <form th:action="@{/exercisegoal/step3}" method="post" th:object="${exerciseGoalForm}">
+            <div class="createexercisegoal-step createexercisegoal-step-active">
+                <div class="createexercisegoal-question">운동 시작일과 목표 달성일을 선택해주세요</div>
+
+                <div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="error-message"></div>
+                <input type="date" th:field="*{startDate}" />
+
+                <div th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="error-message"></div>
+                <input type="date" th:field="*{endDate}" />
+
+                <div class="createexercisegoal-btn-group">
+                    <a th:href="@{/exercisegoal/step2}" class="createexercisegoal-prev-btn">이전</a>
+                    <button type="submit" class="createexercisegoal-next-btn">다음</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

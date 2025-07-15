@@ -19,16 +19,6 @@ public class MyExerciseController {
         return "myexercise/MyExerciseMain";
     }
 
-    @GetMapping("/exercisegoal")
-    public String ExerciseGoalPage(Model model) {
-        return "myexercise/ExerciseGoal";
-    }
-
-    @GetMapping("/creategoal")
-    public String CreateGoalPage(Model model) {
-        return "myexercise/CreateExerciseGoal";
-    }
-
     @GetMapping("/routinelist")
     public String RoutineListPage(Model model) {
         return "myexercise/RoutineList";
@@ -85,9 +75,4 @@ public class MyExerciseController {
     }
 
 
-    @GetMapping("/save")
-    public String save() {
-        exerciseService.saveExercisesToDb();
-        return "exercise-save-success!";
-    }
 }

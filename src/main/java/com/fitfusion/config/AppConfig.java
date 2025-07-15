@@ -1,5 +1,6 @@
 package com.fitfusion.config;
 
+
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -11,11 +12,13 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+
 @Configuration
 public class AppConfig {
 
     @Bean
     public ModelMapper modelMapper() {
+
         ModelMapper modelMapper = new ModelMapper();
 
         Converter<LocalDate, Date> dateConverter = new Converter<LocalDate, Date>() {

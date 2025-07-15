@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko"
+      class="createexercisegoal"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+
+<head>
+    <title layout:fragment="title">운동 목표 설정 | step1</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="createexercisegoal-container">
+        <form th:action="@{/exercisegoal/step1}" method="post" th:object="${exerciseGoalForm}">
+            <div class="createexercisegoal-step createexercisegoal-step-active">
+                <div class="createexercisegoal-question">운동 목표를 선택해주세요</div>
+
+                <div class="createexercisegoal-radio-group">
+                    <div th:each="goal : ${goalTypes}">
+                        <input type="radio"
+                               th:field="*{goalType}"
+                               th:value="${goal.goalName}"
+                               th:id="${goal.goalName}"
+                               hidden/>
+                        <label th:for="${goal.goalName}" class="createexercisegoal-option-btn"
+                               th:text="${goal.goalName}">뚜렷한 체중 감량</label>
+                    </div>
+
+                    <div th:if="${#fields.hasErrors('goalType')}" th:errors="*{goalType}" class="error-message"></div>
+                    <div class="createexercisegoal-btn-group">
+                        <button type="submit" class="createexercisegoal-next-btn">다음</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

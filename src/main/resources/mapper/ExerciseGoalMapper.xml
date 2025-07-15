@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fitfusion.mapper.ExerciseGoalMapper">
+
+    <insert id="insertUserGoal" parameterType="ExerciseGoal">
+        insert into FITFUSION_USER_GOALS (
+            goal_id
+          , goal_name
+          , goal_desc
+          , start_weight
+          , target_weight
+          , start_date
+          , end_date
+          , user_id
+          , progress_id
+        ) values (
+          EXERCISE_GOAL_SEQ.NEXTVAL
+          , #{goalType}
+          , #{goalDescription}
+          , #{startWeight}
+          , #{targetWeight}
+          , #{startDate}
+          , #{endDate}
+          , #{userId}
+          , #{progressId}
+        )
+    </insert>
+
+    <select id="getUserGoalByUserIdAndGoalId" parameterType="ExerciseGoal" resultType="ExerciseGoal">
+        select
+            goal_id             as goalId
+          , goal_name           as goalType
+          , goal_desc           as goalDescription
+          , start_weight        as startWeight
+          , target_weight       as targetWeight
+          , start_date          as startDate
+          , end_date            as endDate
+        from
+            FITFUSION_USER_GOALS
+        where
+            USER_ID = #{userId}
+        and GOAL_ID = #{goalId}
+    </select>
+    <select id="getAllUserGoalsByUserId" parameterType="int" resultType="ExerciseGoal">
+        select
+            goal_id             as goalId
+          , goal_name           as goalType
+          , goal_desc           as goalDescription
+          , start_weight        as startWeight
+          , target_weight       as targetWeight
+          , start_date          as startDate
+          , end_date            as endDate
+        from
+            FITFUSION_USER_GOALS
+        where
+            USER_ID = #{userId}
+        order by goal_id desc
+    </select>
+
+    <update id="updateGoal" parameterType="ExerciseGoal">
+        update
+            FITFUSION_USER_GOALS
+        set
+            GOAL_NAME = #{goalType}
+          , GOAL_DESC = #{goalDescription}
+          , START_WEIGHT = #{startWeight}
+          , TARGET_WEIGHT = #{targetWeight}
+          , START_DATE = #{startDate}
+          , END_DATE = #{endDate}
+        where
+            GOAL_ID = #{goalId}
+    </update>
+
+    <delete id="deleteGoal">
+        delete from
+            FITFUSION_USER_GOALS
+        where
+            GOAL_ID = #{goalId}
+    </delete>
+</mapper>

@@ -1,5 +1,8 @@
 package com.fitfusion.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum GoalType {
     LOSS_WEIGHT("체중 감량"),
     GAIN_WEIGHT("체중 증가"),
@@ -13,7 +16,12 @@ public enum GoalType {
         this.goalName = goalName;
     }
 
-    public String getgoalName() {
-        return goalName;
+    public static GoalType fromGoalName(String goalName) {
+        for (GoalType type : values()) {
+            if (type.getGoalName().equals(goalName)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown goal name: " + goalName);
     }
 }
