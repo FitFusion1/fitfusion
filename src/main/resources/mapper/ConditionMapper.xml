@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.ConditionMapper">
+
+    <insert id="insertCondition" parameterType="Condition">
+        insert into FITFUSION_CONDITIONS (
+                                  condition_id
+                                , user_id
+                                , condition_level
+                                , created_date
+                    ) values (
+                                  #{conditionId}
+                                , #{userId}
+                                , #{conditionLevel}
+                                , sysdate
+                         )
+    </insert>
+
+    <select id="getNextConditionId" resultType="int">
+        select fitfusion_condition_seq.nextval from dual
+    </select>
+
+    <delete id="deleteConditionByUserId">
+        delete from fitfusion_conditions
+        where user_id = #{userId}
+    </delete>
+</mapper>

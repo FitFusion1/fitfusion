@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fitfusion.mapper.SelectedGoalMapper">
+    
+    <select id="findByUserId" resultType="SelectedGoal">
+        SELECT
+            USER_ID AS userId
+          , GOAL_ID AS goalId
+        FROM FITFUSION_USER_SELECTED_GOAL
+        WHERE USER_ID = #{userId}
+    </select>
+
+    <insert id="insertSelectedGoal">
+        INSERT INTO FITFUSION_USER_SELECTED_GOAL (USER_ID, GOAL_ID)
+        VALUES (#{userId}, #{goalId})
+    </insert>
+
+    <update id="updateSelectedGoal">
+        UPDATE FITFUSION_USER_SELECTED_GOAL
+        SET GOAL_ID = #{goalId}
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <delete id="deleteByUserId">
+        DELETE FROM FITFUSION_USER_SELECTED_GOAL
+        WHERE USER_ID = #{userId}
+    </delete>
+</mapper>

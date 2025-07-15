@@ -25,4 +25,8 @@
                  )
     </insert>
 
+    <select id="findAll" resultType="com.fitfusion.vo.Exercise">
+        SELECT * FROM FITFUSION_EXERCISES
+    </select>
+
 </mapper>

@@ -1,12 +1,16 @@
 package com.fitfusion.web.controller;
 
+import com.fitfusion.enums.GoalType;
+import com.fitfusion.mapper.ExerciseGoalMapper;
 import com.fitfusion.service.ExerciseGoalService;
+import com.fitfusion.service.SelectedGoalService;
 import com.fitfusion.validation.Step1Group;
 import com.fitfusion.validation.Step2Group;
 import com.fitfusion.validation.Step3Group;
 import com.fitfusion.validation.Step4Group;
 import com.fitfusion.vo.Exercise;
 import com.fitfusion.vo.ExerciseGoal;
+import com.fitfusion.vo.SelectedGoal;
 import com.fitfusion.web.form.ExerciseGoalRegisterForm;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,13 +34,17 @@ import java.util.Date;
 public class ExerciseGoalController {
 
     private final ExerciseGoalService exerciseGoalService;
+    private final SelectedGoalService selectedGoalService;
     @Autowired
     private ModelMapper modelMapper;
-
+    @Autowired
+    private ExerciseGoalMapper exerciseGoalMapper;
+    int userId = 1;
 
     @GetMapping("/step1")
     public String step1(Model model) {
         model.addAttribute("exerciseGoalForm", new ExerciseGoalRegisterForm());
+        model.addAttribute("goalTypes", GoalType.values());
         return "exerciseGoal/CreateGoalOne";
     }
 
@@ -45,7 +54,7 @@ public class ExerciseGoalController {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalOne";
         }
-        System.out.println(">> STEP1 저장한 값: " + formData.getStartWeight());
+
         return "redirect:/exercisegoal/step2";
     }
 
@@ -59,7 +68,7 @@ public class ExerciseGoalController {
     @PostMapping("/step2")
     public String step2(@Validated(Step2Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
                         BindingResult bindingResult) {
-        System.out.println(">> STEP2 세션에서 꺼낸 값: " + formData);
+
 
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalTwo";
@@ -94,8 +103,9 @@ public class ExerciseGoalController {
             return "exerciseGoal/CreateGoalFour";
         }
 
-        formData.setUserId(1);
+        formData.setUserId(userId);
         exerciseGoalService.insertUserGoal(formData);
+
 
         status.setComplete();
         return "redirect:/exercisegoal/success";
@@ -108,9 +118,55 @@ public class ExerciseGoalController {
 
     @GetMapping("/goallist")
     public String goalList(Model model) {
+
+        List<ExerciseGoal> exerciseGoals = exerciseGoalMapper.getAllUserGoalsByUserId(userId);
+        SelectedGoal selectedGoal = selectedGoalService.getSelectedGoal(userId);
+
+        model.addAttribute("exerciseGoals", exerciseGoals);
+        model.addAttribute("selectedGoal", selectedGoal);
+
         return "exerciseGoal/ExerciseGoalList";
     }
 
+    @PostMapping("/select")
+    public String selectGoal(@RequestParam int goalId) {
+        selectedGoalService.deleteSelectedGoal(userId);
+        selectedGoalService.selectGoal(userId, goalId);
 
+        return "redirect:/exercisegoal/goallist";
+    }
+
+    @PostMapping("/unselect")
+    public String unselectGoal() {
+        selectedGoalService.deleteSelectedGoal(userId);
+
+        return "redirect:/exercisegoal/goallist";
+    }
+
+    @GetMapping("/goalupdate")
+    public String goalUpdate(@RequestParam("goalId") int goalId, Model model) {
+        ExerciseGoal exerciseGoal = exerciseGoalService.getUserGoalByUserId(userId, goalId);
+        ExerciseGoalRegisterForm formData = modelMapper.map(exerciseGoal, ExerciseGoalRegisterForm.class);
+        model.addAttribute("exerciseGoalForm", formData);
+        model.addAttribute("goalTypes", GoalType.values());
+        return "exerciseGoal/GoalUpdate";
+    }
+
+    @PostMapping("/goalupdate")
+    public String goalUpdate(@Valid @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
+                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "exerciseGoal/GoalUpdate";
+        }
+        formData.setUserId(userId);
+        exerciseGoalService.updateGoal(formData);
+        return "redirect:/exercisegoal/goallist";
+    }
+
+    @PostMapping("/goaldelete")
+    public String goalDelete(@RequestParam("goalId") int goalId) {
+        exerciseGoalService.deleteGoal(goalId);
+        return "redirect:/exercisegoal/goallist";
+    }
 
 }

@@ -60,6 +60,11 @@ body {
     font-weight: bold;
 }
 
+.createexercisegoal-radio-group {
+    width: 150%;
+}
+
+
 input[type="number"],
 input[type="date"]{
     width: 100%;
@@ -1302,15 +1307,17 @@ body.RoutineList {
     display: flex;
     justify-content: space-between;
     margin-top: 35px;
+    gap: 10px;
 }
 
 .GoalUpdate-button {
-    width: 48%;
+    flex: 1;
     padding: 14px;
     font-size: 16px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    text-align: center;
 }
 
 .GoalUpdate-cancel {
@@ -1322,6 +1329,14 @@ body.RoutineList {
     background-color: #333;
 }
 
+.GoalUpdate-delete {
+    background-color: #ff4d4d;
+    color: #fff;
+}
+.GoalUpdate-delete:hover {
+    background-color: #e60000;
+}
+
 .GoalUpdate-save {
     background-color: #00b894;
     color: #fff;
@@ -1329,6 +1344,11 @@ body.RoutineList {
 
 .GoalUpdate-save:hover {
     background-color: #00a381;
+}
+
+.GoalUpdate-textarea {
+    height: 120px; /* ✅ 원하는 높이로 조절하세요 */
+    resize: vertical; /* 사용자 크기 조절 허용 */
 }
 
 .ExerciseGoal-container {
@@ -1423,7 +1443,6 @@ body.RoutineList {
     background-color: #00bcd4;
     color: #121212;
     font-weight: bold;
-    pointer-events: none;
 }
 
 .ExerciseGoal-addGoalButton {

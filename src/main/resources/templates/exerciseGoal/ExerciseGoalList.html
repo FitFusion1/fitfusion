@@ -21,54 +21,37 @@
 
     <div class="ExerciseGoal-goalList">
         <!-- 선택된 목표 -->
-        <div class="ExerciseGoal-goalCard ExerciseGoal-selected">
+        <div class="ExerciseGoal-goalCard"
+             th:each="exerciseGoal : ${exerciseGoals}"
+             th:classappend="${selectedGoal != null and exerciseGoal.goalId == selectedGoal.goalId} ? 'ExerciseGoal-selected' : ''">
             <div class="ExerciseGoal-goalInfo">
                 <h3>
-                    체중 감량 (5kg)
-                    <span class="ExerciseGoal-progressText">목표까지 2.3kg 남았습니다</span>
+                    <span th:text="${exerciseGoal.goalType}">체중 감량 (5kg)</span>
+                    <span class="ExerciseGoal-progressText"
+                      th:text="'목표까지' + (${exerciseGoal.startWeight-exerciseGoal.targetWeight}) +' kg 남았습니다'">남은 정보</span>
                 </h3>
-                <p>기간: 2025.07.01 ~ 2025.08.31</p>
+                <p th:text="'기간: ' + ${#dates.format(exerciseGoal.startDate, 'yyyy.MM.dd')} + '~' + ${#dates.format(exerciseGoal.endDate, 'yyyy.MM.dd')}">기간: 2025.07.01 ~ 2025.08.31</p>
             </div>
             <div class="ExerciseGoal-goalActions">
-                <button class="ExerciseGoal-selectButton ExerciseGoal-active">이 목표 선택됨</button>
-                <button class="ExerciseGoal-selectButton">수정</button>
-                <button class="ExerciseGoal-selectButton">삭제</button>
+                <form th:action="@{/exercisegoal/select}" method="post"
+                      th:if="${selectedGoal == null or exerciseGoal.goalId != selectedGoal.goalId}">
+                    <input type="hidden" name="goalId" th:value="${exerciseGoal.goalId}">
+                    <button class="ExerciseGoal-selectButton" type="submit">이 목표 선택</button>
+                </form>
+                <form th:action="@{/exercisegoal/unselect}" method="post"
+                      th:if="${selectedGoal != null and exerciseGoal.goalId == selectedGoal.goalId}">
+                <button class="ExerciseGoal-selectButton ExerciseGoal-active" type="submit">이 목표 선택됨</button>
+                </form>
+                <button class="ExerciseGoal-selectButton" th:onclick="|location.href='@{/exercisegoal/goalupdate(goalId=${exerciseGoal.goalId})}'|">수정</button>
+                <form th:action="@{/exercisegoal/goaldelete}" method="post">
+                    <input type="hidden" name="goalId" th:value="${exerciseGoal.goalId}">
+                    <button class="ExerciseGoal-selectButton" type="submit">삭제</button>
+                </form>
             </div>
         </div>
+</div>
 
-        <!-- 미선택 목표 -->
-        <div class="ExerciseGoal-goalCard">
-            <div class="ExerciseGoal-goalInfo">
-                <h3>
-                    근육량 증가 (3kg)
-                    <span class="ExerciseGoal-progressText">목표까지 1.1kg 남았습니다</span>
-                </h3>
-                <p>기간: 2025.07.01 ~ 2025.09.01</p>
-            </div>
-            <div class="ExerciseGoal-goalActions">
-                <button class="ExerciseGoal-selectButton">이 목표 선택</button>
-                <button class="ExerciseGoal-selectButton">수정</button>
-                <button class="ExerciseGoal-selectButton">삭제</button>
-            </div>
-        </div>
-
-        <div class="ExerciseGoal-goalCard">
-            <div class="ExerciseGoal-goalInfo">
-                <h3>
-                    건강한 생활습관 개선
-                    <span class="ExerciseGoal-progressText">목표까지 12일 남았습니다</span>
-                </h3>
-                <p>기간: 2025.07.01 ~ 2025.10.15</p>
-            </div>
-            <div class="ExerciseGoal-goalActions">
-                <button class="ExerciseGoal-selectButton">이 목표 선택</button>
-                <button class="ExerciseGoal-selectButton">수정</button>
-                <button class="ExerciseGoal-selectButton">삭제</button>
-            </div>
-        </div>
-    </div>
-
-    <button class="ExerciseGoal-addGoalButton">+ 새 목표 추가</button>
+    <button class="ExerciseGoal-addGoalButton" th:onclick="|location.href='@{/exercisegoal/step1}'|">+ 새 목표 추가</button>
 </div>
 </div>
 </html>

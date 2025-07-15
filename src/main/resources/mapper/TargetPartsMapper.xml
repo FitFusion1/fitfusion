@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.TargetPartsMapper">
+
+    <delete id="deleteTargetPartsByUserId">
+        delete from fitfusion_user_condition_target_parts
+        where user_id = #{userId}
+    </delete>
+
+    <insert id="insertTargetPart" parameterType="AvoidPart">
+        insert into fitfusion_user_condition_target_parts (user_id, condition_id, body_part_name)
+        values (#{userId}, #{conditionId} , #{bodyName})
+    </insert>
+</mapper>

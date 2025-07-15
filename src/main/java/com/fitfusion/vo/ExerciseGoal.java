@@ -15,7 +15,7 @@ public class ExerciseGoal {
     private int goalId;
     private int userId;
     private int progressId;
-    private GoalType goalType;
+    private String goalType;
     private String goalDescription;
     private Integer startWeight;
     private Integer targetWeight;

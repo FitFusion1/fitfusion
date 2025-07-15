@@ -20,9 +20,9 @@ import java.util.Date;
 public class ExerciseGoalRegisterForm {
 
     private int userId;
-
+    private int goalId;
     @NotNull(message = "목표는 필수 선택값입니다.", groups = Step1Group.class)
-    private GoalType goalType;
+    private String goalType;
 
     @NotBlank(message = "설명은 필수 입력값입니다.", groups = Step4Group.class)
     @Size(min = 1, message = "설명은 최소 1글자 이상입니다.")
