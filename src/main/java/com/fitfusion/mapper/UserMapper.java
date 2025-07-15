@@ -1,29 +1,29 @@
 package com.fitfusion.mapper;
 
-import com.fitfusion.vo.User;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.fitfusion.vo.User;
 
 @Mapper
 public interface UserMapper {
 
-    int checkUsernameExists(String username);
-    int checkEmailExists(String email);
+    List<User> getUsers();
+
     void insertUser(User user);
-    void insertUserRole(@Param("userId") int userId,
+
+    void insertUserRole(@Param("userNo") int userNo,
                         @Param("roleName") String roleName);
 
-    /**
-     * 아이디 혹은 이메일과 그 유형을 전달받아서
-     * 유저 객체를 전달받는다.
-     * @param condition {type: username 혹은 이메일, identifier: 값}
-     * @return 유저 객체
-     */
-    Optional<User> getUserWithRoleNames(Map<String, Object> condition);
-    List<String> getRoleNamesByUserId(int id);
+    User getUserByUsername(String username);
 
+    User getUserByUsernameWithRoleNames(String username);
+
+    User getUserByEmail(String email);
+
+    User getUserByNo(int userNo);
+
+    List<String> getRoleNamesByUserNo(int userNo);
 }
