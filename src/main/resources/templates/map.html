@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>📍 내 위치 & 헬스장 검색</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" th:href="@{/css/map.css}">
+</head>
+<body>
+
+<!-- ⬆️ 네비게이션 -->
+<div id="nav-container">
+    <button onclick="location.href='/'">🏠 메인 페이지</button>
+    <a th:href="@{/chatbot}">🤖 헬스보트 챗봇</a>
+</div>
+
+<!-- 🔍 위치 검색창 -->
+<div id="search-bar">
+    <input type="text" id="location-input" placeholder="지역명 또는 역명 (예: 종로3가역)">
+    <button id="set-location-btn">위치 설정</button>
+</div>
+
+<!-- 🗺️ 지도 표시 영역 -->
+<div id="map"></div>
+
+<!-- 📉 Kakao Maps API -->
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=709f8eb34b8860e51c2ed050bf8bc0f1&libraries=services"></script>
+<script th:src="@{/js/map.js}"></script>
+
+</body>
+</html>
