@@ -1,0 +1,160 @@
+/* 전체 페이지 어두운 배경 */
+body {
+    margin: 0 !important;
+    font-family: 'Roboto', sans-serif !important;
+    background-color: #111;
+    color: #f1f1f1;
+}
+
+/* 리스트 항목 스타일 */
+.record-food-search-list-item {
+    background-color: #222;
+    color: #f1f1f1;
+    border: 1px solid #333;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.record-food-search-list-item:hover {
+    background-color: #333;
+}
+
+/* 버튼 컬러 어울리게 */
+.btn-outline-primary {
+    color: #f1f1f1;
+    border-color: #00d084;
+}
+
+.btn-outline-primary:hover {
+    background-color: #00d084;
+    color: #fff;
+}
+
+/* 검색창 등 */
+.record-food-search-input,
+.record-food-search-meal-select {
+    background-color: #333;
+    color: #f1f1f1;
+    border-color: #444;
+}
+
+.record-food-search-input::placeholder {
+    color: #aaa;
+}
+
+.record-food-search-input:focus {
+    background-color: #444;
+    color: #fff;
+    border-color: #00d084;
+}
+
+.btn-primary {
+    background-color: #00d084;
+    border-color: #00d084;
+}
+
+.record-food-search-fixed-bottom {
+    background-color: #222;
+    border-top: 1px solid #333;
+    color: #f1f1f1;
+}
+
+/* 모달 다크 테마 */
+.record-food-search-modal-content {
+    background-color: #222;
+    color: #f1f1f1;
+}
+
+.record-food-search-modal-header {
+    border-bottom: 1px solid #333;
+}
+
+.record-food-search-modal-footer {
+    border-top: 1px solid #333;
+}
+
+/* footer와 내용 간격 */
+main {
+    margin-bottom: 500px;
+}
+
+html, body {
+    height: 100%;
+    background-color: #111;
+    color: #f1f1f1;
+}
+
+main {
+    background-color: transparent;
+}
+
+[layout\:fragment="content"] {
+    background-color: transparent;
+}
+
+footer {
+    background-color: #111;
+    color: #f1f1f1;
+}
+
+.record-food-search-result-list:empty {
+    display: none;
+}
+
+/* 즐겨찾기 별 아이콘 색상 */
+.bi.bi-star {
+    color: #aaa;
+    transition: color 0.2s;
+}
+
+.bi.bi-star-fill {
+    color: #ffc107;
+}
+
+/* record-food-search 내부에서만 Bootstrap 색상 오버라이드 */
+.record-food-search-container .btn-primary {
+    background-color: #00d084;
+    border-color: #00d084;
+}
+
+.record-food-search-container .btn-primary:hover {
+    background-color: #00b070;
+    border-color: #00b070;
+}
+
+.record-food-search-container .btn-outline-primary {
+    color: #00d084;
+    border-color: #00d084;
+}
+
+.record-food-search-container .btn-outline-primary:hover {
+    background-color: #00d084;
+    color: #fff;
+}
+
+.record-food-search-container .nav-link.active {
+    background-color: #00d084;
+    border-color: #00d084;
+    color: #fff;
+}
+
+.record-food-search-container .nav-link:hover {
+    color: #00b070;
+    border-color: #00b070;
+}
+
+/* Tabs text color fix */
+.record-food-search-container .nav-link {
+    color: #00d084;
+}
+
+.record-food-search-container .nav-link:hover {
+    color: #00b070;
+}
+
+.record-food-search-container .nav-link.active {
+    color: #fff;
+    background-color: #00d084;
+    border-color: #00d084;
+}

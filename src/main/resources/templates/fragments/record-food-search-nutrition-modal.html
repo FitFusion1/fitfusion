@@ -1,0 +1,39 @@
+<th:block th:fragment="record-food-search-nutrition-modal">
+    <div class="modal fade" id="nutritionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="record-food-search-modal-content modal-content">
+                <div class="record-food-search-modal-header modal-header">
+                    <h5 class="record-food-search-modal-title modal-title" id="modalFoodName"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="record-food-search-modal-body modal-body">
+                    <div class="mb-3">
+                        <label class="record-food-search-form-label form-label">섭취량 (g)</label>
+                        <input type="number" id="modalGramInput" class="record-food-search-input form-control" value="100" min="1">
+                    </div>
+                    <div id="modalNutritionInfo">
+                        <p>열량: <span id="modalKcal"></span> kcal</p>
+                        <p>탄수화물: <span id="modalCarb"></span> g</p>
+                        <p>당류: <span id="modalSugars"></span> g</p>
+                        <p>당알콜: <span id="modalSugarAlcohol"></span> g</p>
+                        <p>식이섬유: <span id="modalFiber"></span> g</p>
+                        <p>단백질: <span id="modalProtein"></span> g</p>
+                        <p>지방: <span id="modalFat"></span> g</p>
+                        <p>포화지방: <span id="modalSatFat"></span> g</p>
+                        <p>트랜스지방: <span id="modalTransFat"></span> g</p>
+                        <p>콜레스테롤: <span id="modalCholesterol"></span> mg</p>
+                        <p>불포화지방산: <span id="modalUnsatFat"></span> g</p>
+                        <p>나트륨: <span id="modalSodium"></span> mg</p>
+                        <p>카페인: <span id="modalCaffeine"></span> mg</p>
+                        <p>알코올: <span id="modalAlcohol"></span> g</p>
+                        <p>칼슘: <span id="modalCalcium"></span> mg</p>
+                    </div>
+                </div>
+                <div class="record-food-search-modal-footer modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button class="btn btn-primary" id="modalConfirmBtn">추가</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
