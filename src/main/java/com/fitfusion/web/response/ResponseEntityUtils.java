@@ -28,7 +28,7 @@ public class ResponseEntityUtils {
                 .body(ApiResponse.success(message, data));
     }
 
-    public static ResponseEntity<ApiResponse<Void>> fail(int status, String message) {
+    public static <T> ResponseEntity<ApiResponse<T>> fail(int status, String message) {
         return ResponseEntity
                 .status(status)
                 .body(ApiResponse.fail(status, message));

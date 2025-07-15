@@ -26,7 +26,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (inputValue.contains("@")) {
             condition.put("type", "email");
         } else {
-            System.out.println("username!!!!");
             condition.put("type", "username");
         }
         condition.put("identifier", inputValue);

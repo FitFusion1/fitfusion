@@ -17,8 +17,8 @@ public class ApiRegistrationController {
     /*
      * 요청 방식 : GET
      * 요청 URI : /api/registration/validation
-     * 옵션 : ?type=username
-     *       ?type=email
+     * 옵션 : ?type=username, value=xxx
+     *       ?type=email, value=xxx
      */
     @GetMapping("/validation")
     public ResponseEntity<ApiResponse<Boolean>> checkDuplicate(
