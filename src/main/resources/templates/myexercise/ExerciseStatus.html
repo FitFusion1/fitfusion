@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+<head>
+    <title layout:fragment="title">운동 통계 대시보드</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+<h1 class="ExerciseStatus-title">운동 통계 대시보드</h1>
+
+<!-- 성실도 -->
+<div class="ExerciseStatus-section">
+    <h2 class="ExerciseStatus-subtitle">이번 주 성실도</h2>
+    <div class="ExerciseStatus-consistency-wrapper">
+        <div class="ExerciseStatus-consistency-chart">
+            <canvas id="consistencyChart"></canvas>
+        </div>
+        <div class="ExerciseStatus-consistency-info">
+            <p class="ExerciseStatus-stat-item">총 계획된 루틴: <span class="ExerciseStatus-highlight">5일</span></p>
+            <p class="ExerciseStatus-stat-item">실제 수행한 루틴: <span class="ExerciseStatus-highlight">4일</span></p>
+            <p class="ExerciseStatus-stat-item">성실도 점수: <span class="ExerciseStatus-highlight">80%</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- 운동 부위 밸런스 -->
+<div class="ExerciseStatus-section">
+    <h2 class="ExerciseStatus-subtitle">운동 부위 밸런스</h2>
+    <div class="ExerciseStatus-chart-container">
+        <canvas id="balanceChart"></canvas>
+    </div>
+</div>
+
+<!-- 퍼스널 레코드 -->
+<div class="ExerciseStatus-section">
+    <h2 class="ExerciseStatus-subtitle">퍼스널 레코드 (Personal Record)</h2>
+    <ul class="ExerciseStatus-record-list">
+        <li>🏋️ 데드리프트: <span class="ExerciseStatus-highlight">120kg</span> (06.22)</li>
+        <li>🏋️ 스쿼트: <span class="ExerciseStatus-highlight">100kg</span> (06.18)</li>
+        <li>🏋️ 벤치프레스: <span class="ExerciseStatus-highlight">80kg</span> (06.10)</li>
+    </ul>
+</div>
+
+<!-- 운동 추이 -->
+<div class="ExerciseStatus-section">
+    <h2 class="ExerciseStatus-subtitle">운동 수행량 추이 (6월)</h2>
+    <div class="ExerciseStatus-chart-container" style="max-width: 600px;">
+        <canvas id="progressChart"></canvas>
+    </div>
+</div>
+
+<!-- AI 추천 -->
+<div class="ExerciseStatus-section">
+    <h2 class="ExerciseStatus-subtitle">AI 추천 루틴</h2>
+    <p class="ExerciseStatus-stat-item ExerciseStatus-ai-recommend">
+        최근 상체 운동이 많았습니다. <br>
+        오늘은 <span class="ExerciseStatus-highlight">하체 중심 루틴</span>을 추천합니다! 🦵
+    </p>
+</div>
+
+<!-- 하단 버튼 -->
+<div class="ExerciseStatus-button-container">
+    <a href="/myexercise" class="ExerciseStatus-btn">나의 운동으로 가기</a>
+    <a href="/routine" class="ExerciseStatus-btn">운동하러 가기</a>
+</div>
+<th:block layout:fragment="script">
+    <!-- Chart.js + Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script>
+        const centerTextPlugin = {
+            id: 'centerText',
+            beforeDraw: function (chart) {
+                const {width, height, ctx} = chart;
+                ctx.restore();
+                const fontSize = (height / 8).toFixed(2);
+                ctx.font = `bold ${fontSize}px Segoe UI`;
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = '#ffffff';
+                const lines = ["성실도", "80%"];
+                const lineHeight = height / 6;
+                lines.forEach((line, i) => {
+                    const textX = (width - ctx.measureText(line).width) / 2;
+                    const textY = height / 2 - lineHeight + i * lineHeight;
+                    ctx.fillText(line, textX, textY);
+                });
+                ctx.save();
+            }
+        };
+
+        new Chart(document.getElementById('consistencyChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['달성', '미달성'],
+                datasets: [{
+                    data: [80, 20],
+                    backgroundColor: ['#4caf50', '#424242'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '70%',
+                plugins: {
+                    legend: {display: false},
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            },
+            plugins: [centerTextPlugin]
+        });
+
+        new Chart(document.getElementById('balanceChart'), {
+            type: 'pie',
+            data: {
+                labels: ['상체', '하체', '코어'],
+                datasets: [{
+                    data: [50, 35, 15],
+                    backgroundColor: ['#4caf50', '#2196f3', '#ff9800']
+                }]
+            },
+            options: {
+                maintainAspectRatio: true,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {color: '#fff'}
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        font: {weight: 'bold', size: 14},
+                        formatter: (value, ctx) => {
+                            const label = ctx.chart.data.labels[ctx.dataIndex];
+                            return `${label} ${value}%`;
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        new Chart(document.getElementById('progressChart'), {
+            type: 'bar',
+            data: {
+                labels: ['6월 1주', '2주', '3주', '4주'],
+                datasets: [{
+                    label: '총 수행 루틴 수',
+                    data: [3, 5, 4, 2],
+                    backgroundColor: '#00bcd4',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {ticks: {color: '#fff'}, grid: {color: '#333'}},
+                    y: {beginAtZero: true, ticks: {color: '#fff'}, grid: {color: '#333'}}
+                },
+                plugins: {
+                    legend: {labels: {color: '#fff'}}
+                }
+            }
+        });
+    </script>
+</th:block>
+</div>
+</html>

@@ -2,6 +2,7 @@ package com.fitfusion.vo;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.ibatis.type.Alias;
 
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString
 @Alias("User")
 public class User {
     private int userId;

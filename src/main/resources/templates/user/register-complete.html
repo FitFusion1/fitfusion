@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+
+<head>
+    <title>회원가입 완료</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/register.css}">
+    </th:block>
+</head>
+<div class="registration-container" layout:fragment="content">
+    <div class="registration-form">
+        <div class="registration-card active" style="align-items: center; text-align: center;">
+            <h2>🎉 회원가입이 완료되었습니다!</h2>
+            <p th:text="|환영합니다, ${user.name}님!|"></p>
+            <p>회원가입이 성공적으로 완료되었습니다.</p>
+            <p th:text="|아이디: ${user.username}|"></p>
+            <p th:text="|이메일: ${user.email}|"></p>
+            <p>로그인하여 다양한 서비스를 이용해보세요.</p>
+            <a th:href="@{/}" class="login-btn">로그인 하러가기</a>
+        </div>
+    </div>
+</div>
+</html>

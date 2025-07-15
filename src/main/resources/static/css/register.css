@@ -1,8 +1,6 @@
 /* Registration Card Styles */
 .registration-container {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-color: #000000;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -20,7 +18,8 @@
 }
 
 .registration-card {
-    backdrop-filter: blur(5px);
+    color: black;
+    background-color: #ffffff;
     border-radius: 12px;
     padding: 2rem 2rem 1rem 2rem;
     margin: 0 auto;
@@ -67,6 +66,7 @@
 }
 
 .registration-card h2 {
+    color: #121212;
     margin-bottom: 1rem;
     font-size: 1.4rem;
     font-weight: 600;
@@ -97,8 +97,8 @@
     outline: none;
 }
 
-.next-btn, .back-btn, .submit-btn {
-    padding: 0.5rem 1rem;
+.next-btn, .back-btn, .submit-btn, .login-btn {
+    padding: 10px;
     border: none;
     border-radius: 6px;
     font-size: 0.9rem;
@@ -109,8 +109,7 @@
     transition: background 0.2s;
     position: relative;
     z-index: 10;
-    width: 80px;
-    height: 36px;
+    width: auto;
 }
 
 .back-btn {
@@ -124,6 +123,13 @@
 
 .back-btn:hover {
     background: #bdbdbd;
+}
+
+.login-btn {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Button container for positioning */
@@ -185,4 +191,32 @@
 
 .registration-card.slide-right {
     transform: translateX(100%);
+}
+
+.message-container {
+    display: inline-block;
+    min-height: 1em;
+    width: 100%;
+    position: relative;
+    margin-top: 2px;
+}
+
+.error-message {
+    display: none;
+    font-size: smaller;
+    color: red;
+}
+
+.error-message.invalid {
+    display: block;
+}
+
+.valid-message {
+    display: none;
+    font-size: smaller;
+    color: blue;
+}
+
+.valid-message.active {
+    display: block;
 }

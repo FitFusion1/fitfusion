@@ -1,0 +1,1669 @@
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #121212;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #ffffff;
+}
+
+.createexercisegoal-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px 20px;
+    height: 100%;
+    max-width: 480px;
+    margin: 40px auto 100px;
+}
+
+.createexercisegoal-step {
+    display: none;
+    width: 100%;
+    animation: createexercisegoal-fadeIn 0.3s ease-in-out;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.createexercisegoal-step-active {
+    display: flex;
+}
+
+.createexercisegoal-question {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.createexercisegoal-option-btn {
+    width: 100%;
+    background-color: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 30px;
+    padding: 16px;
+    font-size: 16px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.createexercisegoal-option-btn.createexercisegoal-selected {
+    background-color: #00bcd4;
+    color: #000;
+    font-weight: bold;
+}
+
+input[type="number"],
+input[type="date"],
+textarea {
+    width: 100%;
+    padding: 16px;
+    margin-bottom: 20px;
+    background-color: #1f1f1f;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+    height: 100px;
+}
+
+.createexercisegoal-next-btn {
+    width: 100%;
+    background-color: #00bcd4;
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+@keyframes createexercisegoal-fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.ExerciseCondition {
+    background-color: #0f0f0f;
+    color: #e0e0e0;
+    font-family: 'Pretendard', sans-serif;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+/* 컨테이너 내부 정렬 처리 */
+.ExerciseCondition-container {
+    max-width: 1080px;
+    width: 100%;
+    margin: 50px auto 100px;              /* ✅ 수평 가운데 정렬 */
+    padding: 40px;
+    background-color: #1a1a1a;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.05);
+}
+
+.ExerciseCondition-container {
+    max-width: 1080px; /* ✅ 더 넓게 */
+    width: 100%;
+    padding: 40px;
+    background-color: #1a1a1a;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.05);
+}
+
+.ExerciseCondition-title {
+    text-align: center;
+    font-size: 28px;
+    color: #00e0ff;
+    margin-bottom: 36px;
+}
+
+.ExerciseCondition-form-group {
+    margin-bottom: 40px;
+}
+
+.ExerciseCondition-label {
+    display: block;
+    font-weight: 600;
+    font-size: 17px;
+    margin-bottom: 16px;
+}
+
+.ExerciseCondition-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+}
+
+.ExerciseCondition-option {
+    background-color: #2a2a2a;
+    padding: 14px 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.ExerciseCondition-option:hover {
+    background-color: #3a3a3a;
+}
+
+.ExerciseCondition-option input {
+    margin-right: 10px;
+    accent-color: #00e0ff;
+}
+
+.ExerciseCondition-radio-group {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.ExerciseCondition-radio {
+    background-color: #2a2a2a;
+    padding: 14px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ExerciseCondition-radio:hover {
+    background-color: #3a3a3a;
+}
+
+.ExerciseCondition-radio input[type="radio"] {
+    margin-right: 10px;
+    accent-color: #00e0ff;
+}
+
+.ExerciseCondition-submit-btn {
+    background-color: #00c4cc;
+    color: white;
+    border: none;
+    padding: 18px;
+    font-size: 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+.ExerciseCondition-submit-btn:hover {
+    background-color: #00aeb4;
+}
+
+
+body.exercisegoal {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.exercisegoal-container {
+    max-width: 960px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.exercisegoal-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00bcd4;
+}
+
+.exercisegoal-description {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #bbbbbb;
+    margin-bottom: 40px;
+}
+
+.exercisegoal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.exercisegoal-card {
+    background-color: #1e1e1e;
+    padding: 28px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 6px solid transparent;
+    transition: border-color 0.3s;
+    min-height: 100px;
+}
+
+.exercisegoal-card.exercisegoal-card-selected {
+    border-left: 6px solid #00bcd4;
+    background-color: #1b1b1b;
+}
+
+.exercisegoal-info h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+    color: #ffffff;
+    line-height: 1.5;
+}
+
+.exercisegoal-progress {
+    font-size: 0.9rem;
+    color: #bbbbbb;
+    margin-left: 12px;
+}
+
+.exercisegoal-info p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #cccccc;
+    line-height: 1.6;
+}
+
+.exercisegoal-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 160px;
+}
+
+.exercisegoal-button {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background-color: #2e2e2e;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.exercisegoal-button:hover {
+    background-color: #00bcd4;
+    color: #000;
+}
+
+.exercisegoal-button.exercisegoal-button-selected {
+    background-color: #00bcd4;
+    color: #121212;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.exercisegoal-add-button {
+    display: block;
+    margin: 50px auto 0;
+    background-color: #00bcd4;
+    color: #121212;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.exercisegoal-add-button:hover {
+    background-color: #00a0b0;
+}
+body.ExerciseLog {
+    font-family: 'Segoe UI', sans-serif;
+    margin: auto;
+    padding: 0;
+    background-color: #121212;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;   /* 수직 정렬 */
+    align-items: center;
+}
+
+.ExerciseLog-container {
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    margin: 40px auto 80px;
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+    box-sizing: border-box;
+}
+
+.ExerciseLog-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 1.8rem;
+    color: #00e0ff;
+}
+
+.ExerciseLog-log-entry {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.ExerciseLog-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ExerciseLog-log-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #00bcd4;
+}
+
+.ExerciseLog-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.ExerciseLog-table th,
+.ExerciseLog-table td {
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: center;
+}
+
+.ExerciseLog-table th {
+    background-color: #333;
+}
+
+.ExerciseLog-exercise-name {
+    font-weight: bold;
+    color: #00e676;
+}
+
+.ExerciseLog-btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+.ExerciseLog-btn {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ExerciseLog-btn:hover {
+    background-color: #00e676;
+    color: #000;
+}
+
+.ExerciseLog-back-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+    background-color: #00e676;
+    color: #000;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.ExerciseLog-back-btn:hover {
+    background-color: #00ffab;
+}
+
+
+.ExerciseStatus-ai-recommend {
+    text-align: center;
+}
+
+.ExerciseStatus-body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 40px;
+}
+
+.ExerciseStatus-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00bcd4;
+}
+
+.ExerciseStatus-section {
+    background-color: #1e1e1e;
+    padding: 20px 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.ExerciseStatus-subtitle {
+    color: #00bcd4;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.ExerciseStatus-consistency-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.ExerciseStatus-consistency-chart {
+    width: 200px;
+    height: 200px;
+}
+
+.ExerciseStatus-consistency-info {
+    text-align: left;
+}
+
+.ExerciseStatus-stat-item {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+.ExerciseStatus-highlight {
+    color: #4caf50;
+    font-weight: bold;
+}
+
+.ExerciseStatus-chart-container {
+    margin: 0 auto;
+    width: 320px;
+}
+
+canvas#balanceChart {
+    width: 100% !important;
+    height: auto !important;
+}
+
+.ExerciseStatus-record-list {
+    list-style: none;
+    padding-left: 0;
+    text-align: center;
+}
+
+.ExerciseStatus-record-list li {
+    font-size: 1.1rem;
+    margin: 6px 0;
+}
+
+.ExerciseStatus-button-container {
+    text-align: center;
+    margin-top: 60px;
+    padding-bottom: 40px;
+}
+
+.ExerciseStatus-btn {
+    background-color: #00bcd4;
+    color: #121212;
+    border: none;
+    padding: 12px 24px;
+    margin: 0 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.ExerciseStatus-btn:hover {
+    background-color: #0097a7;
+}
+
+body.MyExercise {
+    background-color: #121212;
+    font-family: 'Segoe UI', sans-serif;
+    color: #f0f0f0;
+    margin: 0;
+    padding: 30px 0 80px; /* top 30px, bottom 40px 여백 추가 */
+}
+
+.MyExercise-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.MyExercise-title {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #00ff95;
+    margin-bottom: 40px;
+}
+
+.MyExercise-section {
+    background-color: #1e1e1e;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 255, 149, 0.06);
+}
+
+.MyExercise-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.MyExercise-section-header h2 {
+    font-size: 1.2rem;
+    color: #00eaff;
+    margin: 0;
+}
+
+.MyExercise-section-header button {
+    background-color: transparent;
+    border: 1px solid #00ffc3;
+    color: #00ffc3;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.MyExercise-section-header button:hover {
+    background-color: #00ffc3;
+    color: #000;
+}
+
+.MyExercise-highlight {
+    background-color: #2b2b2b;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.MyExercise-card-container {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+}
+
+.MyExercise-card {
+    min-width: 200px;
+    padding: 14px;
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.3s;
+}
+
+.MyExercise-card:hover {
+    background-color: #333;
+}
+
+.MyExercise-card strong {
+    font-size: 1.05rem;
+    color: #00ff95;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.MyExercise-bar {
+    height: 10px;
+    background-color: #00ffc3;
+    border-radius: 5px;
+    margin-top: 8px;
+}
+
+.MyExercise-stat-list {
+    padding-left: 0;
+    list-style: none;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.MyExercise-btn {
+    padding: 6px 12px;
+    background-color: #00ffc3;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.MyExercise-btn:hover {
+    background-color: #00e0b0;
+}
+
+body.RoutineCompletion {
+    background-color: #121212;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;  /* 세로 중앙 정렬 */
+    align-items: center;
+}
+
+.RoutineCompletion-container {
+    max-width: 900px;
+    width: 100%;
+    background-color: #1e1e1e;
+    padding: 40px;
+    margin: 40px auto 80px;
+
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    box-sizing: border-box;
+}
+
+.RoutineCompletion-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.RoutineCompletion-card {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+}
+
+.RoutineCompletion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 20px;
+}
+
+.RoutineCompletion-info p {
+    margin: 4px 0;
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.RoutineCompletion-name {
+    font-weight: bold;
+    color: #00e676;
+    font-size: 18px;
+}
+
+.RoutineCompletion-name span {
+    font-style: italic;
+    color: #aaa;
+    font-size: 15px;
+    margin-left: 4px;
+}
+
+.RoutineCompletion-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.RoutineCompletion-check {
+    width: 20px;
+    height: 20px;
+    accent-color: #4caf50;
+    cursor: pointer;
+}
+
+.RoutineCompletion-partialBtn {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.RoutineCompletion-partialBtn:hover {
+    background-color: #666;
+}
+
+.RoutineCompletion-partial {
+    display: none;
+    margin-top: 16px;
+}
+
+.RoutineCompletion-partial label {
+    display: block;
+    margin: 6px 0 4px;
+    font-size: 13px;
+    color: #bbb;
+}
+
+.RoutineCompletion-input {
+    width: 100%; /* ✅ 너비 100%로 통일 */
+    max-width: 300px; /* ✅ 적당한 최대 크기 제한 */
+    padding: 8px 12px;
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+}
+
+.RoutineCompletion-submit {
+    width: 100%;
+    margin-top: 30px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.RoutineCompletion-submit:hover {
+    background-color: #45a049;
+}
+
+
+body.RoutineDetail {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #111;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+.RoutineDetail-container {
+    max-width: 900px;
+    margin: 40px auto 100px;
+    padding: 30px;
+    background-color: #1c1c1c;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+}
+
+.RoutineDetail-title {
+    margin-bottom: 10px;
+    font-size: 28px;
+    border-left: 5px solid #00c896;
+    padding-left: 12px;
+}
+
+.RoutineDetail-info p {
+    font-size: 15px;
+    color: #bbb;
+    margin-bottom: 30px;
+}
+
+.RoutineDetail-card {
+    background-color: #222;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+}
+
+.RoutineDetail-name {
+    margin-top: 0;
+    color: #00ffae;
+    font-size: 18px;
+}
+
+.RoutineDetail-meta {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 8px;
+}
+
+.RoutineDetail-set {
+    font-size: 14px;
+    color: #ddd;
+    margin-bottom: 10px;
+}
+
+.RoutineDetail-desc {
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.RoutineDetail-buttonbox {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.RoutineDetail-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.RoutineDetail-primary {
+    background-color: #00c896;
+    color: #000;
+}
+
+.RoutineDetail-primary:hover {
+    background-color: #00a77d;
+}
+
+.RoutineDetail-secondary {
+    background-color: #555;
+    color: #fff;
+}
+
+.RoutineDetail-secondary:hover {
+    background-color: #777;
+}
+
+body.RoutineList {
+    margin: auto ;
+    background-color: #121212;
+    font-family: 'Segoe UI', sans-serif;
+    color: #ffffff;
+}
+
+.RoutineList-container {
+    max-width: 1100px;
+    margin: 40px auto 200px;
+    padding: 20px;
+}
+
+.RoutineList-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #ffffff;
+}
+
+.RoutineList-addButton {
+    display: block;
+    width: 180px;
+    margin: 0 auto 40px auto;
+    padding: 12px;
+    background-color: #2e8b57;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.RoutineList-addButton:hover {
+    background-color: #3fa96d;
+}
+
+.RoutineList-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.RoutineList-card {
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
+    cursor: pointer; /* 카드 전체 클릭 가능하게 커서 변경 */
+}
+
+.RoutineList-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.RoutineList-cardTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.RoutineList-tag {
+    display: inline-block;
+    background-color: #2e8b57;
+    color: white;
+    border-radius: 12px;
+    padding: 4px 10px;
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.RoutineList-meta {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #cccccc;
+}
+
+.RoutineList-buttonGroup {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.RoutineList-button {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.RoutineList-start {
+    background-color: #2e7d5a;
+    color: white;
+}
+
+.RoutineList-start:hover {
+    background-color: #38996b;
+}
+
+.RoutineList-edit {
+    background-color: #3b6fa0;
+    color: white;
+}
+
+.RoutineList-edit:hover {
+    background-color: #4f89c2;
+}
+
+.RoutineList-delete {
+    background-color: #a33a3a;
+    color: white;
+}
+
+.RoutineList-delete:hover {
+    background-color: #c94e4e;
+}
+.RoutineRecommendation {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+    margin: 0;
+    padding-top: 80px; /* 화면 아래로 자연스럽게 */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.RoutineRecommendation-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #00ffff;
+}
+
+.RoutineRecommendation-description {
+    text-align: center;
+    color: #cccccc;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;   /* ✅ 추가 */
+    margin-right: auto;  /* ✅ 추가 */
+}
+
+.RoutineRecommendation-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.RoutineRecommendation-card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    width: 280px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.RoutineRecommendation-card h2 {
+    font-size: 1.3rem;
+    color: #00ffff;
+    margin-bottom: 10px;
+}
+
+.RoutineRecommendation-info {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.RoutineRecommendation-info span {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.RoutineRecommendation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 40px;
+    margin-bottom: 100px; /* ✅ 푸터와 간격 주기 */
+}
+
+.RoutineRecommendation-buttons button {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.RoutineRecommendation-buttons button:hover {
+    background-color: #666;
+}
+
+.TargetRoutineRecommendations {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #121212;
+    color: #fff;
+    min-height: 100vh;
+    padding-top: 80px;
+}
+
+
+.TargetRoutineRecommendations-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2.2rem;
+    color: #00bcd4;
+}
+
+.TargetRoutineRecommendations-subtext {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 40px;
+}
+
+.TargetRoutineRecommendations-container {
+    max-width: 1200px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.TargetRoutineRecommendations-card {
+    background-color: #1f1f1f;
+    border-radius: 12px;
+    padding: 20px;
+    width: 320px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s;
+}
+
+.TargetRoutineRecommendations-card:hover {
+    transform: scale(1.03);
+}
+
+.TargetRoutineRecommendations-part {
+    font-size: 0.95rem;
+    color: #ffc107;
+    margin-bottom: 8px;
+}
+
+.TargetRoutineRecommendations-name {
+    font-size: 1.3rem;
+    color: #4fc3f7;
+    margin-bottom: 10px;
+}
+
+.TargetRoutineRecommendations-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #ccc;
+    margin-bottom: 12px;
+}
+
+.TargetRoutineRecommendations-list {
+    font-size: 0.9rem;
+    color: #b2dfdb;
+    margin-bottom: 16px;
+}
+
+.TargetRoutineRecommendations-start {
+    display: inline-block;
+    background-color: #00bcd4;
+    color: #000;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.TargetRoutineRecommendations-start:hover {
+    background-color: #00acc1;
+}
+
+.TargetRoutineRecommendations-bottom {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 100px; /* ✅ 푸터와 간격 확보 */
+}
+
+.TargetRoutineRecommendations-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    margin: 0 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.TargetRoutineRecommendations-btn.gray {
+    background-color: #444;
+    color: #fff;
+}
+
+.TargetRoutineRecommendations-btn.gray:hover {
+    background-color: #555;
+}
+
+
+.GoalUpdate {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 60px 20px 100px;  /* ✅ 아래 여백 추가 */
+    display: flex;
+    justify-content: center;
+}
+
+.GoalUpdate-container {
+    background-color: #1e1e1e;
+    padding: 40px 50px;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(0, 255, 149, 0.1);
+    max-width: 700px;
+    width: 100%;
+}
+
+.GoalUpdate-title {
+    text-align: center;
+    font-size: 1.9rem;
+    margin-bottom: 35px;
+    color: #00ffc2;
+}
+
+.GoalUpdate-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.GoalUpdate-select,
+.GoalUpdate-input {
+    width: 100%;
+    padding: 12px;
+    background-color: #2a2a2a;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 8px;
+    margin-bottom: 22px;
+    font-size: 15px;
+}
+
+.GoalUpdate-button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 35px;
+}
+
+.GoalUpdate-button {
+    width: 48%;
+    padding: 14px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.GoalUpdate-cancel {
+    background-color: #444;
+    color: #bbb;
+}
+
+.GoalUpdate-cancel:hover {
+    background-color: #333;
+}
+
+.GoalUpdate-save {
+    background-color: #00b894;
+    color: #fff;
+}
+
+.GoalUpdate-save:hover {
+    background-color: #00a381;
+}
+
+.ExerciseGoal-container {
+    max-width: 960px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.ExerciseGoal-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00bcd4;
+}
+
+.ExerciseGoal-description {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #bbbbbb;
+    margin-bottom: 40px;
+}
+
+.ExerciseGoal-goalList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ExerciseGoal-goalCard {
+    background-color: #1e1e1e;
+    padding: 28px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 6px solid transparent;
+    transition: border-color 0.3s;
+    min-height: 100px;
+}
+
+.ExerciseGoal-selected {
+    border-left: 6px solid #00bcd4;
+    background-color: #1b1b1b;
+}
+
+.ExerciseGoal-goalInfo h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+    color: #ffffff;
+    line-height: 1.5;
+}
+
+.ExerciseGoal-progressText {
+    font-size: 0.9rem;
+    color: #bbbbbb;
+    font-weight: normal;
+    margin-left: 12px;
+}
+
+.ExerciseGoal-goalInfo p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #cccccc;
+    line-height: 1.6;
+}
+
+.ExerciseGoal-goalActions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 160px;
+}
+
+.ExerciseGoal-selectButton {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    background-color: #2e2e2e;
+    color: #ffffff;
+}
+
+.ExerciseGoal-selectButton:hover {
+    background-color: #00bcd4;
+    color: #000;
+}
+
+.ExerciseGoal-active {
+    background-color: #00bcd4;
+    color: #121212;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.ExerciseGoal-addGoalButton {
+    display: block;
+    margin: 50px auto 0;
+    background-color: #00bcd4;
+    color: #121212;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.ExerciseGoal-addGoalButton:hover {
+    background-color: #00a0b0;
+}
+
+.RoutineEdit-container {
+    max-width: 1000px;
+    margin: 0 auto 100px;
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 255, 149, 0.08);
+}
+
+.RoutineEdit-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #00ff95;
+}
+
+.RoutineEdit-formGroup {
+    margin-bottom: 20px;
+}
+
+.RoutineEdit-formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.RoutineEdit-formGroup input,
+.RoutineEdit-formGroup select,
+.RoutineEdit-formGroup textarea {
+    width: 100%;
+    padding: 10px;
+    background-color: #3a3a3a; /* 더 밝은 색상으로 조정 */
+    border: 1px solid #555; /* 테두리 추가 */
+    box-shadow: 0 0 0 3px rgba(0, 255, 149, 0.2); /* 포커스 시 강조 */
+    border-radius: 6px;
+    color: #fff;
+}
+
+.RoutineEdit-formGroup textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.RoutineEdit-exerciseList {
+    margin-top: 30px;
+}
+
+.RoutineEdit-exerciseCard {
+    background-color: #2b2b2b;
+    padding: 40px 24px 24px 24px; /* top padding 증가 */
+    border-radius: 10px;
+    margin-bottom: 24px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.RoutineEdit-deleteBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #ff4d4d;
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+/* 각 form-group 사이 간격 */
+.RoutineEdit-formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.RoutineEdit-saveBtn {
+    margin-top: 30px;
+    padding: 12px 20px;
+    background-color: #00c896;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.RoutineEdit-addBtn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #444;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.ExerciseLogEdit-container {
+    max-width: 900px;
+    margin: 40px auto 80px;
+    background-color: #1e1e1e;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 0 12px rgba(0, 255, 149, 0.15);
+}
+
+.ExerciseLogEdit-title {
+    text-align: center;
+    color: #00ff95;
+    margin-bottom: 40px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.ExerciseLogEdit-logInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.ExerciseLogEdit-label {
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 15px;
+    color: #fff;
+}
+
+.ExerciseLogEdit-routineLabel {
+    font-size: 18px;
+    font-weight: bold;
+    color: #00ffcc;
+}
+
+.ExerciseLogEdit-input,
+.ExerciseLogEdit-routineInput {
+    padding: 10px 14px;
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 15px;
+}
+
+.ExerciseLogEdit-routineInput {
+    font-size: 20px;
+    width: 260px;
+}
+
+.ExerciseLogEdit-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.ExerciseLogEdit-table th,
+.ExerciseLogEdit-table td {
+    border: 1px solid #444;
+    padding: 12px;
+    text-align: center;
+}
+
+.ExerciseLogEdit-table th {
+    background-color: #292929;
+    color: #00ff95;
+    font-weight: bold;
+}
+
+.ExerciseLogEdit-deleteBtn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.ExerciseLogEdit-deleteBtn:hover {
+    background-color: #e63636;
+}
+
+.ExerciseLogEdit-addBtn {
+    background-color: #00c896;
+    color: #000;
+    border: none;
+    padding: 10px 18px;
+    font-weight: bold;
+    font-size: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
+
+.ExerciseLogEdit-addBtn:hover {
+    background-color: #00b386;
+}
+
+.ExerciseLogEdit-buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.ExerciseLogEdit-button {
+    flex: 1;
+    padding: 14px 0;
+    background-color: #00ff95;
+    color: #000000;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.ExerciseLogEdit-cancel {
+    background-color: #555555;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ExerciseLogEdit-button:hover {
+    background-color: #00e685;
+}
+
+.ExerciseLogEdit-cancel:hover {
+    background-color: #444;
+}
+
+/* 모든 input 타입에 동일한 박스 스타일 적용 */
+.ExerciseLogEdit-input {
+    appearance: textfield;
+    -moz-appearance: textfield;
+    /* number 타입 input에서도 화살표 제거 및 일관화 */
+}
+.ExerciseLogEdit-input::-webkit-outer-spin-button,
+.ExerciseLogEdit-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* 크롬/사파리 등에서 number input의 기본 화살표 제거 */
+.ExerciseLogEdit-input::-webkit-inner-spin-button,
+.ExerciseLogEdit-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.ExerciseLogEdit-recordDelete {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.ExerciseLogEdit-recordDelete:hover {
+    background-color: #e63636;
+}
+
