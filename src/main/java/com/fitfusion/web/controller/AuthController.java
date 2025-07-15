@@ -51,8 +51,4 @@ public class AuthController {
         return "user/login";
     }
 
-    @PostMapping("/login")
-    public String loginUser(@ModelAttribute User user) {
-        return "redirect:/";
-    }
 }

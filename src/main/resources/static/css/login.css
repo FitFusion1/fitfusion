@@ -126,3 +126,8 @@
         min-height: 70vh;
     }
 }
+
+.login-form small {
+    align-self: center;
+    color: red;
+}

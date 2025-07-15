@@ -36,7 +36,7 @@ public class ApiResponse<T> {
     }
 
     // 실패 응답 - status:응답코드, message:메세지, data:null
-    public static ApiResponse<Void> fail(int status, String message) {
-        return new ApiResponse<Void>(false, status, message, null);
+    public static <T> ApiResponse<T> fail(int status, String message) {
+        return new ApiResponse<T>(false, status, message, null);
     }
 }

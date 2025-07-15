@@ -15,16 +15,23 @@
         <h2>로그인</h2>
         <form th:action="@{/user/login}" method="post" class="login-form">
             <label>아이디
-                <input type="text" name="username" required autocomplete="username">
+                <input type="text" name="username" required autocomplete="username"
+                    id="username-input">
+                <small class="field-error" id="username-invalid-message"></small>
             </label>
             <label>비밀번호
-                <input type="password" name="password" required autocomplete="current-password">
+                <input type="password" name="password" required autocomplete="current-password"
+                    id="password-input">
+                <small class="field-error" id="password-invalid-message"></small>
             </label>
             <button type="submit" class="login-submit">로그인</button>
+            <small th:if="${param.error}" class="field-error" id="login-error-message">아이디 혹은 비밀번호가 올바르지 않습니다.</small>
         </form>
         <div class="login-footer">
             <p>계정이 없으신가요? <a th:href="@{/user/register}" class="register-link">회원가입</a></p>
         </div>
     </div>
 </div>
+
+<script layout:fragment="script" th:src="@{/js/login.js}"></script>
 </html>

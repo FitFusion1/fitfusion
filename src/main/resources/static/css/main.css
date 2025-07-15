@@ -18,12 +18,13 @@ header {
     padding: 30px 26px;
 }
 
-nav a {
+nav a, nav button {
     font-family: 'IBM Plex Sans KR', sans-serif;
     color: #aaa;
     text-decoration: none;
     font-weight: 600;
     display: inline-block;
+    cursor: pointer;
 }
 
 nav .logo {
@@ -53,7 +54,7 @@ nav .logo {
     gap: 50px;
 }
 
-.nav-items a:hover, .login-buttons a:hover {
+.nav-items a:hover, .login-buttons a:hover, .login-buttons button:hover {
     color: #00d084;
 }
 
@@ -194,9 +195,8 @@ footer {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
     padding: 2.5rem 2rem 2rem 2rem;
     min-width: 320px;
-    max-width: 90vw;
-    width: 100%;
     max-width: 400px;
+    width: 100%;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -295,4 +295,17 @@ footer {
 .login-modal small {
     align-self: center;
     color: red;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.login-footer p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
 }

@@ -1,5 +1,7 @@
 // Login Modal Logic
 (function () {
+    if (window.location.pathname === '/user/login') return;
+
     const openBtn = document.querySelector('#login-modal-open-btn');
     const overlay = document.querySelector('.login-modal-overlay');
     const modal = document.querySelector('.login-modal');
@@ -67,7 +69,7 @@
 
         const currentUrl = window.location.href;
         $.ajax({
-            url: '/api/save-request-url',
+            url: '/api/save-redirect-url',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -78,13 +80,14 @@
         $.ajax({
             url: "/user/login",
             method: "POST",
-            contentType: 'application/x-www-form-urlencoded',
             data: {
                 username: usernameInput,
                 password: passwordInput
             },
-            success: function () {
-                location.reload();
+            success: function() {
+                $.get('/api/get-redirect-url', function(res) {
+                   window.location.href = res.data || '/';
+                });
             },
             error: function (jqXHR) {
                 if (jqXHR.status === 401) {
