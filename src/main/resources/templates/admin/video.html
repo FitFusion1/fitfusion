@@ -5,7 +5,7 @@
       layout:decorate="~{/layout/base}" th:with="menu='admin'">
 <head>
     <meta charset="UTF-8" />
-    <title>영상 관리 - FitFusion</title>
+    <title>영상 관리</title>
     <th:block layout:fragment="css">
         <link rel="stylesheet" th:href="@{/css/admin.css}">
     </th:block>
@@ -16,7 +16,10 @@
     <div class="admin-header">
         <div class="admin-header-left">
             <h1><i class="fas fa-film"></i> 운동 영상 콘텐츠 관리</h1>
-            <p class="admin-subtitle">/admin/routines, /admin/videos</p>
+            <p class="admin-subtitle">/admin/videos</p>
+        </div>
+        <div class="admin-header-right">
+            <a th:href="@{/admin}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
         </div>
     </div>
 
