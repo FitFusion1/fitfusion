@@ -1,0 +1,78 @@
+body {
+    background: #f7f7f7;
+}
+
+.edit-user-main {
+    max-width: 420px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    padding: 40px 32px;
+}
+
+.edit-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+label {
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 2px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #fafafa;
+    color: #222;
+    transition: border 0.2s;
+}
+
+input:focus {
+    border: 1.5px solid #00d084;
+    outline: none;
+}
+
+.save-btn {
+    background: #00d084;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 0;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.save-btn:hover {
+    background: #009e6d;
+}
+
+.cancel-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #888;
+    text-decoration: underline;
+    font-size: 15px;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .edit-user-main {
+        padding: 18px 6px;
+    }
+}
