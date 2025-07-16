@@ -47,6 +47,21 @@
     });
 </script>
 <script th:src="@{/js/modal-login.js}"></script>
+<script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('profile-dropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('profile-dropdown');
+        const icon = document.querySelector('.profile-icon');
+        if (dropdown && !dropdown.contains(event.target) && !icon.contains(event.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>
 
 <!-- 페이지 전용 스크립트 -->
 <th:block layout:fragment="script"></th:block>

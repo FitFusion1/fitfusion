@@ -123,6 +123,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return isValid;
     }
 
+    function debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
     function checkDuplicateValue(type, inputField) {
         inputField.parentNode.querySelector('.valid-message')
             ?.classList.remove('active');
@@ -142,6 +150,21 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    const debouncedUsernameCheck = debounce((inputElement) => {
+        if (inputElement.parentNode.querySelectorAll('.error-message.invalid').length !== 0) {
+            return;
+        }
+        checkDuplicateValue('username', inputElement);
+    }, 1000);
+
+    const debouncedEmailCheck = debounce((inputElement) => {
+        if (inputElement.parentNode.querySelectorAll('.error-message.invalid').length !== 0) {
+            return;
+        }
+        checkDuplicateValue('email', inputElement);
+    }, 1000);
+
 
     // Add event listeners
     function addEventListeners() {
@@ -182,6 +205,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const filteredInput = inputValue.replace(/[^0-9a-zA-Z-_]/g, '');
                 const invalidCharMessage = inputElement.parentNode.querySelector('[data-error-cat="format"]');
                 const invalidLengthMessage = inputElement.parentNode.querySelector('[data-error-cat="length"]');
+                inputElement.parentNode.querySelector('[data-error-cat="duplicate"]')?.classList.remove('invalid');
+                inputElement.parentNode.querySelector('.valid-message')?.classList.remove('active');
                 let duplicateCheckViable = true;
 
                 if (inputValue !== filteredInput) {
@@ -193,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (inputValue.length < 3) {
+                    console.log(inputValue.length);
                     invalidLengthMessage.classList.add('invalid');
                     duplicateCheckViable = false;
                 } else {
@@ -200,18 +226,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (duplicateCheckViable) {
-                    checkDuplicateValue('username', inputElement);
+                    debouncedUsernameCheck(inputElement);
                 }
             }
 
             if (inputElement.getAttribute('name') === 'email') {
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 const invalidFormatMessage = inputElement.parentNode.querySelector('[data-error-cat="format"]');
+                inputElement.parentNode.querySelector('[data-error-cat="duplicate"]')?.classList.remove('invalid');
+                inputElement.parentNode.querySelector('.valid-message')?.classList.remove('active');
                 if (!emailRegex.test(inputValue)) {
                     invalidFormatMessage.classList.add('invalid');
                 } else {
                     invalidFormatMessage.classList.remove('invalid');
-                    checkDuplicateValue('email', inputElement);
+                    debouncedEmailCheck(inputElement);
                 }
             }
 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+<head>
+    <title>마이페이지</title>
+    <link layout:fragment="css" rel="stylesheet" th:href="@{/css/mypage.css}">
+</head>
+<body>
+<section layout:fragment="content" class="main mypage-main">
+    <h1>My Page</h1>
+    <div class="section" id="user-actions">
+        <h2>Common Actions</h2>
+        <ul class="actions-list">
+            <li><a href="edit_user.html" class="action-link"><i class="fa fa-user-edit"></i> Edit My Info</a></li>
+            <li><a href="#" class="action-link"><i class="fa fa-chart-line"></i> View Progress</a></li>
+            <li><a href="#" class="action-link"><i class="fa fa-dumbbell"></i> Log Exercise</a></li>
+            <li><a href="#" class="action-link"><i class="fa fa-utensils"></i> Log Meal</a></li>
+            <li><a href="#" class="action-link"><i class="fa fa-sign-out-alt"></i> Log Out</a></li>
+        </ul>
+    </div>
+    <div class="section" id="exercises">
+        <h2>Tracked Exercises</h2>
+        <div class="placeholder-card">No exercises tracked yet.</div>
+    </div>
+    <div class="section" id="meals">
+        <h2>Tracked Meals</h2>
+        <div class="placeholder-card">No meals tracked yet.</div>
+    </div>
+</section>
+</body>
+</html>
