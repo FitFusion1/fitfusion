@@ -39,7 +39,7 @@ public class ConditionController {
     public String saveCondition(@ModelAttribute ExerciseConditionForm formData, HttpSession session, Model model) {
         List<String> avoidParts = formData.getAvoidParts();
         List<String> targetParts = formData.getTargetParts();
-        String condition = formData.getCondition();
+        String condition = formData.getConditionLevel();
 
         if (targetParts == null || targetParts.isEmpty()) {
             model.addAttribute("bodyParts", Arrays.asList(BodyPart.values()));
@@ -69,12 +69,12 @@ public class ConditionController {
         }
 
 
-        int conditionId = conditionService.saveConditionAndAvoidAndTartget(userId, formData.getCondition(), formData.getAvoidParts(), formData.getTargetParts());
+        int conditionId = conditionService.saveConditionAndAvoidAndTartget(userId, formData.getConditionLevel(), formData.getAvoidParts(), formData.getTargetParts());
 
         session.setAttribute("targetParts", formData.getTargetParts());
         session.setAttribute("avoidParts", formData.getAvoidParts());
-        session.setAttribute("condition", formData.getCondition());
+        session.setAttribute("condition", formData.getConditionLevel());
 
-        return "redirect:/routine/recommend/result";
+        return "redirect:/routine/create";
     }
 }

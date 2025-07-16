@@ -1073,7 +1073,7 @@ body.RoutineList {
     background-color: #121212;
     color: #ffffff;
     margin: 0;
-    padding-top: 80px; /* 화면 아래로 자연스럽게 */
+    padding-top: 80px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -1092,23 +1092,37 @@ body.RoutineList {
     color: #cccccc;
     margin-bottom: 40px;
     max-width: 700px;
-    margin-left: auto;   /* ✅ 추가 */
-    margin-right: auto;  /* ✅ 추가 */
+    margin-left: auto;
+    margin-right: auto;
 }
 
+/* ✅ 카드 목록 레이아웃 정렬 */
 .RoutineRecommendation-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 24px;
     justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
+/* ✅ 카드 스타일 및 정렬 */
 .RoutineRecommendation-card {
     background-color: #1e1e1e;
     padding: 20px;
     border-radius: 12px;
     width: 280px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+
+.RoutineRecommendation-card:hover {
+    transform: translateY(-4px);
 }
 
 .RoutineRecommendation-card h2 {
@@ -1120,6 +1134,7 @@ body.RoutineList {
 .RoutineRecommendation-info {
     font-size: 0.95rem;
     line-height: 1.6;
+    flex-grow: 1;
 }
 
 .RoutineRecommendation-info span {
@@ -1127,12 +1142,13 @@ body.RoutineList {
     margin-bottom: 6px;
 }
 
+/* ✅ 버튼 정렬 */
 .RoutineRecommendation-buttons {
     display: flex;
     justify-content: center;
     gap: 15px;
     margin-top: 40px;
-    margin-bottom: 100px; /* ✅ 푸터와 간격 주기 */
+    margin-bottom: 100px;
 }
 
 .RoutineRecommendation-buttons button {
@@ -1149,6 +1165,18 @@ body.RoutineList {
 .RoutineRecommendation-buttons button:hover {
     background-color: #666;
 }
+
+/* ✅ 모바일 대응 */
+@media screen and (max-width: 768px) {
+    .RoutineRecommendation-card {
+        width: 90%;
+    }
+
+    .RoutineRecommendation-list {
+        padding: 0 10px;
+    }
+}
+
 
 .TargetRoutineRecommendations {
     font-family: 'Segoe UI', sans-serif;

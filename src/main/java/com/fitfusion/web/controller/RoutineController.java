@@ -1,13 +1,15 @@
 package com.fitfusion.web.controller;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@Controller
 @RequestMapping("/routine")
 public class RoutineController {
 
-    @GetMapping("/create")
+    @GetMapping("")
    public String createRoutine() {
-        return "routine/RoutineCompletion";
+        return "routine/RoutineRecommendation";
     }
 }

@@ -8,6 +8,8 @@ import java.util.List;
 @Mapper
 public interface ExerciseGoalMapper {
 
+    ExerciseGoal findSelectedGoalByUserId(int userId);
+
     void insertUserGoal(ExerciseGoal goal);
 
     ExerciseGoal getUserGoalByUserIdAndGoalId(int userId, int goalId);

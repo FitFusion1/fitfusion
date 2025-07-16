@@ -6,7 +6,7 @@ public enum BodyPart {
     SHOULDERS("어깨"),
     LEGS("하체"),
     ARMS("팔"),
-    CORE("복부");
+    CORE("복근");
 
     private final String bodyPartName;
 

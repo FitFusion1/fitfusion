@@ -21,10 +21,8 @@
 
                 <div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="error-message"></div>
                 <input type="date" th:field="*{startDate}" />
-
                 <div th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="error-message"></div>
                 <input type="date" th:field="*{endDate}" />
-
                 <div class="createexercisegoal-btn-group">
                     <a th:href="@{/exercisegoal/step2}" class="createexercisegoal-prev-btn">이전</a>
                     <button type="submit" class="createexercisegoal-next-btn">다음</button>

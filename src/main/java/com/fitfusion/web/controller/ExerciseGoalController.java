@@ -50,8 +50,10 @@ public class ExerciseGoalController {
 
     @PostMapping("/step1")
     public String step1(@Validated(Step1Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
-                        BindingResult bindingResult) {
+                        BindingResult bindingResult,
+                        Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("goalTypes", GoalType.values());
             return "exerciseGoal/CreateGoalOne";
         }
 
@@ -67,7 +69,8 @@ public class ExerciseGoalController {
 
     @PostMapping("/step2")
     public String step2(@Validated(Step2Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
-                        BindingResult bindingResult) {
+                        BindingResult bindingResult,
+                        Model model) {
 
 
         if (bindingResult.hasErrors()) {
@@ -83,7 +86,8 @@ public class ExerciseGoalController {
 
     @PostMapping("/step3")
     public String step3(@Validated(Step3Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
-                        BindingResult bindingResult) {
+                        BindingResult bindingResult,
+                        Model model) {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalThree";
         }
@@ -98,7 +102,8 @@ public class ExerciseGoalController {
     @PostMapping("/step4")
     public String step4(@Validated(Step4Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
                         BindingResult bindingResult,
-                        SessionStatus status) {
+                        SessionStatus status,
+                        Model model) {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalFour";
         }

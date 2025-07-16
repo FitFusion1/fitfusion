@@ -47,7 +47,7 @@
             <label class="ExerciseCondition-label">3. 오늘 컨디션은 어떤가요?</label>
             <div class="ExerciseCondition-radio-group">
                 <label class="ExerciseCondition-radio" th:each="level : ${conditionLevels}">
-                    <input type="radio" name="condition" th:value="${level.getLevel()}"/>
+                    <input type="radio" name="conditionLevel" th:value="${level.getLevel()}"/>
                     <span th:text="${level.emoji + ' ' + level.level}">컨디션</span>
                 </label>
             </div>

@@ -18,7 +18,6 @@ public class KakaoShowGymData {
 
         GymDataDto kakaoPlaceData = gymMapper.select(gymDataDto.getKakaoPlaceId());
         if (kakaoPlaceData != null) {
-            return;
         } else {
             gymMapper.insert(gymDataDto);
         }

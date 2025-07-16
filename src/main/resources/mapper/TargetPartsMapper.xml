@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.TargetPartsMapper">
 
+    <select id="getTargetPartsByUserId" resultType="string" parameterType="int">
+        select body_part_name       as partName
+        from fitfusion_user_condition_target_parts
+        where user_id = #{userId}
+    </select>
+
     <delete id="deleteTargetPartsByUserId">
         delete from fitfusion_user_condition_target_parts
         where user_id = #{userId}

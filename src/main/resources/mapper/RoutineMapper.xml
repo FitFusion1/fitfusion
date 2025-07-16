@@ -3,7 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.RoutineMapper">
-    <insert id="insertRoutine" parameterType="Routine" useGeneratedKeys="true" keyProperty="routineId">
+
+    <insert id="insertRoutine" parameterType="Routine">
+        <selectKey keyProperty="routineId" resultType="int" order="BEFORE">
+            SELECT FITFUSION_ROUTINE_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
         insert into FITFUSION_ROUTINE(
                 routine_id
               , user_id
@@ -13,15 +17,20 @@
               , updated_date
               , description)
         values (
-                FITFUSION_ROUTINE_SEQ.NEXTVAL
+                #{routineId}
               , #{userId}
             , #{name}
-            , #{difficultLevel}
-            , #{sysdate}
-            , #{sysdate}
+            , #{difficultyLevel}
+            , sysdate
+            , sysdate
             , #{description}
                )
     </insert>
+
+    <select id="getNextRoutineId" resultType="int">
+        select fitfusion_routine_seq.nextval
+        from dual
+    </select>
 
     <insert id="insertRoutineExercise">
         insert into FITFUSION_ROUTINE_EXERCISE (

@@ -21,16 +21,18 @@ public class ExerciseGoalRegisterForm {
 
     private int userId;
     private int goalId;
-    @NotNull(message = "목표는 필수 선택값입니다.", groups = Step1Group.class)
+    @NotBlank(message = "목표는 필수 선택값입니다.", groups = Step1Group.class)
     private String goalType;
 
     @NotBlank(message = "설명은 필수 입력값입니다.", groups = Step4Group.class)
     @Size(min = 1, message = "설명은 최소 1글자 이상입니다.")
     private String goalDescription;
 
+    @NotNull(message = "현재 체중을 입력해주세요.", groups = Step2Group.class)
     @Min(value = 1, message = "현재 체중은 1kg 이상이어야 합니다.", groups = Step2Group.class)
     private Integer startWeight;
 
+    @NotNull(message = "목표 체중을 입력해주세요.", groups = Step2Group.class)
     @Min(value = 1, message = "목표 체중은 1kg 이상이어야 합니다.", groups = Step2Group.class)
     private Integer targetWeight;
 

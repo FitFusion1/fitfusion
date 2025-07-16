@@ -59,4 +59,9 @@ public class ExerciseGoalService {
     public void deleteGoal(int goalId) {
         exerciseGoalMapper.deleteGoal(goalId);
     }
+
+    public ExerciseGoal getSelectedGoalByUserId(int userId) {
+        return exerciseGoalMapper.findSelectedGoalByUserId(userId);
+    }
+
 }

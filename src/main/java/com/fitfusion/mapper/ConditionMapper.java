@@ -10,4 +10,6 @@ public interface ConditionMapper {
     int getNextConditionId();
 
     void deleteConditionByUserId(int userId);
+
+    String getConditionLevelByUserId(int userId);
 }

@@ -5,6 +5,24 @@
 
 <mapper namespace="com.fitfusion.mapper.ExerciseGoalMapper">
 
+    <select id="findSelectedGoalByUserId" resultType="ExerciseGoal">
+        select
+            sg.user_id                 as userId,
+            g.progress_id             as progressId,
+            g.goal_name               as goalName,
+            g.goal_desc               as goalDescription,
+            g.start_weight            as startWeight,
+            g.target_weight           as targetWeight,
+            g.start_date              as startDate,
+            g.end_date                as endDate
+        from
+            fitfusion_user_selected_goal sg,
+            fitfusion_user_goals g
+        where
+            sg.user_id = #{userId}
+        and sg.goal_id = g.goal_id
+    </select>
+
     <insert id="insertUserGoal" parameterType="ExerciseGoal">
         insert into FITFUSION_USER_GOALS (
             goal_id
