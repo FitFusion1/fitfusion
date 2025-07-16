@@ -5,7 +5,7 @@
       layout:decorate="~{/layout/base}" th:with="menu='admin'">
 <head>
   <meta charset="UTF-8" />
-  <title>관리자 대시보드 - FitFusion</title>
+  <title>관리자 대시보드</title>
   <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
   </th:block>
@@ -51,7 +51,7 @@
     <div class="admin-stat-card">
       <div class="admin-stat-icon"><i class="fas fa-bullhorn"></i></div>
       <div class="admin-stat-content">
-        <h3 th:text="예정">3</h3>
+        <h3 th:text="${countNotices}">3</h3>
         <p>공지사항</p>
       </div>
     </div>

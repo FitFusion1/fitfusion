@@ -5,7 +5,7 @@
       layout:decorate="~{/layout/base}" th:with="menu='admin'">
 <head>
     <meta charset="UTF-8" />
-    <title>공지사항 관리 - FitFusion</title>
+    <title>공지사항 관리</title>
     <th:block layout:fragment="css">
         <link rel="stylesheet" th:href="@{/css/admin.css}">
     </th:block>
@@ -18,12 +18,15 @@
             <h1><i class="fas fa-bullhorn"></i> 공지사항 관리</h1>
             <p class="admin-subtitle">/admin/notices</p>
         </div>
+        <div class="admin-header-right">
+            <a th:href="@{/admin}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
+        </div>
     </div>
 
     <!-- 공지사항 관리 -->
     <div class="admin-section">
         <div class="admin-table-actions" style="margin-bottom:16px;">
-            <a href="#" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> 공지사항 등록</a>
+            <a th:href="@{/admin/notice/create}" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> 공지사항 등록</a>
         </div>
         <div class="admin-table-container">
             <table class="admin-table">
@@ -37,24 +40,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>401</td>
-                    <td>서비스 점검 안내</td>
-                    <td>2025-06-20</td>
-                    <td>관리자</td>
+                <tr th:if="${!notices.isEmpty()}"
+                    th:each="notice, stat : ${notices}">
+                    <td th:text="${notice.noticeId}">1</td>
                     <td>
-                        <button class="admin-btn admin-btn-secondary"><i class="fas fa-edit"></i> 수정</button>
-                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
+                        <a th:href="@{/admin/notice/detail/{id}(id=${notice.noticeId})}" th:text="${notice.title}">제목</a>
                     </td>
-                </tr>
-                <tr>
-                    <td>402</td>
-                    <td>여름철 운동 팁</td>
-                    <td>2025-06-25</td>
-                    <td>관리자</td>
+                    <td th:text="${#dates.format(notice.createdDate, 'yyyy-MM-dd HH:mm:ss')}">2025-06-20</td>
+                    <td th:text="${notice.user.userId}">관리자</td>
                     <td>
-                        <button class="admin-btn admin-btn-secondary"><i class="fas fa-edit"></i> 수정</button>
-                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
+                        <a th:href="@{/admin/notice/modify/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-secondary"><i class="fas fa-edit"></i> 수정</a>
+                        <a th:href="@{/admin/notice/delete/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</a>
                     </td>
                 </tr>
                 </tbody>
