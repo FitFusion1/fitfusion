@@ -63,8 +63,4 @@ public class RoutineRecommendationController {
         return "redirect:/routine/list";
     }
 
-    @GetMapping("/routine/list")
-    public String RoutineList() {
-        return "routine/RoutineList";
-    }
 }

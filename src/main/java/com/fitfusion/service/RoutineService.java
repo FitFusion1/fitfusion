@@ -1,5 +1,6 @@
 package com.fitfusion.service;
 
+import com.fitfusion.dto.RoutineListDto;
 import com.fitfusion.mapper.RoutineExerciseMapper;
 import com.fitfusion.mapper.RoutineMapper;
 import com.fitfusion.vo.RecommendedExercise;
@@ -18,6 +19,7 @@ public class RoutineService {
 
     private final RoutineMapper routineMapper;
     private final RoutineExerciseMapper routineExerciseMapper;
+
 
     @Transactional
     public int saveRecommendedRoutine(int userId, List<RecommendedExercise> exercises) {
@@ -46,5 +48,20 @@ public class RoutineService {
         }
 
         return routineId;
+    }
+
+    public List<RoutineListDto> getRoutineListByUserId(int userId) {
+        return routineMapper.getRoutineListByUserId(userId);
+    }
+
+    public List<RoutineListDto> getRoutineByUserId(int userId, int routineId) {
+        return routineMapper.selectRoutineByUserAndRoutineId(userId, routineId);
+    }
+
+    public void deleteRoutineListByUserAndRoutine(int userId, int routineId) {
+        routineMapper.deleteRoutineByUserAndRoutineId(userId, routineId);
+    }
+    public void updateRoutine(Routine routine) {
+        routineMapper.updateRoutine(routine);
     }
 }

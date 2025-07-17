@@ -19,7 +19,8 @@ public class ExerciseGoalService {
     private ExerciseGoalMapper exerciseGoalMapper;
     @Autowired
     private ModelMapper modelMapper;
-
+    @Autowired
+    private SelectedGoalService selectedGoalService;
 
 
     public ExerciseGoalService(ExerciseGoalMapper exerciseGoalMapper) {
@@ -57,6 +58,7 @@ public class ExerciseGoalService {
     }
 
     public void deleteGoal(int goalId) {
+        selectedGoalService.deleteSelectedGoal(goalId);
         exerciseGoalMapper.deleteGoal(goalId);
     }
 

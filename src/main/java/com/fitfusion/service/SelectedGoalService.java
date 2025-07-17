@@ -32,4 +32,11 @@ public class SelectedGoalService {
     public void deleteSelectedGoal(int userId) {
         selectMapper.deleteByUserId(userId);
     }
+
+    public void updateSelectedGoal(int userId, int goalId) {
+        SelectedGoal selectedGoal = new SelectedGoal();
+        selectedGoal.setUserId(userId);
+        selectedGoal.setGoalId(goalId);
+        selectMapper.updateSelectedGoal(selectedGoal);
+    }
 }

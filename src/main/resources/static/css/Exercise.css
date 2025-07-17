@@ -964,24 +964,41 @@ body.RoutineList {
     color: #ffffff;
 }
 
+/* 공통 스타일 */
 .RoutineList-addButton {
-    display: block;
-    width: 180px;
-    margin: 0 auto 40px auto;
-    padding: 12px;
-    background-color: #2e8b57;
-    color: white;
+    display: inline-block;
+    width: 190px; /* ✅ 고정 너비 설정 */
+    padding: 12px 20px;
+    margin: 0 10px 40px;
+    font-size: 16px;
+    font-weight: bold;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
+}
+/* 부모에 가운데 정렬 */
+.RoutineList-container {
+    text-align: center; /* 버튼 포함 콘텐츠 가운데 정렬 */
 }
 
-.RoutineList-addButton:hover {
+/* 나만의 루틴 생성 버튼 */
+.RoutineList-addButton.custom-create {
+    background-color: #2e8b57;
+    color: white;
+}
+.RoutineList-addButton.custom-create:hover {
     background-color: #3fa96d;
 }
+/* AI 루틴 생성 버튼 */
+.RoutineList-addButton.ai-create {
+    background-color: #4444aa;
+    color: white;
+}
 
+.RoutineList-addButton.ai-create:hover {
+    background-color: #5b5bd6;
+}
 .RoutineList-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1031,7 +1048,9 @@ body.RoutineList {
     gap: 10px;
 }
 
+
 .RoutineList-button {
+    width: 100%;
     flex: 1;
     padding: 8px 12px;
     font-size: 14px;
@@ -1064,7 +1083,9 @@ body.RoutineList {
     background-color: #a33a3a;
     color: white;
 }
-
+.RoutineList-buttonGroup form {
+    flex: 1;
+}
 .RoutineList-delete:hover {
     background-color: #c94e4e;
 }

@@ -23,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Date;
 import java.util.List;
@@ -127,6 +128,14 @@ public class ExerciseGoalController {
         List<ExerciseGoal> exerciseGoals = exerciseGoalMapper.getAllUserGoalsByUserId(userId);
         SelectedGoal selectedGoal = selectedGoalService.getSelectedGoal(userId);
 
+        if (selectedGoal != null) {
+            exerciseGoals.sort((g1, g2) -> {
+                if (g1.getGoalId() == selectedGoal.getGoalId()) return -1;
+                if (g2.getGoalId() == selectedGoal.getGoalId()) return 1;
+                return 0;
+            });
+        }
+
         model.addAttribute("exerciseGoals", exerciseGoals);
         model.addAttribute("selectedGoal", selectedGoal);
 
@@ -134,9 +143,30 @@ public class ExerciseGoalController {
     }
 
     @PostMapping("/select")
-    public String selectGoal(@RequestParam int goalId) {
-        selectedGoalService.deleteSelectedGoal(userId);
+    public String selectGoal(@RequestParam int goalId, RedirectAttributes redirectAttributes) {
+        SelectedGoal currentSelected = selectedGoalService.getSelectedGoal(userId);
+
+        if (currentSelected != null && currentSelected.getGoalId() == goalId) {
+            return "redirect:/exercisegoal/goallist";
+        }
+
         selectedGoalService.selectGoal(userId, goalId);
+
+        ExerciseGoal goal = exerciseGoalService.getUserGoalByUserId(userId, goalId);
+        String goalType = goal.getGoalType();
+
+        String message = switch (goalType) {
+            case "체중 감량" -> "유산소 및 하체 중심의 고강도 루틴이 추천됩니다.";
+            case "체중 증가" -> "가슴, 등, 다리 중심의 고강도 루틴이 추천됩니다.";
+            case "체중 유지" -> "전신을 고르게 자극하는 중간 강도 루틴이 제공됩니다.";
+            case "근육 증가" -> "사용자가 선택한 부위 중심의 고강도 루틴이 추천됩니다.";
+            case "건강한 생활습관 개선" -> "코어, 유산소, 하체 중심의 가벼운 루틴이 추천됩니다.";
+            default -> null;
+        };
+
+        if (message != null) {
+            redirectAttributes.addFlashAttribute("goalAlert", message);
+        }
 
         return "redirect:/exercisegoal/goallist";
     }

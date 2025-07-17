@@ -15,19 +15,32 @@
 <div class="RoutineList-container">
     <h1 class="RoutineList-title">나의 운동 루틴</h1>
 
-    <button class="RoutineList-addButton">+ 루틴 추가하기</button>
+    <button class="RoutineList-addButton custom-create"
+            th:onclick="'location.href=\\'/routine/create/custom\\''">+ 나만의 루틴 생성하기</button>
+    <button class="RoutineList-addButton ai-create"
+            th:onclick="'location.href=\\'/routine/create/ai\\''">+ AI 루틴 생성하기</button>
 
     <div class="RoutineList-grid">
-        <div class="RoutineList-card" onclick="location.href='/myexercise/routinedetail'">
-            <div class="RoutineList-cardTitle">하체 강화 루틴</div>
-            <span class="RoutineList-tag">하체</span>
-            <span class="RoutineList-tag">중간</span>
-            <span class="RoutineList-tag">40분</span>
-            <div class="RoutineList-meta">스쿼트, 런지, 레그프레스 포함</div>
+        <div class="RoutineList-card" th:each="routine : ${routines}"
+             th:onclick="|location.href='/routine/detail?id=' + [[${routine.routineId}]]|">
+            <div class="RoutineList-cardTitle" th:text="${routine.routineName}">루틴 이름</div>
+            <span class="RoutineList-tag" th:text="${routine.targetPart}">카테고리</span>
+            <span class="RoutineList-tag" th:text="${routine.difficulty}">난이도</span>
+            <span class="RoutineList-tag" th:text="${routine.totalTime}">예상 평균 운동시간</span>
+            <div class="RoutineList-meta" th:text="${routine.summary}">운동 요약</div>
             <div class="RoutineList-buttonGroup">
-                <button class="RoutineList-button RoutineList-start">수행</button>
-                <button class="RoutineList-button RoutineList-edit">수정</button>
-                <button class="RoutineList-button RoutineList-delete">삭제</button>
+                <form th:action="@{/routine/execute}" method="get">
+                    <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
+                    <button class="RoutineList-button RoutineList-start">수행</button>
+                </form>
+                <form th:action="@{/routine/update}" method="get">
+                    <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
+                    <button class="RoutineList-button RoutineList-edit">수정</button>
+                </form>
+                <form th:action="@{/routine/delete}" method="post">
+                    <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
+                    <button class="RoutineList-button RoutineList-delete">삭제</button>
+                </form>
             </div>
         </div>
 

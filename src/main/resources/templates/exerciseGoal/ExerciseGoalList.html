@@ -54,4 +54,9 @@
     <button class="ExerciseGoal-addGoalButton" th:onclick="|location.href='@{/exercisegoal/step1}'|">+ 새 목표 추가</button>
 </div>
 </div>
+<th:block layout:fragment="script">
+    <script th:if="${goalAlert != null}" th:inline="javascript">
+        alert([[${goalAlert}]]);
+    </script>
+</th:block>
 </html>

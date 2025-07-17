@@ -4,10 +4,38 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.RoutineMapper">
 
+    <select id="getRoutineListByUserId" parameterType="int" resultType="RoutineListDto">
+        select
+            r.routine_id        as routineId,
+            r.name              as routineName,
+            r.difficulty_level  as difficulty,
+            (
+                select e.category
+                from fitfusion_routine_exercise re2
+                         join fitfusion_exercises e on re2.exercise_id = e.exercise_id
+                where re2.routine_id = r.routine_id
+                    fetch first 1 row only
+            ) as targetPart,
+            (
+                select listagg(e.name, ', ') within group (order by e.name)
+        from fitfusion_routine_exercise re3
+            join fitfusion_exercises e on re3.exercise_id = e.exercise_id
+        where re3.routine_id = r.routine_id
+            ) as summary,
+            (
+        select (count(*) * 5) || '분'
+        from fitfusion_routine_exercise re4
+        where re4.routine_id = r.routine_id
+            ) as totalTime
+        from
+            fitfusion_routine r
+        where
+            r.user_id = #{userId}
+        order by
+            r.created_date desc
+    </select>
+
     <insert id="insertRoutine" parameterType="Routine">
-        <selectKey keyProperty="routineId" resultType="int" order="BEFORE">
-            SELECT FITFUSION_ROUTINE_SEQ.NEXTVAL FROM DUAL
-        </selectKey>
         insert into FITFUSION_ROUTINE(
                 routine_id
               , user_id
@@ -31,17 +59,35 @@
         select fitfusion_routine_seq.nextval
         from dual
     </select>
-
-    <insert id="insertRoutineExercise">
-        insert into FITFUSION_ROUTINE_EXERCISE (
-                routine_exercise_id
-              , routine_id
-              , exercise_id
-               )
-        values (
-                FITFUSION_ROUTINE_EXERCISE_SEQ.NEXTVAL
-              , #{routineId}
-              , #{exerciseId}
-               )
-    </insert>
+    
+    <select id="selectRoutineByUserAndRoutineId" parameterType="map" resultType="Routine">
+        select
+               routine_id               as routineId
+             , user_id                  as userId
+             , name                     as name
+             , difficulty_level         as difficultyLevel
+             , created_date             as createdDate
+             , updated_date             as updatedDate
+             , description              as description
+        from
+            fitfusion_routine
+        where
+            user_id = #{userId}
+        and routine_id = #{routineId}
+    </select>
+    
+    <update id="updateRoutine" parameterType="Routine">
+        update fitfusion_routine
+        set 
+            name = #{name}
+          , difficulty_level = #{difficultyLevel}
+          , updated_date = sysdate
+          , description = #{description}
+        where user_id = #{userId} and routine_id = #{routineId}
+    </update>
+    
+    <delete id="deleteRoutineByUserAndRoutineId" parameterType="map">
+        delete from fitfusion_routine
+        where user_id = #{userId} and routine_id = #{routineId}
+    </delete>
 </mapper>
