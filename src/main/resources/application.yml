@@ -9,6 +9,9 @@ spring:
 #개발 중 템플릿 캐싱 끄기 !!!!!!! commit 전에 확인하기#
   thymeleaf:
     cache: false
+  config:
+    import:
+    - classpath:securekey.yml
 
 server:
   port: 80
@@ -16,4 +19,4 @@ mybatis:
   mapper-locations: classpath:mapper/*.xml
   configuration:
     jdbc-type-for-null: null
-  type-aliases-package: com.fitfusion.vo
+  type-aliases-package: com.fitfusion.vo, com.fitfusion.dto

@@ -1,151 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com/fitfusion/mapper/UserMapper.java">
+<mapper namespace="com.fitfusion.mapper.UserMapper">
+    <!--
+        int checkUsernameExists(String username);
+    -->
+    <select id="checkUsernameExists" resultType="int">
+        SELECT CASE WHEN EXISTS (
+            SELECT 1 FROM FITFUSION_USERS
+            WHERE USERNAME = #{username}
+        ) THEN 1 ELSE 0 END
+        FROM DUAL
+    </select>
 
     <!--
-        List<User> getUsers();
-     -->
-    <select id="getUsers" resultType="User">
-        select
-            user_no			userNo
-             , username
-             , name
-             , email
-             , deleted
-             , created_date		createdDate
-             , updated_date		updatedDate
-        from
-            app_users
-        order by
-            user_no asc
+        int checkEmailExists(String email);
+    -->
+    <select id="checkEmailExists" resultType="int">
+        SELECT CASE WHEN EXISTS (
+            SELECT 1 FROM FITFUSION_USERS
+            WHERE EMAIL = #{email}
+        ) THEN 1 ELSE 0 END
+        FROM DUAL
     </select>
 
     <!--
         void insertUser(User user);
-     -->
+    -->
     <insert id="insertUser" parameterType="User">
-        <selectKey keyProperty="userNo"
+        <selectKey keyProperty="userId"
                    resultType="int"
                    order="BEFORE">
-            select app_users_seq.nextval
-            from dual
+            SELECT FITFUSION_USER_SEQ.nextval
+            FROM DUAL
         </selectKey>
-
-        insert into app_users
-        (user_no, username, password, name, email)
-        values
-        (#{userNo}, #{username}, #{password}, #{name}, #{email})
+        INSERT INTO FITFUSION_USERS
+        ( USER_ID
+        , USERNAME
+        , PASSWORD
+        , NAME
+        , EMAIL
+        , GENDER
+        , HEIGHT
+        , WEIGHT
+        , BIRTH_DATE
+        , EXPERIENCE_LEVEL
+        )
+        VALUES
+        ( #{userId}
+        , #{username}
+        , #{password}
+        , #{name}
+        , #{email}
+        , #{gender}
+        , #{height}
+        , #{weight}
+        , #{birthDate}
+        , #{experienceLevel}
+        )
     </insert>
 
     <!--
-        void insertUserRole(@Param("userNo") int userNo,
-                            @Param("roleName") String roleName);
+        void insertUserRole(@Param("userId") int userId,
+                        @Param("roleName") String roleName);
     -->
     <insert id="insertUserRole">
-        insert into app_user_roles
-            (user_no, role_name)
-        values
-            (#{userNo}, #{roleName})
+        INSERT INTO FITFUSION_USER_ROLES
+            (USER_ID, ROLE_NAME)
+        VALUES
+            (#{userId}, #{roleName})
     </insert>
 
-    <!--
-        User getUserByUsername(String username);
-    -->
-    <select id="getUserByUsername" resultType="User">
-        select
-            user_no				userNo
-             , username
-             , password
-             , name
-             , email
-             , deleted
-             , created_date		createdDate
-             , updated_date		updatedDate
-        from
-            app_users
-        where
-            username = #{username}
-    </select>
-
-    <!--
-        User getUserByUsernameWithRoleNames(String username);
-    -->
-    <resultMap type="User" id="UserResultMapWithRoleNames">
-        <id column="user_no" property="userNo"/>
+    <resultMap id="UserResultMapWithRoleNames" type="User">
+        <id column="user_id" property="userId"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="name" property="name"/>
         <result column="email" property="email"/>
-        <result column="deleted" property="deleted"/>
+        <result column="gender" property="gender"/>
+        <result column="height" property="height"/>
+        <result column="weight" property="weight"/>
+        <result column="birth_date" property="birthDate"/>
+        <result column="created_date" property="createdDate"/>
+        <result column="updated_date" property="updatedDate"/>
+        <result column="deleted" property="deleted" />
+        <result column="deleted_date" property="deletedDate" />
+        <result column="experience_level" property="experienceLevel"/>
         <collection property="roleNames"
-                    column="user_no"
+                    column="user_id"
                     ofType="string"
-                    select="getRoleNamesByUserNo">
-        </collection>
+                    select="getRoleNamesByUserId"/>
     </resultMap>
-    <select id="getUserByUsernameWithRoleNames" resultMap="UserResultMapWithRoleNames">
-        select
-            a.user_no
-             , a.username
-             , a.password
-             , a.name
-             , a.email
-             , a.deleted
-        from
-            app_users a
-        where
-            a.username = #{username}
+
+    <!--
+        Optional<User> getUserWithRoleNames(Map<String, Object> condition);
+            condition: {
+                type: username 혹은 email,
+                identifier: {username} 혹은 {email}
+            }
+    -->
+    <select id="getUserWithRoleNames" parameterType="map"
+            resultMap="UserResultMapWithRoleNames">
+        SELECT
+        USER_ID
+        , USERNAME
+        , PASSWORD
+        , NAME
+        , EMAIL
+        , GENDER
+        , HEIGHT
+        , WEIGHT
+        , BIRTH_DATE
+        , CREATED_DATE
+        , UPDATED_DATE
+        , DELETED
+        , DELETED_DATE
+        , EXPERIENCE_LEVEL
+        FROM
+        FITFUSION_USERS
+        WHERE
+        <if test="'username'.equals(type)">
+            USERNAME = #{identifier}
+        </if>
+        <if test="'email',equals(type)">
+            EMAIL = #{identifier}
+        </if>
     </select>
 
     <!--
-        List<String> getRoleNamesByUserNo(int userNo);
+        List<String> getRoleNamesByUserId(int id);
     -->
-    <select id="getRoleNamesByUserNo" resultType="string">
-        select
-            role_name
-        from
-            app_user_roles
+    <select id="getRoleNamesByUserId">
+        SELECT
+            ROLE_NAME
+        FROM
+            FITFUSION_USER_ROLES
         where
-            user_no = #{userNo}
+            USER_ID = #{id}
     </select>
-
-    <!--
-        User getUserByEmail(String email);
-    -->
-    <select id="getUserByEmail" resultType="User">
-        select
-            user_no				userNo
-             , username
-             , password
-             , name
-             , email
-             , deleted
-             , created_date		createdDate
-             , updated_date		updatedDate
-        from
-            app_users
-        where
-            email = #{email}
-    </select>
-
-    <!--
-        User getUserByUserNo(int userNo);
-    -->
-    <select id="getUserByUserNo" resultType="User">
-        select
-            user_no				userNo
-             , username
-             , password
-             , name
-             , email
-             , deleted
-             , created_date		createdDate
-             , updated_date		updatedDate
-        from
-            app_users
-        where
-            user_no = #{userNo}
-    </select>
-
 
 </mapper>
