@@ -18,6 +18,10 @@ public class FoodService {
         return foodMapper.findAll();
     }
 
+    public FoodDto findFoodById(Integer foodId) {
+        return foodMapper.findFoodByIdWithUnit(foodId);
+    }
+
     public List<FoodDto> searchFoods(String keyword) {
         return foodMapper.searchFoods(keyword);
     }
@@ -47,7 +51,7 @@ public class FoodService {
         foodMapper.updateFood(foodDto);
     }
 
-    public void deleteFood(String foodId) {
+    public void deleteFood(Integer foodId) {
         foodMapper.deleteFood(foodId);
     }
 
@@ -57,5 +61,4 @@ public class FoodService {
     public List<String> findAllFoodNames() {
         return foodMapper.findAllFoodNames();
     }
-
 }
