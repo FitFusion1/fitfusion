@@ -223,3 +223,39 @@ li {
     margin: 0;
     padding: 0;
 }
+
+.review-actions {
+    margin-top: 5px;
+}
+
+.edit-btn, .delete-btn {
+    margin-right: 5px;
+    padding: 4px 8px;
+    font-size: 0.9em;
+}
+
+#map {
+    width: 100%;
+    height: 300px; /* 또는 400px 등 원하는 높이로 */
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.custom-marker {
+    background-color: #222; /* 어두운 배경 */
+    color: #fff;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    font-size: 14px;
+    border: 1px solid #555;
+    display: inline-block;
+    white-space: nowrap;
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-marker:hover {
+    background-color: #ff4d4d; /* 운동 느낌 강렬한 색으로 호버 효과 */
+    transform: scale(1.05);
+}

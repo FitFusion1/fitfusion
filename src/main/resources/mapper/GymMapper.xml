@@ -62,25 +62,25 @@
         DetailDataDto detailData(int gymId);
     -->
     <select id="detailData" resultMap="detailDataMap">
-        select
-            G.GYM_ID
-             ,  G.NAME
-             ,  G.ADDRESS
-             ,  G.PHONE
-             ,  G.LATITUDE
-             ,  G.LONGITUDE
-             ,  G.AVERAGE_RATING
-             ,  R.REVIEW_ID
-             ,  R.RATING
-             ,  R.CONTENT
-             ,  R.CREATED_DATE
-             ,  R.UPDATED_DATE
-             ,  U.USER_ID
-             ,  U.USERNAME
-        from FITFUSION_GYMS G, FITFUSION_GYM_REVIEWS R, FITFUSION_USERS U
-        WHERE U.USER_ID = R.USER_ID(+)
-          AND   G.GYM_ID = R.GYM_ID(+)
-          AND   G.GYM_ID = #{gymId}
+        SELECT
+            G.GYM_ID,
+            G.NAME,
+            G.ADDRESS,
+            G.PHONE,
+            G.LATITUDE,
+            G.LONGITUDE,
+            G.AVERAGE_RATING,
+            R.REVIEW_ID,
+            R.RATING,
+            R.CONTENT,
+            R.CREATED_DATE,
+            R.UPDATED_DATE,
+            U.USER_ID,
+            U.USERNAME
+        FROM FITFUSION_GYMS G
+                 LEFT JOIN FITFUSION_GYM_REVIEWS R ON G.GYM_ID = R.GYM_ID
+                 LEFT JOIN FITFUSION_USERS U ON R.USER_ID = U.USER_ID
+        WHERE G.GYM_ID = #{gymId}
     </select>
 
 </mapper>

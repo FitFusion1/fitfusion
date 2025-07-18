@@ -1,8 +1,11 @@
 package com.fitfusion.web.controller;
 
 import com.fitfusion.dto.DetailDataDto;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.KakaoShowGymData;
+import com.fitfusion.vo.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +25,13 @@ public class MapPageController {
 
     // 기본 경로 접근
     @GetMapping("/gyms/detail/{gymId}")
-    public String detail(@PathVariable int gymId, Model model) {
+    public String detail(@PathVariable int gymId, Model model, @AuthenticationPrincipal SecurityUser securityUser) {
 
         DetailDataDto detailData = kakaoShowGymData.detailForm(gymId);
-        System.out.println("gymId: " + gymId);
-        System.out.println("detailData: " + detailData);
+        User user = securityUser.getUser();
+
+        model.addAttribute("user", user);
+        model.addAttribute("loginUserId", user.getUserId());
         model.addAttribute("detailData", detailData);
         return "detail";
     }
