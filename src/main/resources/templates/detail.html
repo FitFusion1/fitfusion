@@ -40,27 +40,83 @@
         </ul>
       </div>
 
-      <!-- ✍️ 리뷰 작성 버튼 -->
-      <div class="write-review-box">
-        <button class="write-review-button" onclick="">
-          ✍️ 리뷰 작성하기
-        </button>
+      <!-- 리뷰 작성 버튼 -->
+      <div class="write-review-box my-3">
+        <button class="btn btn-primary" id="review-btn">리뷰 작성하기</button>
+      </div>
+
+      <!-- 리뷰 작성 폼 -->
+      <div id="review-form" style="display: none;" class="card p-4 shadow-sm mb-4">
+        <input type="hidden" id="gymId" th:value="${detailData.gymId}" />
+
+        <div class="mb-3">
+          <label for="rating" class="form-label">별점</label>
+          <select id="rating" class="form-select">
+            <option value="1">⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="content" class="form-label">리뷰 내용</label>
+          <textarea id="content" class="form-control" rows="3" placeholder="내용을 입력하세요"></textarea>
+        </div>
+
+        <div class="text-end">
+          <button id="review-submit-btn" class="btn btn-success">리뷰 제출</button>
+        </div>
       </div>
 
       <!-- 📝 리뷰 카드 목록 -->
       <ul>
         <li th:each="review : ${detailData.gymReviews}">
-          <div class="review-card">
+          <div class="review-card" id="${review.reviewId}">
             <div class="review-header">
               <div>
-                <p class="username" th:text="${review.user.getUsername()}">아이디</p>
-                <p class="stars" >⭐⭐⭐⭐⭐</p>
+                <p class="username"
+                   th:if="${user.userId != null}"
+                   th:text="${review.getUser().getUsername()}">아이디</p>
+                <p class="stars">
+                  <span th:each="i : ${#numbers.sequence(1, review.getRating())}">⭐</span>
+                </p>
               </div>
-              <span class="review-date" th:text="${#dates.format(review.createdDate, 'yyyy-MM-dd')}">날짜</span>
+              <span class="review-date"
+                    th:text="${#dates.format(review.createdDate, 'yyyy-MM-dd')}">날짜</span>
+              <div th:if="${loginUserId.equals(review.user.userId)}">
+                <button class="edit-button" th:attr="data-comment-id=${review.reviewId}">수정</button>
+                <button class="delete-button" th:attr="data-comment-id=${review.reviewId}">삭제</button>
+              </div>
             </div>
             <div class="review-content">
               <p th:text="${review.content}">내용</p>
             </div>
+
+              <!-- 수정 폼 (기본 숨김) -->
+            <div class="edit-form" style="display: none;">
+              <div class="mb-2">
+
+                <label>별점</label>
+                <select class="form-select rating-select">
+                  <option value="1" th:selected="${review.rating == 1}">⭐</option>
+                  <option value="2" th:selected="${review.rating == 2}">⭐⭐</option>
+                  <option value="3" th:selected="${review.rating == 3}">⭐⭐⭐</option>
+                  <option value="4" th:selected="${review.rating == 4}">⭐⭐⭐⭐</option>
+                  <option value="5" th:selected="${review.rating == 5}">⭐⭐⭐⭐⭐</option>
+                </select>
+              </div>
+
+              <div class="mb-2">
+                <label>리뷰 내용</label>
+                <textarea class="form-control content-textarea" rows="3"
+                          th:text="${review.content}"></textarea>
+              </div>
+
+              <button class="edit-submit-button btn btn-sm btn-success mt-2">수정 완료</button>
+            </div>
+
           </div>
         </li>
       </ul>
@@ -70,15 +126,200 @@
 
       <hr>
 
+      <input type="hidden" id="latitude" th:value="${detailData.getLatitude()}" />
+      <input type="hidden" id="longitude" th:value="${detailData.getLongitude()}" />
+
       <!-- 지도 영역 -->
       <h3>📍 위치</h3>
-      <div class="map-placeholder">
-        <!-- 지도 위치 들어올 부분 -->
-      </div>
+      <div id="map"></div>
     </div>
 
   </div>
 
 </main>
+
+<!-- 스크립트 영역 -->
+<div layout:fragment="script">
+
+  <!-- 📉 Kakao Maps API -->
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=709f8eb34b8860e51c2ed050bf8bc0f1&libraries=services"></script>
+
+
+  <script>
+    let map;
+    let currentPositionMarker;
+
+    window.onload = function () {
+      const mapContainer = document.getElementById("map");
+      const gymId = document.getElementById("gymId").value;
+      const lat = parseFloat(document.getElementById("latitude").value);
+      const lon = parseFloat(document.getElementById("longitude").value);
+
+      const gymPosition = new kakao.maps.LatLng(lat, lon);
+
+      // 지도 초기화
+      map = new kakao.maps.Map(mapContainer, {
+        center: gymPosition,
+        level: 4
+      });
+
+      // 헬스장 마커
+      currentPositionMarker = new kakao.maps.Marker({
+        map: map,
+        position: gymPosition,
+        image: new kakao.maps.MarkerImage(
+                "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png",
+                new kakao.maps.Size(40, 42),
+                { offset: new kakao.maps.Point(13, 42) }
+        )
+      });
+
+      // "헬스장" 텍스트 오버레이 생성
+      const overlayContent = `<div class="custom-marker">헬스장</div>`;
+      const customOverlay = new kakao.maps.CustomOverlay({
+        content: overlayContent,
+        position: gymPosition,
+        yAnchor: 1.5
+      });
+      customOverlay.setMap(map);
+
+      // 현재 위치 표시
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const myLat = pos.coords.latitude;
+          const myLon = pos.coords.longitude;
+          const myPosition = new kakao.maps.LatLng(myLat, myLon);
+
+          // 내 위치 마커 생성
+          const myMarker = new kakao.maps.Marker({
+            map: map,
+            position: myPosition,
+            image: new kakao.maps.MarkerImage(
+                    "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png",
+                    new kakao.maps.Size(40, 42),
+                    { offset: new kakao.maps.Point(13, 42) }
+            )
+          });
+        }, error => {
+          console.error("현재 위치를 가져올 수 없습니다.");
+        });
+      }
+    };
+
+    // 수정 삭제 자바 스크립트
+    document.addEventListener("DOMContentLoaded", function () {
+      const reviewBtn = document.getElementById("review-btn");
+      const submitBtn = document.getElementById("review-submit-btn");
+
+      const token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+      const header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+      if (reviewBtn) {
+        reviewBtn.addEventListener("click", function () {
+          const form = document.getElementById("review-form");
+          form.style.display = (form.style.display === "none") ? "block" : "none";
+        });
+      }
+
+      if (submitBtn) {
+        submitBtn.addEventListener("click", function () {
+          const gymId = document.getElementById("gymId").value;
+          const rating = document.getElementById("rating").value;
+          const content = document.getElementById("content").value;
+
+          const data = { gymId, rating, content };
+
+          console.log('data :', data);
+          fetch('/gym/review', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              [header]: token
+            },
+            body: JSON.stringify(data)
+          })
+                  .then(res => {
+                    if (!res.ok) throw new Error("리뷰 등록 실패");
+                    return res.json();
+                  })
+                  .then(data => {
+                    alert("등록 완료");
+                    location.reload();
+                  })
+                  .catch(error => {
+                    alert("오류 발생: " + error.message);
+                  });
+        });
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll(".edit-button").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const commentId = btn.getAttribute("data-comment-id");
+          const card = btn.closest(".review-card");
+          const editForm = card.querySelector(".edit-form");
+
+          editForm.style.display = (editForm.style.display === "none" || editForm.style.display === "") ? "block" : "none";
+
+          const submitBtn = editForm.querySelector(".edit-submit-button");
+          const ratingSelect = editForm.querySelector(".rating-select");
+          const contentTextarea = editForm.querySelector(".content-textarea");
+
+          submitBtn.onclick = () => {
+            const rating = ratingSelect.value;
+            const content = contentTextarea.value;
+
+            const data = { rating, content };
+
+            fetch(`/gym/review/${commentId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+              },
+              body: JSON.stringify(data)
+            })
+                    .then(res => {
+                      if (!res) throw new Error('수정 실패');
+                      alert('수정 완료');
+                      location.reload();
+                      console.log('res :', res);
+                    })
+                    .catch(error => {
+                      alert('오류 발생' + error.message);
+                    });
+          };
+        });
+      });
+    });
+
+    document.querySelectorAll(".delete-button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const commentId = btn.getAttribute("data-comment-id");
+        const card = btn.closest(".review-card");
+
+        const token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+
+        fetch(`/gym/review/${commentId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token
+          }
+        })
+                .then(del => {
+                  alert('삭제 완료');
+                  card.remove();
+                  location.reload();
+                })
+                .catch(error => {
+                  alert('오류발생' + error.message);
+                });
+      });
+    });
+  </script>
+
+</div>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.fitfusion.dto;
 
+import com.fitfusion.vo.Gym;
 import com.fitfusion.vo.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +19,8 @@ public class GymReviewDto {
     private Date createdDate;
     private Date updatedDate;
 
+    private int userId;
+    private int gymId;
     private User user;
+
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.GymReviewMapper">
+
+    <!--
+         public GymReviewDto insertReview(GymReviewDto gymReviewDto);
+    -->
+    <insert id="insertReview" parameterType="GymReviewDto">
+        insert into FITFUSION_GYM_REVIEWS
+        (REVIEW_ID, RATING, CONTENT, CREATED_DATE, UPDATED_DATE, USER_ID, GYM_ID)
+        values
+        (FITFUSION_GYM_REVIEWS_SEQ.NEXTVAL, #{rating}, #{content}, #{createdDate }, #{updatedDate}, #{user.userId}, #{gymId})
+    </insert>
+
+    <!--
+        List<GymReviewDto> selectReviewsByGymId(int gymId);
+    -->
+    <select id="selectReviewsByGymId" resultType="GymReviewDto">
+        select
+            REVIEW_ID              as   reviewId
+        ,   RATING
+        ,   CONTENT
+        ,   CREATED_DATE           as   createdDate
+        ,   UPDATED_DATE           as   updatedDate
+        ,   USER_ID                as   userId
+        ,   GYM_ID                 as   gymId
+        from FITFUSION_GYM_REVIEWS
+        where GYM_ID = #{gymId}
+    </select>
+
+
+    <!--
+        void updateReview(GymReviewDto gymReviewDto);
+    -->
+    <update id="updateReview" parameterType="GymReviewDto">
+        update
+            FITFUSION_GYM_REVIEWS
+        set
+            RATING = #{rating}
+        ,   CONTENT = #{content}
+        where
+            REVIEW_ID = #{reviewId}
+        and USER_ID = #{userId}
+    </update>
+
+    <!--
+        void deleteReview(GymReviewDto gymReview);
+    -->
+    <delete id="deleteReview">
+        delete from
+            FITFUSION_GYM_REVIEWS
+        where REVIEW_ID = #{reviewId}
+    </delete>
+</mapper>
