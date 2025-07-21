@@ -18,6 +18,6 @@ mybatis:
   type-aliases-package: com.fitfusion.vo, com.fitfusion.dto
 
 kakao:
-  rest-api-key: 258fb141165b1f58e8cb1847169c112f
+  rest-api-key: 47eef7648a4fcca43d3b58f2460230f5
   redirect-uri: http://localhost:8080/oauth/kakao/callback
 
