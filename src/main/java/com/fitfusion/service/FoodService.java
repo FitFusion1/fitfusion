@@ -35,8 +35,8 @@ public class FoodService {
         return new PageResponseDto<>(list, total, pageNum, pageSize);
     }
 
-    public List<FoodDto> searchByCategory(String categoryCode) {
-        return foodMapper.findByCategory(categoryCode);
+    public List<FoodDto> searchByCategory(String foodCat1Code) {
+        return foodMapper.findByFoodCat1Code(foodCat1Code);
     }
 
     public List<FoodDto> searchByImported(String isImported) {

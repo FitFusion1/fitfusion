@@ -1,6 +1,6 @@
 package com.fitfusion.util;
 
-public class NumberUtils {
+public class StringToDoubleParser {
 
     /**
      * 문자열을 Double로 변환

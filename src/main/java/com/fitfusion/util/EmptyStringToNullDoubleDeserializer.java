@@ -13,7 +13,7 @@ public class EmptyStringToNullDoubleDeserializer extends JsonDeserializer<Double
     @Override
     public Double deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String text = p.getText();
-        return NumberUtils.toNullableDouble(text);
+        return StringToDoubleParser.toNullableDouble(text);
     }
 }
 

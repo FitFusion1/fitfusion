@@ -21,10 +21,10 @@
 //    private Integer foodId;                      // 식품코드 (DB PK)
 //
 //    @JsonProperty("FOOD_CD")
-//    private String foodCd;                      //  식품 영양 API의 식품 고유 코드
+//    private String food_;                      //  식품 영양 API의 식품 고유 코드
 //
 //    @JsonProperty("BARCODE")
-//    private String barcode;                     // 바코드
+//    private String foodBarcode;                     // 바코드
 //
 //    @NotBlank
 //    @JsonProperty("FOOD_NM_KR")
@@ -92,16 +92,16 @@
 //
 //    // 식품 분류
 //    @JsonProperty("FOOD_CAT1_CD")
-//    private String foodCategoryCode;
+//    private String foodCat1Code;
 //
 //    @JsonProperty("FOOD_CAT1_NM")
-//    private String foodCategoryName;
+//    private String foodCat1Name;
 //
 //    @JsonProperty("FOOD_CAT2_CD")
-//    private String foodMidCategoryCode;
+//    private String foodCat2Code;
 //
 //    @JsonProperty("FOOD_CAT2_NM")
-//    private String foodMidCategoryName;
+//    private String foodCat2Name;
 //
 //    @JsonProperty("FOOD_CAT3_CD")
 //    private String foodSmallCategoryCode;
