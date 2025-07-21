@@ -234,141 +234,15 @@
         )
     </insert>
 
-    <!-- 9. MERGE (중복 방지용 삽입)
-    API용인 이유 : 중복 여부를 foodCode(API에서의 음식의 고유번호)로 체크함
-     ✅ 기능 설명
-     - FOOD_CODE를 기준으로 이미 존재하는 식품은 INSERT를 생략하고
-       존재하지 않을 경우에만 새로운 데이터를 삽입함
-     ✅ 시퀀스 낭비 방지:
-     - foodId를 Java에서 미리 SELECT해서 파라미터로 넘긴 후 #{foodId}로 사용
--->
     <!--
-        12. INSERT (API -> DB 저장용)
-        DB에 중복된 음식DB를 저장하지 않기 위해 사용
-
-        FOOD_CODE 기준으로 존재 여부 판단 → 없을 때만 INSERT
-
-        MERGE 기반 INSERT 구문
-
-        ✅ 기능 설명
-        - FOOD_CODE를 기준으로 이미 존재하는 식품은 INSERT를 생략하고,
-          존재하지 않을 경우에만 새로운 데이터를 삽입함
-        - 중복 체크를 Java 코드에서 하지 않고 DB에서 처리하므로
-          대량 데이터 처리 시 효율적임
-
-        ✅ 사용 조건
-        - FOOD_CODE는 고유해야 하며, NOT NULL이 보장되어야 함
-        - FOOD_ID는 Java에서 시퀀스(FITFUSION_FOOD_ITEMS_SEQ)를 호출해 설정해야 함
-        - WHEN MATCHED THEN UPDATE 절은 현재 미사용(향후 확장 가능)
-
-        ✅ 사용 예
-        int result = foodMapper.mergeFood(foodDto);
-        if (result == 1) { ... } // 삽입 성공
+     9. 중복 식품 검사 (FOOD_CODE 기준)
+     - 해당 FOOD_CODE가 DB에 존재하는지 확인함
+     - 존재 시 1 이상의 값 반환, 없으면 0
     -->
-    <insert id="mergeFood" parameterType="com.fitfusion.dto.FoodDto">
-        MERGE INTO FITFUSION_FOOD_ITEMS target
-            USING (SELECT #{foodCode} AS FOOD_CODE FROM DUAL) src
-            ON (target.FOOD_CODE = src.FOOD_CODE)
-            WHEN NOT MATCHED THEN
-                INSERT (
-                        FOOD_ID,
-                        FOOD_CODE,
-                        FOOD_BARCODE,
-                        FOOD_NAME,
-                        MAKER_NAME,
-                        FOOD_GROUP_NAME,
-                        FOOD_CLASS_NAME,
-                        FOOD_CAT1_CODE,
-                        FOOD_CAT1_NAME,
-                        FOOD_REF_CODE,
-                        FOOD_REF_NAME,
-                        FOOD_CAT2_CODE,
-                        FOOD_CAT2_NAME,
-                        FOOD_SERVING_SIZE_RAW,
-                        FOOD_SERVING_SIZE_VALUE,
-                        FOOD_SERVING_UNIT_ID,
-                        FOOD_WEIGHT_RAW,
-                        FOOD_WEIGHT_VALUE,
-                        FOOD_WEIGHT_UNIT_ID,
-                        REFERENCE_INTAKE,
-                        CALORIES,
-                        CARBOHYDRATE_G,
-                        PROTEIN_G,
-                        FAT_G,
-                        SUGAR_G,
-                        FIBER_G,
-                        CALCIUM_MG,
-                        IRON_MG,
-                        POTASSIUM_MG,
-                        SODIUM_MG,
-                        VITAMIN_C_MG,
-                        CHOLESTEROL_MG,
-                        SATURATED_FAT_G,
-                        TRANS_FAT_G,
-                        UNSATURATED_FAT_G,
-                        TOTAL_FATTY_ACIDS_G,
-                        SUGAR_ALCOHOL_G,
-                        CAFFEINE_MG,
-                        ORIGIN_COUNTRY_NAME,
-                        IS_IMPORTED,
-                        IMAGE_URL,
-                        IS_USER_CREATED,
-                        CREATED_BY_USER_ID,
-                        DATA_SOURCE_NAME,
-                        API_RECORD_UPDATED_DATE,
-                        CREATED_DATE,
-                        UPDATED_DATE
-                    )
-                    VALUES (
-                       FITFUSION_FOOD_ITEMS_SEQ.NEXTVAL,
-                       #{foodCode, jdbcType=VARCHAR},
-                       #{foodBarcode, jdbcType=VARCHAR},
-                       #{foodName, jdbcType=VARCHAR},
-                       #{makerName, jdbcType=VARCHAR},
-                       #{foodGroupName, jdbcType=VARCHAR},
-                       #{foodClassName, jdbcType=VARCHAR},
-                       #{foodCat1Code, jdbcType=VARCHAR},
-                       #{foodCat1Name, jdbcType=VARCHAR},
-                       #{foodRefCode, jdbcType=VARCHAR},
-                       #{foodRefName, jdbcType=VARCHAR},
-                       #{foodCat2Code, jdbcType=VARCHAR},
-                       #{foodCat2Name, jdbcType=VARCHAR},
-                       #{foodServingSizeRaw, jdbcType=VARCHAR},
-                       #{foodServingSizeValue, jdbcType=DOUBLE},
-                       #{foodServingUnitId, jdbcType=INTEGER},
-                       #{foodWeightRaw, jdbcType=VARCHAR},
-                       #{foodWeightValue, jdbcType=DOUBLE},
-                       #{foodWeightUnitId, jdbcType=INTEGER},
-                       #{referenceIntake, jdbcType=VARCHAR},
-                       #{calories, jdbcType=DOUBLE},
-                       #{carbohydrateG, jdbcType=DOUBLE},
-                       #{proteinG, jdbcType=DOUBLE},
-                       #{fatG, jdbcType=DOUBLE},
-                       #{sugarG, jdbcType=DOUBLE},
-                       #{fiberG, jdbcType=DOUBLE},
-                       #{calciumMg, jdbcType=DOUBLE},
-                       #{ironMg, jdbcType=DOUBLE},
-                       #{potassiumMg, jdbcType=DOUBLE},
-                       #{sodiumMg, jdbcType=DOUBLE},
-                       #{vitaminCMg, jdbcType=DOUBLE},
-                       #{cholesterolMg, jdbcType=DOUBLE},
-                       #{saturatedFatG, jdbcType=DOUBLE},
-                       #{transFatG, jdbcType=DOUBLE},
-                       #{unsaturatedFatG, jdbcType=DOUBLE},
-                       #{totalFattyAcidsG, jdbcType=DOUBLE},
-                       #{sugarAlcoholG, jdbcType=DOUBLE},
-                       #{caffeineMg, jdbcType=DOUBLE},
-                       #{originCountryName, jdbcType=VARCHAR},
-                       #{isImported, jdbcType=VARCHAR},
-                       #{imageUrl, jdbcType=VARCHAR},
-                       #{isUserCreated, jdbcType=VARCHAR},
-                       #{createdByUserId, jdbcType=INTEGER},
-                       #{dataSourceName, jdbcType=VARCHAR},
-                       #{apiRecordUpdateDate, jdbcType=DATE},
-                       #{createdDate, jdbcType=DATE},
-                       #{updatedDate, jdbcType=DATE}
-                   )
-    </insert>
+    <select id="existsByFoodCode" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM FITFUSION_FOOD_ITEMS
+        WHERE FOOD_CODE = #{foodCode}
+    </select>
 
     <!-- 10. UPDATE -->
     <update id="updateFood" parameterType="com.fitfusion.dto.FoodDto">

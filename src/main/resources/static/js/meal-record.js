@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const li = document.createElement('li');
-                li.className = "record-food-search-list-item d-flex justify-content-between align-items-center record-food-search-clickable-area";
+                li.className = "meal-record-list-item d-flex justify-content-between align-items-center meal-record-clickable-area";
                 li.setAttribute("data-food-id", food.id);
 
                 const isFavorite = favorites.has(food.id);
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let innerHTML = `
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="bi ${starClass} record-food-search-favorite-icon" style="cursor:pointer;" data-food-id="${food.id}"></i>
+                            <i class="bi ${starClass} meal-record-favorite-icon" style="cursor:pointer;" data-food-id="${food.id}"></i>
                             <strong>${food.name}</strong>
                         </div>
                         <small class="text-secondary">${food.serving} / ${food.kcal}kcal</small>
@@ -161,26 +161,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     innerHTML += `
                         <div class="d-flex align-items-center gap-2">
                             <span>${amount}${food.unit || 'g'}</span>
-                            <button class="btn btn-sm btn-danger record-food-search-remove-btn" type="button">✕</button>
+                            <button class="btn btn-sm btn-danger meal-record-remove-btn" type="button">✕</button>
                         </div>
                     `;
                 } else {
                     innerHTML += `
                         <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-sm btn-outline-primary record-food-search-add-btn" type="button">+</button>
+                            <button class="btn btn-sm btn-outline-primary meal-record-add-btn" type="button">+</button>
                         </div>
                     `;
                 }
 
                 li.innerHTML = innerHTML;
 
-                li.querySelector('.record-food-search-favorite-icon').addEventListener('click', (ev) => {
+                li.querySelector('.meal-record-favorite-icon').addEventListener('click', (ev) => {
                     ev.stopPropagation();
                     toggleFavorite(food.id);
                     renderResults();
                 });
 
-                const addBtn = li.querySelector('.record-food-search-add-btn');
+                const addBtn = li.querySelector('.meal-record-add-btn');
                 if (addBtn) {
                     addBtn.addEventListener('click', (ev) => {
                         ev.stopPropagation();
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
-                const removeBtn = li.querySelector('.record-food-search-remove-btn');
+                const removeBtn = li.querySelector('.meal-record-remove-btn');
                 if (removeBtn) {
                     removeBtn.addEventListener('click', (ev) => {
                         ev.stopPropagation();

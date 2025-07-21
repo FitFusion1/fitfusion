@@ -6,8 +6,18 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 
-//JSON 역직렬화 시 자동으로 숫자 파싱(JSON → Double 변환)
-
+/**
+ * Jackson JSON 역직렬화 시 문자열을 Double로 변환하는 deserializer.
+ *
+ * - 빈 문자열("") 또는 null인 경우 → null 반환
+ * - 숫자 형식 문자열인 경우 → Double로 변환
+ * - 그 외의 경우는 내부 유틸에서 처리
+ *
+ * 예:
+ *   "123.45" → 123.45
+ *   ""       → null
+ *   null     → null
+ */
 public class EmptyStringToNullDoubleDeserializer extends JsonDeserializer<Double> {
 
     @Override
