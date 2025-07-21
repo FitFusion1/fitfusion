@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title>헬스장 비교</title>
+    <link rel="stylesheet" th:href="@{/css/compareGyms.css}">
+</head>
+
+<body>
+<main layout:fragment="content" class="container py-5 d-flex flex-column min-vh-100">
+    <h2 class="mb-4 text-center fw-bold">최근 찾아본 헬스장</h2>
+
+    <form id="compareForm" class="flex-grow-1">
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th></th>
+                <th>이름</th>
+                <th>주소</th>
+                <th>⭐ 평균 별점</th>
+                <th>❤️ 찜 수</th>
+                <th>💬 리뷰 수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="gym : ${detailDataList}">
+                <td>
+                    <label>
+                        <input type="checkbox" name="gym"
+                               th:value="${gym.gymId}"
+                               th:data-name="${gym.name}"
+                               th:data-rating="${gym.averageRating}"
+                               th:data-review="${gym.reviewCount}" >
+                    </label>
+                </td>
+                <td th:text="${gym.name}"></td>
+                <td th:text="${gym.address}"></td>
+                <td th:text="${gym.averageRating}"></td>
+                <td></td>
+                <td th:text="${gym.reviewCount}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+
+
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-success px-4 me-3" onclick="compareGyms()">비교하기</button>
+            <a th:href="@{/map}" class="btn btn-secondary px-4">이전으로</a>
+        </div>
+    </form>
+</main>
+
+<th:block layout:fragment="script">
+    <script>
+            function compareGyms() {
+                const checked  = document.querySelectorAll('input[name="gym"]:checked');
+                if (checked .length < 2 || checked .length > 3) {
+                    alert("헬스장을 최소 2개 이상, 3개 이하로 선택해주세요");
+            }   else {
+                    const gyms = [];
+                    checked.forEach((checkbox) => {
+                        gyms.push({
+                            id: checkbox.value,
+                            name: checkbox.dataset.name,
+                            rating: parseFloat(checkbox.dataset.rating),
+                            review: parseInt(checkbox.dataset.review)
+                        });
+                    });
+                        gyms.sort((a, b) => b.rating - a.rating);
+
+                        let result = "헬스장 비교 결과 (별점 기준)\n";
+                        gyms.forEach((gym, i) => {
+                            result += `${i + 1}위, ${gym.name} - ${gym.rating}점, ${gym.review}개 리뷰\n `;
+                        });
+                        alert(result);
+                }
+        }
+    </script>
+</th:block>
+</body>
+</html>

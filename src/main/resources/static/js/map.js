@@ -1,8 +1,11 @@
 let map = null; // 카카오 맵 객체
 let userLat, userLon; // 현재 사용자의 위도, 경도
-let openOverlay = null; // 열려 있는 오버레이(말풍선) 객체, 하나만 열기 위해 사용
-let currentPositionMarker = null; // 현재 위치를 표시하는 마커 객체
-let gymMarkers = []; // 지도 위의 헬스장 마커들을 저장하는 배열(초기화 시 사용)
+let openOverlay = null; // 열려 있는 오버레이 객체
+let currentPositionMarker = null; // 현재 위치 마커
+let gymMarkers = []; // 헬스장 마커 저장 배열
+let selectedGyms = []; // ✅ 전역에서 선택한 헬스장들 저장
+const loginUserId = document.getElementById("loginUserId").value;
+console.log("loginUserId : " + loginUserId);
 
 
 window.onload = function () {
@@ -57,11 +60,8 @@ window.onload = function () {
             return;
         }
 
-        const ps = new kakao.maps.services.Places(); //  생성자 함수 장소 검색을 지원받는 api을 받는다
-        // 생성자 함수로 만들어진 ps로 ketwordSerarch 메소드를 실행할 수 있다
-        // 이 기능은 입력한 키워드로 장소를 검색
+        const ps = new kakao.maps.services.Places();
         ps.keywordSearch(keyword, function (data, status) {
-            console.log('data2:', data , status);
             if (status === kakao.maps.services.Status.OK && data.length > 0) {
                 initMap(parseFloat(data[0].y), parseFloat(data[0].x));
             } else {
@@ -74,39 +74,29 @@ window.onload = function () {
         gymMarkers.forEach(m => m.setMap(null));
         gymMarkers = [];
 
-        // encodeURIComponent() : 특수 문자(공백, 한글 등)를 URL에서 안전하게 인코딩하기 위해서
-        // ex) /api/kakao/gyms?keyword=%EB%A7%8C%EC%88%98%EC%97%AD&lat=37.45729&lon=126.72929 이런식으로 전달되어서
         const url = "/api/kakao/gyms?lat=" + encodeURIComponent(userLat) + "&lon=" + encodeURIComponent(userLon);
 
         fetch(url)
-            .then(res => res.json()) // ① 응답을 JSON으로 파싱
-            .then(data => {                      // ② 파싱된 데이터를 처리 시작
-                if (!Array.isArray(data)) {     // ③ 데이터가 배열인지 확인
+            .then(res => res.json())
+            .then(data => {
+                if (!Array.isArray(data)) {
                     alert("헬스장 정보를 불러오지 못했습니다.");
                     return;
                 }
 
-                // ④ 여기에 헬스장 마커 찍는 로직이 들어감
                 data.forEach(place => {
-                    console.log('data :', data);
                     const name = place.place_name;
                     const x = place.x;
                     const y = place.y;
                     const kakaoPlaceId = name + "_" + x + "_" + y;
 
-                    const marker = new kakao.maps.Marker({
-                        map: map,
-                        position: new kakao.maps.LatLng(y, x),
-                        image: new kakao.maps.MarkerImage(
-                            "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png",
-                            new kakao.maps.Size(40, 42),
-                            { offset: new kakao.maps.Point(13, 42) }
-                        )
-                    });
+                    // ✅ 커스텀 div 마커 생성
+                    const marker = document.createElement('div');
+                    marker.className = 'gym-label';
+                    marker.innerText = '헬스장';
 
-                    gymMarkers.push(marker);
-
-                    kakao.maps.event.addListener(marker, 'click', function () {
+                    // ✅ 클릭 이벤트 등록
+                    marker.addEventListener('click', function () {
                         const gymData = {
                             name: name,
                             address: place.road_address_name || place.address_name || '',
@@ -120,16 +110,14 @@ window.onload = function () {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(gymData)
-
                         })
                             .then(res => res.json())
                             .then(savedGym => {
-                                console.log('savedGym :', savedGym);
                                 if (!savedGym.gymId) return;
+                                savedGym.averageRating = savedGym.averageRating ?? 0.0;
 
                                 if (openOverlay) openOverlay.setMap(null);
 
-                                console.log('gymData :', gymData);
                                 const content = document.createElement('div');
                                 content.style.padding = '10px';
                                 content.style.fontSize = '14px';
@@ -149,9 +137,8 @@ window.onload = function () {
                                 };
                                 content.appendChild(closeBtn);
 
-                                const rating = savedGym.averageRating || 0.0;
                                 const ratingEl = document.createElement('div');
-                                ratingEl.innerHTML = `⭐ <strong>${rating.toFixed(1)}</strong> / 5.0`;
+                                ratingEl.innerHTML = `⭐ <strong>${savedGym.averageRating.toFixed(1)}</strong> / 5.0`;
                                 ratingEl.style.margin = '5px 0';
                                 ratingEl.style.color = '#f5a623';
                                 ratingEl.style.fontWeight = 'bold';
@@ -168,21 +155,31 @@ window.onload = function () {
                                 link.style.color = 'blue';
                                 content.appendChild(link);
 
-                                const compareBtn = document.createElement('button');
-                                compareBtn.innerText = '비교하기';
-                                compareBtn.style.marginTop = '5px';
-                                compareBtn.style.padding = '4px 8px';
-                                compareBtn.style.border = '1px solid #333';
-                                compareBtn.style.borderRadius = '4px';
-                                compareBtn.style.background = '#f0f0f0';
-                                compareBtn.style.cursor = 'pointer';
 
-                                compareBtn.onclick = () => {
+                                if (loginUserId != null && loginUserId !== "") {
+                                    const compareBtn = document.createElement('a');
+                                    compareBtn.innerText = '비교하기';
+                                    compareBtn.style.marginTop = '5px';
+                                    compareBtn.style.padding = '4px 8px';
+                                    compareBtn.style.border = '1px solid #333';
+                                    compareBtn.style.borderRadius = '4px';
+                                    compareBtn.style.background = '#f0f0f0';
+                                    compareBtn.style.cursor = 'pointer';
 
-                                };
+                                    compareBtn.addEventListener('click', function (e) {
+                                        e.preventDefault();
 
-                                content.appendChild(document.createElement('br')); // 줄바꿈
-                                content.appendChild(compareBtn);
+                                        if (!selectedGyms.includes(savedGym.gymId)) {
+                                            selectedGyms.push(savedGym.gymId);
+                                            alert(`'${savedGym.name}' 헬스장이 비교 목록에 추가되었습니다.`);
+                                        } else {
+                                            alert("이미 비교 목록에 있는 헬스장입니다.");
+                                        }
+                                    });
+
+                                    content.appendChild(document.createElement('br'));
+                                    content.appendChild(compareBtn);
+                                }
 
                                 const overlay = new kakao.maps.CustomOverlay({
                                     map: map,
@@ -190,14 +187,38 @@ window.onload = function () {
                                     content: content,
                                     yAnchor: 1
                                 });
-                                console.log("savedGym.lat/lon:", savedGym.latitude, savedGym.longitude);
-                                overlay.setMap(map);
-                                console.log('오버레이 출력됨');
-                                openOverlay = overlay;
 
+                                overlay.setMap(map);
+                                openOverlay = overlay;
                             });
                     });
+
+                    // ✅ 커스텀 오버레이로 마커로 표시
+                    const markerOverlay = new kakao.maps.CustomOverlay({
+                        position: new kakao.maps.LatLng(y, x),
+                        content: marker,
+                        yAnchor: 1
+                    });
+
+                    markerOverlay.setMap(map);
+                    gymMarkers.push(markerOverlay);
                 });
             });
     }
 };
+
+// ✅ compare-final-btn 이벤트 리스너는 딱 한 번만 여기서 등록!
+document.addEventListener('DOMContentLoaded', function () {
+    const compareBtn = document.getElementById('compare-final-btn');
+    if (compareBtn) {
+        compareBtn.addEventListener('click', function () {
+            if (selectedGyms.length === 0) {
+                alert("비교할 헬스장을 먼저 선택해주세요.");
+                return;
+            }
+
+            const query = selectedGyms.map(id => `gymId=${id}`).join('&');
+            window.location.href = `/gyms/compare?${query}`;
+        });
+    }
+});

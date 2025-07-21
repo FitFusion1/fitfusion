@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>📍 내 위치 & 헬스장 검색</title>
     <link rel="icon" href="data:,">
     <link rel="stylesheet" th:href="@{/css/map.css}">
+
 </head>
 <body>
+
+<input type="hidden" id="loginUserId" th:value="${loginUserId}">
 
 <!-- ⬆️ 네비게이션 -->
 <div id="nav-container">
@@ -23,8 +26,10 @@
 <!-- 🗺️ 지도 표시 영역 -->
 <div id="map"></div>
 
+<button sec:authorize="isAuthenticated()" id="compare-final-btn">📊 선택한 헬스장 비교하기</button>
+
 <!-- 📉 Kakao Maps API -->
-<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=709f8eb34b8860e51c2ed050bf8bc0f1&libraries=services"></script>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=96263ed7ed52fb388f0ed47a45e746cd&libraries=services"></script>
 <script th:src="@{/js/map.js}"></script>
 
 </body>
