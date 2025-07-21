@@ -6,15 +6,27 @@
 <mapper namespace="com.fitfusion.mapper.FoodMapper">
 
     <!-- ResultMap: FoodDto 매핑 -->
+    <!-- property="Dto 변수명" column="DB 변수명" 매핑 -->
     <resultMap id="foodResultMap" type="com.fitfusion.dto.FoodDto">
         <id property="foodId" column="FOOD_ID"/>
-        <result property="foodCd" column="FOOD_CD"/>
-        <result property="barcode" column="BARCODE"/>
+        <result property="foodCode" column="FOOD_CODE"/>
+        <result property="foodBarcode" column="FOOD_BARCODE"/>
         <result property="foodName" column="FOOD_NAME"/>
-        <result property="servingSizeRaw" column="SERVING_SIZE_VALUE"/>
-        <result property="servingUnitId" column="SERVING_UNIT_ID"/>
-        <result property="servingUnitSymbol" column="FOOD_UNIT_SYMBOL"/>
-        <result property="foodWeight" column="FOOD_WEIGHT"/>
+        <result property="makerName" column="MAKER_NAME"/>
+        <result property="foodGroupName" column="FOOD_GROUP_NAME"/>
+        <result property="foodClassName" column="FOOD_CLASS_NAME"/>
+        <result property="foodCat1Code" column="FOOD_CAT1_CODE"/>
+        <result property="foodCat1Name" column="FOOD_CAT1_NAME"/>
+        <result property="foodRefCode" column="FOOD_REF_CODE"/>
+        <result property="foodRefName" column="FOOD_REF_NAME"/>
+        <result property="foodCat2Code" column="FOOD_CAT2_CODE"/>
+        <result property="foodCat2Name" column="FOOD_CAT2_NAME"/>
+        <result property="foodServingSizeRaw" column="FOOD_SERVING_SIZE_RAW"/>
+        <result property="foodServingSizeValue" column="FOOD_SERVING_SIZE_VALUE"/>
+        <result property="foodServingUnitId" column="FOOD_SERVING_UNIT_ID"/>
+        <result property="foodWeightRaw" column="FOOD_WEIGHT_RAW"/>
+        <result property="foodWeightValue" column="FOOD_WEIGHT_VALUE"/>
+        <result property="foodWeightUnitId" column="FOOD_WEIGHT_UNIT_ID"/>
         <result property="referenceIntake" column="REFERENCE_INTAKE"/>
         <result property="calories" column="CALORIES"/>
         <result property="carbohydrateG" column="CARBOHYDRATE_G"/>
@@ -25,6 +37,8 @@
         <result property="cholesterolMg" column="CHOLESTEROL_MG"/>
         <result property="saturatedFatG" column="SATURATED_FAT_G"/>
         <result property="transFatG" column="TRANS_FAT_G"/>
+        <result property="unsaturatedFatG" column="UNSATURATED_FAT_G"/>
+        <result property="totalFattyAcidsG" column="TOTAL_FATTY_ACIDS_G"/>
         <result property="potassiumMg" column="POTASSIUM_MG"/>
         <result property="fiberG" column="FIBER_G"/>
         <result property="imageUrl" column="IMAGE_URL"/>
@@ -32,11 +46,6 @@
         <result property="createdByUserId" column="CREATED_BY_USER_ID"/>
         <result property="createdDate" column="CREATED_DATE"/>
         <result property="dataSourceName" column="DATA_SOURCE_NAME"/>
-        <result property="dataModifiedDate" column="DATA_MODIFIED_DATE"/>
-        <result property="dataType" column="DATA_TYPE"/>
-        <result property="makerName" column="MAKER_NAME"/>
-        <result property="importerName" column="IMPORTER_NAME"/>
-        <result property="distributorName" column="DISTRIBUTOR_NAME"/>
         <result property="originCountryName" column="ORIGIN_COUNTRY_NAME"/>
         <result property="isImported" column="IS_IMPORTED"/>
         <result property="ironMg" column="IRON_MG"/>
@@ -44,17 +53,11 @@
         <result property="vitaminCMg" column="VITAMIN_C_MG"/>
         <result property="sugarAlcoholG" column="SUGAR_ALCOHOL_G"/>
         <result property="caffeineMg" column="CAFFEINE_MG"/>
-        <result property="alcoholG" column="ALCOHOL_G"/>
-        <result property="foodCategoryCode" column="FOOD_CATEGORY_CODE"/>
-        <result property="foodCategoryName" column="FOOD_CATEGORY_NAME"/>
-        <result property="foodMidCategoryCode" column="FOOD_MID_CATEGORY_CODE"/>
-        <result property="foodMidCategoryName" column="FOOD_MID_CATEGORY_NAME"/>
-        <result property="foodSmallCategoryCode" column="FOOD_SMALL_CATEGORY_CODE"/>
-        <result property="foodSmallCategoryName" column="FOOD_SMALL_CATEGORY_NAME"/>
-        <result property="foodDetailCategoryCode" column="FOOD_DETAIL_CATEGORY_CODE"/>
-        <result property="foodDetailCategoryName" column="FOOD_DETAIL_CATEGORY_NAME"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+        <result property="apiRecordUpdateDate" column="API_RECORD_UPDATED_DATE"/>
     </resultMap>
 
+<!-- ★필드명 수정 끝나면 *부분 필드명으로 전부 채워넣기 -->
     <!-- 1. 전체 조회 -->
     <select id="findAll" resultMap="foodResultMap">
         SELECT
@@ -62,7 +65,7 @@
             u.FOOD_UNIT_SYMBOL
         FROM FITFUSION_FOOD_ITEMS f
                  LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.SERVING_UNIT_ID = u.FOOD_UNIT_ID
+                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
     </select>
 
     <!-- 2. 상세 조회 -->
@@ -72,7 +75,7 @@
             u.FOOD_UNIT_SYMBOL
         FROM FITFUSION_FOOD_ITEMS f
                  LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.SERVING_UNIT_ID = u.FOOD_UNIT_ID
+                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
         WHERE f.FOOD_ID = #{foodId}
     </select>
 
@@ -83,7 +86,7 @@
             u.FOOD_UNIT_SYMBOL
         FROM FITFUSION_FOOD_ITEMS f
                  LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.SERVING_UNIT_ID = u.FOOD_UNIT_ID
+                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
         WHERE f.FOOD_NAME LIKE '%' || #{keyword} || '%'
     </select>
 
@@ -94,8 +97,8 @@
             u.FOOD_UNIT_SYMBOL
         FROM FITFUSION_FOOD_ITEMS f
                  LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.SERVING_UNIT_ID = u.FOOD_UNIT_ID
-        WHERE f.FOOD_CATEGORY_CODE = #{categoryCode}
+                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
+        WHERE f.FOOD_CAT1_CODE = #{foodCat1Code}
     </select>
 
     <!-- 5. 수입 여부 검색 -->
@@ -105,7 +108,7 @@
             u.FOOD_UNIT_SYMBOL
         FROM FITFUSION_FOOD_ITEMS f
                  LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.SERVING_UNIT_ID = u.FOOD_UNIT_ID
+                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
         WHERE f.IS_IMPORTED = #{isImported}
     </select>
 
@@ -116,7 +119,7 @@
             u.FOOD_UNIT_SYMBOL
         FROM FITFUSION_FOOD_ITEMS f
                  LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.SERVING_UNIT_ID = u.FOOD_UNIT_ID
+                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
         WHERE f.FOOD_NAME LIKE '%' || #{keyword} || '%'
         OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
     </select>
@@ -128,165 +131,305 @@
         WHERE FOOD_NAME LIKE '%' || #{keyword} || '%'
     </select>
 
-    <!-- 8. INSERT -->
+    <!-- 8. INSERT (API -> DB 저장용)
+        FoodDto에 해당하는 컬럼들을 DB에 저장함
+    -->
     <insert id="insertFood" parameterType="com.fitfusion.dto.FoodDto">
-        <selectKey keyProperty="foodId" resultType="Integer" order="BEFORE">
-            SELECT FITFUSION_FOOD_ITEMS_SEQ.NEXTVAL FROM DUAL
-        </selectKey>
         INSERT INTO FITFUSION_FOOD_ITEMS (
         FOOD_ID,
-        FOOD_CD,
-        BARCODE,
+        FOOD_CODE,
+        FOOD_BARCODE,
         FOOD_NAME,
-        FOOD_CATEGORY_CODE,
-        FOOD_CATEGORY_NAME,
-        FOOD_MID_CATEGORY_CODE,
-        FOOD_MID_CATEGORY_NAME,
-        FOOD_SMALL_CATEGORY_CODE,
-        FOOD_SMALL_CATEGORY_NAME,
-        FOOD_DETAIL_CATEGORY_CODE,
-        FOOD_DETAIL_CATEGORY_NAME,
-        SERVING_SIZE_VALUE,
-        SERVING_UNIT_ID,
-        FOOD_WEIGHT,
+        MAKER_NAME,
+        FOOD_GROUP_NAME,
+        FOOD_CLASS_NAME,
+        FOOD_CAT1_CODE,
+        FOOD_CAT1_NAME,
+        FOOD_REF_CODE,
+        FOOD_REF_NAME,
+        FOOD_CAT2_CODE,
+        FOOD_CAT2_NAME,
+        FOOD_SERVING_SIZE_RAW,
+        FOOD_SERVING_SIZE_VALUE,
+        FOOD_SERVING_UNIT_ID,
+        FOOD_WEIGHT_RAW,
+        FOOD_WEIGHT_VALUE,
+        FOOD_WEIGHT_UNIT_ID,
         REFERENCE_INTAKE,
         CALORIES,
         CARBOHYDRATE_G,
         PROTEIN_G,
         FAT_G,
         SUGAR_G,
+        FIBER_G,
+        CALCIUM_MG,
+        IRON_MG,
+        POTASSIUM_MG,
         SODIUM_MG,
+        VITAMIN_C_MG,
         CHOLESTEROL_MG,
         SATURATED_FAT_G,
         TRANS_FAT_G,
-        POTASSIUM_MG,
-        FIBER_G,
+        UNSATURATED_FAT_G,
+        TOTAL_FATTY_ACIDS_G,
+        SUGAR_ALCOHOL_G,
+        CAFFEINE_MG,
+        ORIGIN_COUNTRY_NAME,
+        IS_IMPORTED,
         IMAGE_URL,
         IS_USER_CREATED,
         CREATED_BY_USER_ID,
-        CREATED_DATE,
         DATA_SOURCE_NAME,
-        DATA_MODIFIED_DATE,
-        DATA_TYPE,
-        MAKER_NAME,
-        IMPORTER_NAME,
-        DISTRIBUTOR_NAME,
-        ORIGIN_COUNTRY_NAME,
-        IS_IMPORTED,
-        IRON_MG,
-        CALCIUM_MG,
-        VITAMIN_C_MG,
-        SUGAR_ALCOHOL_G,
-        CAFFEINE_MG,
-        ALCOHOL_G
+        API_RECORD_UPDATED_DATE,
+        CREATED_DATE,
+        UPDATED_DATE
         ) VALUES (
-        #{foodId, jdbcType=INTEGER},
-        #{foodCd, jdbcType=VARCHAR},
-        #{barcode, jdbcType=VARCHAR},
+        FITFUSION_FOOD_ITEMS_SEQ.NEXTVAL,
+        #{foodCode, jdbcType=VARCHAR},
+        #{foodBarcode, jdbcType=VARCHAR},
         #{foodName, jdbcType=VARCHAR},
-        #{foodCategoryCode, jdbcType=VARCHAR},
-        #{foodCategoryName, jdbcType=VARCHAR},
-        #{foodMidCategoryCode, jdbcType=VARCHAR},
-        #{foodMidCategoryName, jdbcType=VARCHAR},
-        #{foodSmallCategoryCode, jdbcType=VARCHAR},
-        #{foodSmallCategoryName, jdbcType=VARCHAR},
-        #{foodDetailCategoryCode, jdbcType=VARCHAR},
-        #{foodDetailCategoryName, jdbcType=VARCHAR},
-        #{servingSizeRaw, jdbcType=VARCHAR},
-        #{servingUnitId, jdbcType=INTEGER},
-        #{foodWeight, jdbcType=DECIMAL},
-        #{referenceIntake, jdbcType=DECIMAL},
-        #{calories, jdbcType=DECIMAL},
-        #{carbohydrateG, jdbcType=DECIMAL},
-        #{proteinG, jdbcType=DECIMAL},
-        #{fatG, jdbcType=DECIMAL},
-        #{sugarG, jdbcType=DECIMAL},
-        #{sodiumMg, jdbcType=DECIMAL},
-        #{cholesterolMg, jdbcType=DECIMAL},
-        #{saturatedFatG, jdbcType=DECIMAL},
-        #{transFatG, jdbcType=DECIMAL},
-        #{potassiumMg, jdbcType=DECIMAL},
-        #{fiberG, jdbcType=DECIMAL},
+        #{makerName, jdbcType=VARCHAR},
+        #{foodGroupName, jdbcType=VARCHAR},
+        #{foodClassName, jdbcType=VARCHAR},
+        #{foodCat1Code, jdbcType=VARCHAR},
+        #{foodCat1Name, jdbcType=VARCHAR},
+        #{foodRefCode, jdbcType=VARCHAR},
+        #{foodRefName, jdbcType=VARCHAR},
+        #{foodCat2Code, jdbcType=VARCHAR},
+        #{foodCat2Name, jdbcType=VARCHAR},
+        #{foodServingSizeRaw, jdbcType=VARCHAR},
+        #{foodServingSizeValue, jdbcType=DOUBLE},
+        #{foodServingUnitId, jdbcType=INTEGER},
+        #{foodWeightRaw, jdbcType=VARCHAR},
+        #{foodWeightValue, jdbcType=DOUBLE},
+        #{foodWeightUnitId, jdbcType=INTEGER},
+        #{referenceIntake, jdbcType=VARCHAR},
+        #{calories, jdbcType=DOUBLE},
+        #{carbohydrateG, jdbcType=DOUBLE},
+        #{proteinG, jdbcType=DOUBLE},
+        #{fatG, jdbcType=DOUBLE},
+        #{sugarG, jdbcType=DOUBLE},
+        #{fiberG, jdbcType=DOUBLE},
+        #{calciumMg, jdbcType=DOUBLE},
+        #{ironMg, jdbcType=DOUBLE},
+        #{potassiumMg, jdbcType=DOUBLE},
+        #{sodiumMg, jdbcType=DOUBLE},
+        #{vitaminCMg, jdbcType=DOUBLE},
+        #{cholesterolMg, jdbcType=DOUBLE},
+        #{saturatedFatG, jdbcType=DOUBLE},
+        #{transFatG, jdbcType=DOUBLE},
+        #{unsaturatedFatG, jdbcType=DOUBLE},
+        #{totalFattyAcidsG, jdbcType=DOUBLE},
+        #{sugarAlcoholG, jdbcType=DOUBLE},
+        #{caffeineMg, jdbcType=DOUBLE},
+        #{originCountryName, jdbcType=VARCHAR},
+        #{isImported, jdbcType=VARCHAR},
         #{imageUrl, jdbcType=VARCHAR},
         #{isUserCreated, jdbcType=VARCHAR},
         #{createdByUserId, jdbcType=INTEGER},
-        #{createdDate, jdbcType=DATE},
         #{dataSourceName, jdbcType=VARCHAR},
-        #{dataModifiedDate, jdbcType=DATE},
-        #{dataType, jdbcType=VARCHAR},
-        #{makerName, jdbcType=VARCHAR},
-        #{importerName, jdbcType=VARCHAR},
-        #{distributorName, jdbcType=VARCHAR},
-        #{originCountryName, jdbcType=VARCHAR},
-        #{isImported, jdbcType=VARCHAR},
-        #{ironMg, jdbcType=DECIMAL},
-        #{calciumMg, jdbcType=DECIMAL},
-        #{vitaminCMg, jdbcType=DECIMAL},
-        #{sugarAlcoholG, jdbcType=DECIMAL},
-        #{caffeineMg, jdbcType=DECIMAL},
-        #{alcoholG, jdbcType=DECIMAL}
+        #{apiRecordUpdateDate, jdbcType=DATE},
+        #{createdDate, jdbcType=DATE},
+        #{updatedDate, jdbcType=DATE}
         )
     </insert>
 
+    <!-- 9. MERGE (중복 방지용 삽입)
+    API용인 이유 : 중복 여부를 foodCode(API에서의 음식의 고유번호)로 체크함
+     ✅ 기능 설명
+     - FOOD_CODE를 기준으로 이미 존재하는 식품은 INSERT를 생략하고
+       존재하지 않을 경우에만 새로운 데이터를 삽입함
+     ✅ 시퀀스 낭비 방지:
+     - foodId를 Java에서 미리 SELECT해서 파라미터로 넘긴 후 #{foodId}로 사용
+-->
+    <!--
+        12. INSERT (API -> DB 저장용)
+        DB에 중복된 음식DB를 저장하지 않기 위해 사용
 
-    <!-- 9. UPDATE -->
+        FOOD_CODE 기준으로 존재 여부 판단 → 없을 때만 INSERT
+
+        MERGE 기반 INSERT 구문
+
+        ✅ 기능 설명
+        - FOOD_CODE를 기준으로 이미 존재하는 식품은 INSERT를 생략하고,
+          존재하지 않을 경우에만 새로운 데이터를 삽입함
+        - 중복 체크를 Java 코드에서 하지 않고 DB에서 처리하므로
+          대량 데이터 처리 시 효율적임
+
+        ✅ 사용 조건
+        - FOOD_CODE는 고유해야 하며, NOT NULL이 보장되어야 함
+        - FOOD_ID는 Java에서 시퀀스(FITFUSION_FOOD_ITEMS_SEQ)를 호출해 설정해야 함
+        - WHEN MATCHED THEN UPDATE 절은 현재 미사용(향후 확장 가능)
+
+        ✅ 사용 예
+        int result = foodMapper.mergeFood(foodDto);
+        if (result == 1) { ... } // 삽입 성공
+    -->
+    <insert id="mergeFood" parameterType="com.fitfusion.dto.FoodDto">
+        MERGE INTO FITFUSION_FOOD_ITEMS target
+            USING (SELECT #{foodCode} AS FOOD_CODE FROM DUAL) src
+            ON (target.FOOD_CODE = src.FOOD_CODE)
+            WHEN NOT MATCHED THEN
+                INSERT (
+                        FOOD_ID,
+                        FOOD_CODE,
+                        FOOD_BARCODE,
+                        FOOD_NAME,
+                        MAKER_NAME,
+                        FOOD_GROUP_NAME,
+                        FOOD_CLASS_NAME,
+                        FOOD_CAT1_CODE,
+                        FOOD_CAT1_NAME,
+                        FOOD_REF_CODE,
+                        FOOD_REF_NAME,
+                        FOOD_CAT2_CODE,
+                        FOOD_CAT2_NAME,
+                        FOOD_SERVING_SIZE_RAW,
+                        FOOD_SERVING_SIZE_VALUE,
+                        FOOD_SERVING_UNIT_ID,
+                        FOOD_WEIGHT_RAW,
+                        FOOD_WEIGHT_VALUE,
+                        FOOD_WEIGHT_UNIT_ID,
+                        REFERENCE_INTAKE,
+                        CALORIES,
+                        CARBOHYDRATE_G,
+                        PROTEIN_G,
+                        FAT_G,
+                        SUGAR_G,
+                        FIBER_G,
+                        CALCIUM_MG,
+                        IRON_MG,
+                        POTASSIUM_MG,
+                        SODIUM_MG,
+                        VITAMIN_C_MG,
+                        CHOLESTEROL_MG,
+                        SATURATED_FAT_G,
+                        TRANS_FAT_G,
+                        UNSATURATED_FAT_G,
+                        TOTAL_FATTY_ACIDS_G,
+                        SUGAR_ALCOHOL_G,
+                        CAFFEINE_MG,
+                        ORIGIN_COUNTRY_NAME,
+                        IS_IMPORTED,
+                        IMAGE_URL,
+                        IS_USER_CREATED,
+                        CREATED_BY_USER_ID,
+                        DATA_SOURCE_NAME,
+                        API_RECORD_UPDATED_DATE,
+                        CREATED_DATE,
+                        UPDATED_DATE
+                    )
+                    VALUES (
+                       FITFUSION_FOOD_ITEMS_SEQ.NEXTVAL,
+                       #{foodCode, jdbcType=VARCHAR},
+                       #{foodBarcode, jdbcType=VARCHAR},
+                       #{foodName, jdbcType=VARCHAR},
+                       #{makerName, jdbcType=VARCHAR},
+                       #{foodGroupName, jdbcType=VARCHAR},
+                       #{foodClassName, jdbcType=VARCHAR},
+                       #{foodCat1Code, jdbcType=VARCHAR},
+                       #{foodCat1Name, jdbcType=VARCHAR},
+                       #{foodRefCode, jdbcType=VARCHAR},
+                       #{foodRefName, jdbcType=VARCHAR},
+                       #{foodCat2Code, jdbcType=VARCHAR},
+                       #{foodCat2Name, jdbcType=VARCHAR},
+                       #{foodServingSizeRaw, jdbcType=VARCHAR},
+                       #{foodServingSizeValue, jdbcType=DOUBLE},
+                       #{foodServingUnitId, jdbcType=INTEGER},
+                       #{foodWeightRaw, jdbcType=VARCHAR},
+                       #{foodWeightValue, jdbcType=DOUBLE},
+                       #{foodWeightUnitId, jdbcType=INTEGER},
+                       #{referenceIntake, jdbcType=VARCHAR},
+                       #{calories, jdbcType=DOUBLE},
+                       #{carbohydrateG, jdbcType=DOUBLE},
+                       #{proteinG, jdbcType=DOUBLE},
+                       #{fatG, jdbcType=DOUBLE},
+                       #{sugarG, jdbcType=DOUBLE},
+                       #{fiberG, jdbcType=DOUBLE},
+                       #{calciumMg, jdbcType=DOUBLE},
+                       #{ironMg, jdbcType=DOUBLE},
+                       #{potassiumMg, jdbcType=DOUBLE},
+                       #{sodiumMg, jdbcType=DOUBLE},
+                       #{vitaminCMg, jdbcType=DOUBLE},
+                       #{cholesterolMg, jdbcType=DOUBLE},
+                       #{saturatedFatG, jdbcType=DOUBLE},
+                       #{transFatG, jdbcType=DOUBLE},
+                       #{unsaturatedFatG, jdbcType=DOUBLE},
+                       #{totalFattyAcidsG, jdbcType=DOUBLE},
+                       #{sugarAlcoholG, jdbcType=DOUBLE},
+                       #{caffeineMg, jdbcType=DOUBLE},
+                       #{originCountryName, jdbcType=VARCHAR},
+                       #{isImported, jdbcType=VARCHAR},
+                       #{imageUrl, jdbcType=VARCHAR},
+                       #{isUserCreated, jdbcType=VARCHAR},
+                       #{createdByUserId, jdbcType=INTEGER},
+                       #{dataSourceName, jdbcType=VARCHAR},
+                       #{apiRecordUpdateDate, jdbcType=DATE},
+                       #{createdDate, jdbcType=DATE},
+                       #{updatedDate, jdbcType=DATE}
+                   )
+    </insert>
+
+    <!-- 10. UPDATE -->
     <update id="updateFood" parameterType="com.fitfusion.dto.FoodDto">
         UPDATE FITFUSION_FOOD_ITEMS
         SET
-            FOOD_CD = #{foodCd, jdbcType=VARCHAR},
-            BARCODE = #{barcode, jdbcType=VARCHAR},
+            FOOD_CODE = #{foodCode, jdbcType=VARCHAR},
+            FOOD_BARCODE = #{foodBarcode, jdbcType=VARCHAR},
             FOOD_NAME = #{foodName, jdbcType=VARCHAR},
-            FOOD_CATEGORY_CODE = #{foodCategoryCode, jdbcType=VARCHAR},
-            FOOD_CATEGORY_NAME = #{foodCategoryName, jdbcType=VARCHAR},
-            FOOD_MID_CATEGORY_CODE = #{foodMidCategoryCode, jdbcType=VARCHAR},
-            FOOD_MID_CATEGORY_NAME = #{foodMidCategoryName, jdbcType=VARCHAR},
-            FOOD_SMALL_CATEGORY_CODE = #{foodSmallCategoryCode, jdbcType=VARCHAR},
-            FOOD_SMALL_CATEGORY_NAME = #{foodSmallCategoryName, jdbcType=VARCHAR},
-            FOOD_DETAIL_CATEGORY_CODE = #{foodDetailCategoryCode, jdbcType=VARCHAR},
-            FOOD_DETAIL_CATEGORY_NAME = #{foodDetailCategoryName, jdbcType=VARCHAR},
-            SERVING_SIZE_VALUE = #{servingSizeRaw, jdbcType=VARCHAR},
-            SERVING_UNIT_ID = #{servingUnitId, jdbcType=INTEGER},
-            FOOD_WEIGHT = #{foodWeight, jdbcType=DECIMAL},
-            REFERENCE_INTAKE = #{referenceIntake, jdbcType=DECIMAL},
+            MAKER_NAME = #{makerName, jdbcType=VARCHAR},
+            FOOD_GROUP_NAME = #{foodGroupName, jdbcType=VARCHAR},
+            FOOD_CLASS_NAME = #{foodClassName, jdbcType=VARCHAR},
+            FOOD_CAT1_CODE = #{foodCat1Code, jdbcType=VARCHAR},
+            FOOD_CAT1_NAME = #{foodCat1Name, jdbcType=VARCHAR},
+            FOOD_REF_CODE = #{foodRefCode, jdbcType=VARCHAR},
+            FOOD_REF_NAME = #{foodRefName, jdbcType=VARCHAR},
+            FOOD_CAT2_CODE = #{foodCat2Code, jdbcType=VARCHAR},
+            FOOD_CAT2_NAME = #{foodCat2Name, jdbcType=VARCHAR},
+            FOOD_SERVING_SIZE_RAW = #{foodServingSizeRaw, jdbcType=VARCHAR},
+            FOOD_SERVING_SIZE_VALUE = #{foodServingSizeValue, jdbcType=DECIMAL},
+            FOOD_SERVING_UNIT_ID = #{foodServingUnitId, jdbcType=INTEGER},
+            FOOD_WEIGHT_RAW = #{foodWeightRaw, jdbcType=VARCHAR},
+            FOOD_WEIGHT_VALUE = #{foodWeightValue, jdbcType=DECIMAL},
+            FOOD_WEIGHT_UNIT_ID = #{foodWeightUnitId, jdbcType=INTEGER},
+            REFERENCE_INTAKE = #{referenceIntake, jdbcType=VARCHAR},
             CALORIES = #{calories, jdbcType=DECIMAL},
             CARBOHYDRATE_G = #{carbohydrateG, jdbcType=DECIMAL},
             PROTEIN_G = #{proteinG, jdbcType=DECIMAL},
             FAT_G = #{fatG, jdbcType=DECIMAL},
             SUGAR_G = #{sugarG, jdbcType=DECIMAL},
+            FIBER_G = #{fiberG, jdbcType=DECIMAL},
+            CALCIUM_MG = #{calciumMg, jdbcType=DECIMAL},
+            IRON_MG = #{ironMg, jdbcType=DECIMAL},
+            POTASSIUM_MG = #{potassiumMg, jdbcType=DECIMAL},
             SODIUM_MG = #{sodiumMg, jdbcType=DECIMAL},
+            VITAMIN_C_MG = #{vitaminCMg, jdbcType=DECIMAL},
             CHOLESTEROL_MG = #{cholesterolMg, jdbcType=DECIMAL},
             SATURATED_FAT_G = #{saturatedFatG, jdbcType=DECIMAL},
             TRANS_FAT_G = #{transFatG, jdbcType=DECIMAL},
-            POTASSIUM_MG = #{potassiumMg, jdbcType=DECIMAL},
-            FIBER_G = #{fiberG, jdbcType=DECIMAL},
+            UNSATURATED_FAT_G = #{unsaturatedFatG, jdbcType=DECIMAL},
+            TOTAL_FATTY_ACIDS_G = #{totalFattyAcidsG, jdbcType=DECIMAL},
+            SUGAR_ALCOHOL_G = #{sugarAlcoholG, jdbcType=DECIMAL},
+            CAFFEINE_MG = #{caffeineMg, jdbcType=DECIMAL},
+            ORIGIN_COUNTRY_NAME = #{originCountryName, jdbcType=VARCHAR},
+            IS_IMPORTED = #{isImported, jdbcType=VARCHAR},
             IMAGE_URL = #{imageUrl, jdbcType=VARCHAR},
             IS_USER_CREATED = #{isUserCreated, jdbcType=VARCHAR},
             CREATED_BY_USER_ID = #{createdByUserId, jdbcType=INTEGER},
-            CREATED_DATE = #{createdDate, jdbcType=DATE},
             DATA_SOURCE_NAME = #{dataSourceName, jdbcType=VARCHAR},
-            DATA_MODIFIED_DATE = #{dataModifiedDate, jdbcType=DATE},
-            DATA_TYPE = #{dataType, jdbcType=VARCHAR},
-            MAKER_NAME = #{makerName, jdbcType=VARCHAR},
-            IMPORTER_NAME = #{importerName, jdbcType=VARCHAR},
-            DISTRIBUTOR_NAME = #{distributorName, jdbcType=VARCHAR},
-            ORIGIN_COUNTRY_NAME = #{originCountryName, jdbcType=VARCHAR},
-            IS_IMPORTED = #{isImported, jdbcType=VARCHAR},
-            IRON_MG = #{ironMg, jdbcType=DECIMAL},
-            CALCIUM_MG = #{calciumMg, jdbcType=DECIMAL},
-            VITAMIN_C_MG = #{vitaminCMg, jdbcType=DECIMAL},
-            SUGAR_ALCOHOL_G = #{sugarAlcoholG, jdbcType=DECIMAL},
-            CAFFEINE_MG = #{caffeineMg, jdbcType=DECIMAL},
-            ALCOHOL_G = #{alcoholG, jdbcType=DECIMAL}
+            API_RECORD_UPDATED_DATE = #{apiRecordUpdateDate, jdbcType=DATE},
+            CREATED_DATE = #{createdDate, jdbcType=DATE},
+            UPDATED_DATE = #{updatedDate, jdbcType=DATE}
         WHERE FOOD_ID = #{foodId, jdbcType=INTEGER}
     </update>
 
-    <!-- 10. DELETE -->
+    <!-- 11. DELETE -->
     <delete id="deleteFood" parameterType="Integer">
         DELETE FROM FITFUSION_FOOD_ITEMS
         WHERE FOOD_ID = #{foodId, jdbcType=INTEGER}
     </delete>
 
-    <!-- 11. 모든 FOOD_NAME 목록 -->
+    <!-- 12. 모든 FOOD_NAME 목록 -->
     <select id="findAllFoodNames" resultType="String">
         SELECT FOOD_NAME
         FROM FITFUSION_FOOD_ITEMS

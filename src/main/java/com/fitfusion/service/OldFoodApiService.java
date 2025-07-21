@@ -98,11 +98,11 @@
 //        FoodDto dto = new FoodDto();
 //
 //        dto.setFoodName(item.path("FOOD_NM_KR").asText(""));
-//        dto.setGroupName(item.path("FOOD_CAT1_NM").asText(""));
-//        dto.setFoodCategoryCode(item.path("FOOD_CAT1_CD").asText(""));
-//        dto.setFoodCategoryName(item.path("FOOD_CAT1_NM").asText(""));
-//        dto.setFoodMidCategoryCode(item.path("FOOD_CAT2_CD").asText(""));
-//        dto.setFoodMidCategoryName(item.path("FOOD_CAT2_NM").asText(""));
+//        dto.setFoodGroupName(item.path("FOOD_CAT1_NM").asText(""));
+//        dto.setFoodCat1Code(item.path("FOOD_CAT1_CD").asText(""));
+//        dto.setFoodCat1Name(item.path("FOOD_CAT1_NM").asText(""));
+//        dto.setFoodCat2Code(item.path("FOOD_CAT2_CD").asText(""));
+//        dto.setFoodCat2Name(item.path("FOOD_CAT2_NM").asText(""));
 //        dto.setFoodSmallCategoryCode(item.path("FOOD_CAT3_CD").asText(""));
 //        dto.setFoodSmallCategoryName(item.path("FOOD_CAT3_NM").asText(""));
 //        dto.setFoodDetailCategoryCode(item.path("FOOD_CAT4_CD").asText(""));

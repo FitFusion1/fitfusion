@@ -25,9 +25,10 @@ public interface FoodMapper {
     List<FoodDto> searchFoods(@Param("keyword") String keyword);
 
     /**
-     * 대분류 코드로 검색
+     * 식품 대분류 코드(FOOD_CAT1_CD)로 검색
+     * 예: 찜류(7), 빵 및 과자류(2), 나물·숙채류(13) 등
      */
-    List<FoodDto> findByCategory(@Param("categoryCode") String categoryCode);
+    List<FoodDto> findByFoodCat1Code(@Param("foodCat1Code") String foodCat1Code);
 
     /**
      * 수입 여부로 검색
@@ -61,11 +62,19 @@ public interface FoodMapper {
     /**
      * 음식 삭제
      */
-    int deleteFood(@Param("foodId") Integer foodId);
+    int deleteFood(Integer foodId);
 
     /**
      * 모든 음식명 조회
      * (중복 체크 / 오토컴플릿용)
      */
     List<String> findAllFoodNames();
+
+    /**
+     * FOOD_CODE가 없을 때만 INSERT하는 MERGE 쿼리
+     *
+     * @param food 저장할 식품 객체
+     * @return INSERT된 경우 1, 아니면 0
+     */
+    int mergeFood(FoodDto food);
 }
