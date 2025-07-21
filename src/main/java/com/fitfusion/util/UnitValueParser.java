@@ -2,6 +2,11 @@ package com.fitfusion.util;
 
 import com.fitfusion.vo.ServingInfo;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class UnitValueParser {
 
     /**
@@ -13,36 +18,30 @@ public class UnitValueParser {
      *   "100" → size=100.0, unitSymbol=null
      *   null / 빈 값 → null
      */
-    public static ServingInfo parse(String value) {
-        if (value == null || value.isBlank()) return null;
+    private static final Logger log = LoggerFactory.getLogger(UnitValueParser.class);
 
-        String trimmed = value.trim();
-        StringBuilder numberPart = new StringBuilder();
-        StringBuilder unitPart = new StringBuilder();
+    private static final Pattern VALUE_WITH_UNIT_PATTERN =
+            Pattern.compile("([0-9.,]+)\\s*([a-zA-Z㎍%가-힣]+)");
 
-        for (char c : trimmed.toCharArray()) {
-            if (Character.isDigit(c) || c == '.') {
-                numberPart.append(c);
-            } else if (c == ',') {
-                // 쉼표는 숫자에서 제거
-                continue;
-            } else {
-                unitPart.append(c);
+    public static ServingInfo parse(String raw) {
+        if (raw == null || raw.isBlank()) return null;
+
+        Matcher matcher = VALUE_WITH_UNIT_PATTERN.matcher(raw.trim());
+        if (matcher.find()) {  // 변경 포인트
+            try {
+                double size = Double.parseDouble(matcher.group(1).replace(",", ""));
+                String symbol = matcher.group(2);
+                return new ServingInfo(size, symbol);
+            } catch (NumberFormatException e) {
+                log.warn("숫자 파싱 실패: '{}'", raw);
             }
+        } else {
+            log.warn("정규식 매칭 실패: '{}'", raw);
         }
 
-        if (numberPart.length() == 0 && unitPart.length() == 0) return null;
-
-        Double size = null;
-        try {
-            if (numberPart.length() > 0) {
-                size = Double.parseDouble(numberPart.toString());
-            }
-        } catch (NumberFormatException ignored) {}
-
-        String unit = unitPart.toString().trim();
-        return new ServingInfo(size, unit.isEmpty() ? null : unit);
+        return null;
     }
+
 
 //    // 개선 전 버전1(클래스명 : ServingSizeParser)
 //    /**
@@ -105,5 +104,37 @@ public class UnitValueParser {
 //        String unit = unitPart.toString().trim();
 //        return new ServingInfo(size, unit.isEmpty() ? null : unit);
 //    }
+
+//    // 개선 전 버전3. foodWeight에 null이 들어가는 경우가 있어서 버림.
+//public static ServingInfo parse(String value) {
+//    if (value == null || value.isBlank()) return null;
+//
+//    String trimmed = value.trim();
+//    StringBuilder numberPart = new StringBuilder();
+//    StringBuilder unitPart = new StringBuilder();
+//
+//    for (char c : trimmed.toCharArray()) {
+//        if (Character.isDigit(c) || c == '.') {
+//            numberPart.append(c);
+//        } else if (c == ',') {
+//            // 쉼표는 숫자에서 제거
+//            continue;
+//        } else {
+//            unitPart.append(c);
+//        }
+//    }
+//
+//    if (numberPart.length() == 0 && unitPart.length() == 0) return null;
+//
+//    Double size = null;
+//    try {
+//        if (numberPart.length() > 0) {
+//            size = Double.parseDouble(numberPart.toString());
+//        }
+//    } catch (NumberFormatException ignored) {}
+//
+//    String unit = unitPart.toString().trim();
+//    return new ServingInfo(size, unit.isEmpty() ? null : unit);
+//}
 
 }

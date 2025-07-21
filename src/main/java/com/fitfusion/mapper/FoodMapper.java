@@ -71,10 +71,10 @@ public interface FoodMapper {
     List<String> findAllFoodNames();
 
     /**
-     * FOOD_CODE가 없을 때만 INSERT하는 MERGE 쿼리
+     * 해당 FOOD_CODE를 가진 음식이 이미 DB에 존재하는지 확인
      *
-     * @param food 저장할 식품 객체
-     * @return INSERT된 경우 1, 아니면 0
+     * @param foodCode 확인할 식품 고유 코드
+     * @return 존재하면 1 이상, 존재하지 않으면 0
      */
-    int mergeFood(FoodDto food);
+    int existsByFoodCode(String foodCode);
 }
