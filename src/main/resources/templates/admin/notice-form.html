@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='admin'">
+<head>
+    <meta charset="UTF-8" />
+    <title>공지사항 생성</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/admin.css}">
+    </th:block>
+</head>
+
+<section layout:fragment="content" class="main">
+    <!-- 헤더 -->
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1><i class="fas fa-bullhorn"></i> 공지사항 등록</h1>
+            <p class="admin-subtitle">/admin/notice-form</p>
+        </div>
+        <div class="admin-header-right">
+            <a th:href="@{/admin/notice}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 뒤로가기</a>
+        </div>
+    </div>
+
+    <!-- 공지사항 폼 -->
+    <div class="admin-section" style="max-width:600px;margin:auto;">
+        <form method="post" th:action="@{/admin/notice/create}">
+            <div class="detail-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <label for="notice-title" style="font-weight:600;">제목</label>
+                <input type="text" id="notice-title" name="title" class="admin-input" placeholder="공지 제목을 입력하세요" style="padding:12px 10px;font-size:16px;border-radius:6px;border:1px solid #ccc;">
+            </div>
+            <div class="detail-item" style="flex-direction:column;align-items:stretch;gap:8px;margin-top:20px;">
+                <label for="notice-content" style="font-weight:600;">내용</label>
+                <textarea id="notice-content" name="content" rows="8" class="admin-input" placeholder="공지 내용을 입력하세요" style="padding:12px 10px;font-size:16px;border-radius:6px;border:1px solid #ccc;resize:vertical;"></textarea>
+            </div>
+            <div class="action-buttons" style="margin-top:32px;">
+                <button type="submit" class="admin-btn admin-btn-primary"><i class="fas fa-save"></i> 저장</button>
+                <a th:href="@{/admin/notice}" class="admin-btn admin-btn-secondary"><i class="fas fa-times"></i> 취소</a>
+            </div>
+        </form>
+    </div>
+</section>
+</html>

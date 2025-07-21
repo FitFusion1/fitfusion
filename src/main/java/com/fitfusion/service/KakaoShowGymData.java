@@ -4,14 +4,19 @@ import com.fitfusion.dto.DetailDataDto;
 import com.fitfusion.dto.GymDataDto;
 import com.fitfusion.dto.GymReviewDto;
 import com.fitfusion.mapper.GymMapper;
+import com.fitfusion.mapper.GymReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class KakaoShowGymData {
 
     private final GymMapper gymMapper;
+    private final GymReviewMapper gymReviewMapper;
 
     // 1. 저장만 하는 메서드
     public void insertGym(GymDataDto gymDataDto) {
@@ -25,7 +30,38 @@ public class KakaoShowGymData {
     }
 
     public GymDataDto selectByKakaoPlaceId(String kakaoPlaceId) {
-        return gymMapper.select(kakaoPlaceId);
+
+        GymDataDto gym = gymMapper.select(kakaoPlaceId);
+
+        List<GymReviewDto> reviews = gymReviewMapper.selectReviewsByGymId(gym.getGymId());
+
+        if (reviews != null && !reviews.isEmpty()) {
+            double sum = 0;
+            int count = 0;
+
+            for (GymReviewDto r : reviews) {
+                if (r.getRating() != null) {
+                    sum += r.getRating();
+                    count++;
+                }
+            }
+
+            double avg = Math.round((sum / count) * 10) / 10.0;
+            gym.setAverageRating(avg);
+        } else {
+            gym.setAverageRating(0.0);
+        }
+
+        return gym;
+    }
+
+    public List<DetailDataDto> detailFormList(List<Integer> gymIds) {
+        List<DetailDataDto> result = new ArrayList<>();
+        for (int gymId : gymIds) {
+            DetailDataDto dto = detailForm(gymId); // 기존 detailForm 재활용
+            result.add(dto);
+        }
+        return result;
     }
 
     public DetailDataDto detailForm(int gymId) {
@@ -44,6 +80,7 @@ public class KakaoShowGymData {
             }
             if(count > 0) {
                 avgRating = sumRating / count;
+                avgRating = Math.round(avgRating * 10) / 10.0;
                 dto.setAverageRating(avgRating);
                 dto.setReviewCount(count);
             } else {

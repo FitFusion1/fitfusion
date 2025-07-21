@@ -5,7 +5,7 @@
       layout:decorate="~{/layout/base}" th:with="menu='admin'">
 <head>
     <meta charset="UTF-8" />
-    <title>회원 관리 - FitFusion</title>
+    <title>회원 관리</title>
     <th:block layout:fragment="css">
         <link rel="stylesheet" th:href="@{/css/admin.css}">
     </th:block>
@@ -19,7 +19,6 @@
             <p class="admin-subtitle">/admin/users</p>
         </div>
         <div class="admin-header-right">
-
             <a th:href="@{/admin}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
             <a href="#" class="admin-btn admin-btn-secondary">
                 <!-- 추후 만들 예정 -->

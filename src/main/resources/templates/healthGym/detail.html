@@ -1,0 +1,148 @@
+  <!DOCTYPE html>
+  <html xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.w3.org/1999/xhtml"
+        layout:decorate="~{layout/base}">
+
+  <head>
+    <title>헬스장 상세정보</title>
+    <link rel="stylesheet" th:href="@{/css/gym-detail.css}">
+  </head>
+
+  <body>
+  <main layout:fragment="content" class="container py-5">
+
+    <div class="wrapper">
+
+      <!-- 상단 이미지 + 찜 버튼 -->
+      <div class="gym-header">
+        <img src="/images/healthGym.jpg" alt="헬스장 이미지">
+        <button class="like-button">🤍 찜하기</button>
+      </div>
+
+      <!-- 지도 페이지로 돌아가기 버튼 -->
+      <div class="back-button-container">
+        <a th:href="@{/map}" class="back-button">← 지도 페이지로</a>
+      </div>
+
+      <!-- 상세 정보 박스 -->
+      <div class="gym-container">
+        <h2 th:text="${detailData.getName()}">헬스장이름</h2>
+        <p><strong>주소:</strong><span th:text="${detailData.getAddress()}"></span></p>
+        <p><strong>전화번호:</strong><span th:text="${detailData.getPhone()}"></span></p>
+        <hr>
+
+        <!--  평균 평점 박스 -->
+        <h3 class="section-title">⭐ 이용 후기</h3>
+        <div class="rating-box">
+          <ul class="average-rating">
+            <strong th:text="${detailData.getAverageRating()}"></strong><span th:text=" '별점' + ${detailData.getReviewCount()} + '개'" class="review-count"></span>
+            <div class="star-icons">⭐⭐⭐⭐⭐</div>
+          </ul>
+        </div>
+
+        <!-- 리뷰 작성 버튼 -->
+        <div sec:authorize="isAuthenticated()" class="write-review-box my-3">
+          <button class="btn btn-primary" id="review-btn">리뷰 작성하기</button>
+        </div>
+
+        <!-- 리뷰 작성 폼 -->
+        <div id="review-form" style="display: none;" class="card p-4 shadow-sm mb-4">
+          <input type="hidden" id="gymId" th:value="${detailData.gymId}" />
+
+          <div class="mb-3">
+            <label for="rating" class="form-label">별점</label>
+            <select id="rating" class="form-select">
+              <option value="1">⭐</option>
+              <option value="2">⭐⭐</option>
+              <option value="3">⭐⭐⭐</option>
+              <option value="4">⭐⭐⭐⭐</option>
+              <option value="5">⭐⭐⭐⭐⭐</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="content" class="form-label">리뷰 내용</label>
+            <textarea id="content" class="form-control" rows="3" placeholder="내용을 입력하세요"></textarea>
+          </div>
+
+          <div class="text-end">
+            <button id="review-submit-btn" class="btn btn-success">리뷰 제출</button>
+          </div>
+        </div>
+
+        <!--  리뷰 카드 목록 -->
+        <ul>
+          <li th:each="review : ${detailData.gymReviews}">
+            <div class="review-card" id="${review.reviewId}">
+              <div class="review-header">
+                <div>
+                  <p class="username"
+                     th:if="${user != null}"
+                     th:text="${review.getUser().name}">아이디</p>
+                  <p class="stars" th:if="${review.rating != null}">
+                    <span th:each="i : ${#numbers.sequence(1, review.rating)}">⭐</span>
+                  </p>
+                </div>
+                <span class="review-date"
+                      th:text="${#dates.format(review.createdDate, 'yyyy-MM-dd')}">날짜</span>
+                <div th:if="${loginUserId != null and loginUserId == review.user.userId}">
+                  <button class="edit-button" th:attr="data-comment-id=${review.reviewId}">수정</button>
+                  <button class="delete-button" th:attr="data-comment-id=${review.reviewId}">삭제</button>
+                </div>
+              </div>
+              <div class="review-content">
+                <p th:text="${review.content}">내용</p>
+              </div>
+
+              <!-- 수정 폼 (기본 숨김) -->
+              <div class="edit-form" style="display: none;">
+                <div class="mb-2">
+                  <label>별점</label>
+                  <select class="form-select rating-select">
+                    <option value="1" th:selected="${review.rating == 1}">⭐</option>
+                    <option value="2" th:selected="${review.rating == 2}">⭐⭐</option>
+                    <option value="3" th:selected="${review.rating == 3}">⭐⭐⭐</option>
+                    <option value="4" th:selected="${review.rating == 4}">⭐⭐⭐⭐</option>
+                    <option value="5" th:selected="${review.rating == 5}">⭐⭐⭐⭐⭐</option>
+                  </select>
+                </div>
+
+                <div class="mb-2">
+                  <label>리뷰 내용</label>
+                  <textarea class="form-control content-textarea" rows="3"
+                            th:text="${review.content}"></textarea>
+                </div>
+
+                <button class="edit-submit-button btn btn-sm btn-success mt-2">수정 완료</button>
+              </div>
+
+            </div>
+          </li>
+        </ul>
+
+        <!-- 무한 스크롤 로딩 텍스트 -->
+        <p class="loading">리뷰를 불러오는 중...</p>
+
+        <hr>
+
+        <input type="hidden" id="latitude" th:value="${detailData.getLatitude()}" />
+        <input type="hidden" id="longitude" th:value="${detailData.getLongitude()}" />
+
+        <!-- 지도 영역 -->
+        <h3>📍 위치</h3>
+        <div id="map"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!--  추가된 스크립트 영역만 아래에 유지 -->
+  <div layout:fragment="script">
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=96263ed7ed52fb388f0ed47a45e746cd&libraries=services"></script>
+    <script th:src="@{/js/gym-detail.js}"></script>
+  </div>
+
+  </body>
+  </html>

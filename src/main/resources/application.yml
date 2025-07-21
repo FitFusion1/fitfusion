@@ -6,13 +6,9 @@ spring:
     url: jdbc:oracle:thin:@localhost:1521:xe
     username: fitfusion
     password: zxcv1234
-#개발 중 템플릿 캐싱 끄기 !!!!!!! commit 전에 확인하기#
-  thymeleaf:
-    cache: false
   config:
     import:
-    - classpath:securekey.yml
-
+      - classpath:securekey.yml
 server:
   port: 80
 mybatis:
@@ -20,3 +16,8 @@ mybatis:
   configuration:
     jdbc-type-for-null: null
   type-aliases-package: com.fitfusion.vo, com.fitfusion.dto
+
+kakao:
+  rest-api-key: 47eef7648a4fcca43d3b58f2460230f5
+  redirect-uri: http://localhost:8080/oauth/kakao/callback
+

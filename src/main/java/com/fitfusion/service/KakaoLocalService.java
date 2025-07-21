@@ -20,7 +20,7 @@ public class KakaoLocalService {
     private RestTemplate restTemplate;
 
     private static final String kakaoApiUrl = "https://dapi.kakao.com/v2/local/search/keyword.json";
-    private static final String restApiKey = "258fb141165b1f58e8cb1847169c112f";
+    private static final String restApiKey = "47eef7648a4fcca43d3b58f2460230f5";
 
     public String searchPlace(String keyword, Double latitude, Double longitude)  {
         // 1. URL 만들기

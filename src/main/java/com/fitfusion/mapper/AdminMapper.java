@@ -1,5 +1,6 @@
 package com.fitfusion.mapper;
 
+import com.fitfusion.vo.Notice;
 import com.fitfusion.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -68,5 +69,40 @@ public interface AdminMapper {
      * @param id
      */
     void softRestoreUserById(int id);
+
+    /**
+     * 모든 공지사항을 조회한다.
+     */
+    List<Notice> getAllNotices();
+
+    /**
+     * 해당 ID의 공지사항을 조회한다.
+     * @param id
+     */
+    Notice getNoticeById(int id);
+
+    /**
+     * notice 정보를 DB에 insert한다.
+     * @param notice
+     */
+    void insertNotice(Notice notice);
+
+    /**
+     * 전체 공지사항의 개수를 조회한다.
+     * @return
+     */
+    int countNotices();
+
+    /**
+     * 해당 ID의 공지사항을 삭제한다.
+     * @param id
+     */
+    void deleteNoticeById(int id);
+
+    /**
+     * 공지사항을 수정한다.
+     * @param notice
+     */
+    void modifyNotice(Notice notice);
 
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+<head>
+    <title>내 정보 수정</title>
+    <link layout:fragment="css" rel="stylesheet" th:href="@{/css/edit-user.css}">
+</head>
+<body>
+<section layout:fragment="content" class="main edit-user-main">
+    <h1>Edit My Info</h1>
+    <form class="edit-user-form">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your Name">
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@email.com">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="New Password">
+        </div>
+        <button type="submit" class="save-btn">Save Changes</button>
+        <a href="mypage.html" class="cancel-link">Cancel</a>
+    </form>
+</section>
+</body>
+</html>

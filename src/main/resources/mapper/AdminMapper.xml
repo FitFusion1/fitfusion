@@ -106,6 +106,7 @@
             experience_level    experience_level
         FROM
             fitfusion_users
+        ORDER BY user_id DESC
     </select>
 
     <!--
@@ -158,5 +159,89 @@
             user_id = #{id}
     </update>
 
+    <!--
+        List<Notice> getAllNotices();
+    -->
+    <select id="getAllNotices" resultType="Notice">
+        SELECT
+            notice_id       noticeId,
+            title,
+            content,
+            created_date    createdDate,
+            updated_date    updatedDate,
+            user_id         "user.userId"
+        FROM
+            fitfusion_notices
+        ORDER BY notice_id DESC
+
+    </select>
+
+    <!--
+        Notice getNoticeById(int id);
+    -->
+    <select id="getNoticeById" parameterType="int" resultType="Notice">
+        SELECT
+            notice_id       noticeId,
+            title,
+            content,
+            created_date    createdDate,
+            updated_date    updatedDate,
+            user_id         "user.userId"
+        FROM
+            fitfusion_notices
+        WHERE
+            notice_Id = #{id}
+    </select>
+
+
+    <!--
+        void insertNotice(Notice notice);
+    -->
+    <insert id="insertNotice" parameterType="Notice">
+        INSERT INTO fitfusion_notices (
+            notice_id,
+            title,
+            content,
+            created_date,
+            updated_date,
+            user_id
+        ) VALUES ( FITFUSION_NOTICE_SEQ.nextval,
+                   #{title},
+                   #{content},
+                   sysdate,
+                   sysdate,
+                   #{user.userId} )
+    </insert>
+
+
+    <!--
+        int countNotices();
+    -->
+    <select id="countNotices" resultType="int">
+        SELECT COUNT(*)
+        FROM fitfusion_notices
+    </select>
+
+    <!--
+        void deleteNoticeById(int id);
+    -->
+    <delete id="deleteNoticeById" parameterType="int">
+        DELETE FROM fitfusion_notices
+        WHERE
+            notice_id = #{id}
+    </delete>
+
+    <!--
+        void modifyNotice(Notice notice);
+    -->
+    <update id="modifyNotice" parameterType="Notice">
+        UPDATE fitfusion_notices
+        SET
+            title = #{title},
+            content = #{content},
+            updated_date = SYSDATE
+        WHERE
+            notice_id = #{noticeId}
+    </update>
 
 </mapper>

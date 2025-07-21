@@ -6,7 +6,7 @@
 }
 
 body {
-    color: #fff;
+    color: black;
 }
 
 header {
@@ -18,12 +18,13 @@ header {
     padding: 30px 26px;
 }
 
-nav a {
+nav a, nav button {
     font-family: 'IBM Plex Sans KR', sans-serif;
     color: #aaa;
     text-decoration: none;
     font-weight: 600;
     display: inline-block;
+    cursor: pointer;
 }
 
 nav .logo {
@@ -40,6 +41,7 @@ nav .logo {
     align-items: center;
     gap: 10px;
 }
+
 .nav-items ul, .login-buttons ul {
     list-style: none;
     display: flex;
@@ -52,7 +54,7 @@ nav .logo {
     gap: 50px;
 }
 
-.nav-items a:hover, .login-buttons a:hover {
+.nav-items a:hover, .login-buttons a:hover, .login-buttons button:hover {
     color: #00d084;
 }
 
@@ -171,3 +173,177 @@ footer {
     display: flex;
     justify-content: space-between;
 }
+
+/* 로그인 모달 */
+.login-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.login-modal {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    padding: 2.5rem 2rem 2rem 2rem;
+    min-width: 320px;
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    animation: modal-fade-in 0.2s;
+}
+
+@keyframes modal-fade-in {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.login-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.login-modal-close:hover {
+    color: #00d084;
+}
+
+.login-modal h2 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    color: #121212;
+    text-align: center;
+}
+
+.login-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.login-modal-form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    color: #444;
+    gap: 0.3rem;
+}
+
+.login-modal-form input[type="text"],
+.login-modal-form input[type="password"] {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fafbfc;
+    margin-top: 0.2rem;
+    transition: border 0.2s;
+}
+
+.login-modal-form input:focus {
+    border-color: #00d084;
+    outline: none;
+}
+
+.login-modal-submit {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: #00d084;
+    color: #fff;
+    transition: background 0.2s;
+    margin-top: 0.5rem;
+}
+
+.login-modal-submit:hover {
+    background: #00b374;
+}
+
+@media (max-width: 500px) {
+    .login-modal {
+        min-width: 90vw;
+        padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+    }
+}
+
+.login-modal small {
+    align-self: center;
+    color: red;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.login-footer p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 36px;
+    background-color: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px;
+    min-width: 140px;
+    z-index: 999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profile-dropdown .dropdown-item {
+    padding: 8px 10px;
+    color: #ccc;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.profile-dropdown .dropdown-item:hover,
+.profile-dropdown .dropdown-item a:hover,
+.profile-dropdown .dropdown-item button:hover {
+    background-color: #333;
+    color: #00d084;
+}
+
+.profile-dropdown a, .profile-dropdown button {
+    color: #ccc;
+    text-decoration: none;
+}
+
+.profile-icon {
+    padding: 4px;
+}
+
