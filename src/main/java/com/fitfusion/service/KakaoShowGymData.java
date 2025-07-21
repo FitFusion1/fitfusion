@@ -8,6 +8,7 @@ import com.fitfusion.mapper.GymReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -52,6 +53,15 @@ public class KakaoShowGymData {
         }
 
         return gym;
+    }
+
+    public List<DetailDataDto> detailFormList(List<Integer> gymIds) {
+        List<DetailDataDto> result = new ArrayList<>();
+        for (int gymId : gymIds) {
+            DetailDataDto dto = detailForm(gymId); // 기존 detailForm 재활용
+            result.add(dto);
+        }
+        return result;
     }
 
     public DetailDataDto detailForm(int gymId) {
