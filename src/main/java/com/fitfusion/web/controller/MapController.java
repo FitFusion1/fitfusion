@@ -9,8 +9,10 @@ import com.fitfusion.service.GymReviewService;
 import com.fitfusion.service.KakaoGymSearchService;
 import com.fitfusion.service.KakaoShowGymData;
 import com.fitfusion.vo.Gym;
+import com.fitfusion.vo.GymLikes;
 import com.fitfusion.vo.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
@@ -105,5 +107,39 @@ public class MapController {
         return ResponseEntity
                 .ok(deleteReview);
     }
+
+    @DeleteMapping("/gym/unlike/{gymId}")
+    public ResponseEntity<?> deleteLike(@PathVariable int gymId, @AuthenticationPrincipal SecurityUser securityUser) {
+
+        User user =  securityUser.getUser();
+        System.out.println("Controlleruser:" + user.getUserId());
+        kakaoShowGymData.deleteLike(gymId, user);
+        System.out.println("Controlleruser2:" + user.getUserId());
+
+        return ResponseEntity
+                .ok("찜 취소 완료");
+    }
+
+    @PostMapping("/gym/like/{gymId}")
+    public ResponseEntity<?> gymLike(@PathVariable int gymId,@AuthenticationPrincipal SecurityUser securityUser) {
+
+        User user = securityUser.getUser();
+
+        boolean isLiked = kakaoShowGymData.isAlreadyLiked(gymId, user.getUserId());
+
+
+        if (isLiked) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("이미 찜한 헬스장입니다.");
+
+        }
+
+        GymLikes gymLikes = kakaoShowGymData.insertLike(gymId, user);
+
+        return ResponseEntity
+                .ok(gymLikes);
+    }
+
 }
 
