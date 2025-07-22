@@ -157,3 +157,63 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+const likeBtns = document.getElementById("like-btns");
+
+if (likeBtns) {
+    likeBtns.addEventListener('click', function () {
+        let gymId = document.getElementById("gymId").value;
+
+        if (likeBtns.classList.contains('liked')) {
+            fetch(`/gym/unlike/${gymId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                }
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        alert("삭제 실패");
+                    } else {
+                        likeBtns.innerText = "🤍 찜하기";
+                        likeBtns.classList.remove('liked');
+                        likeBtns.style.backgroundColor = "";
+                        likeBtns.style.color = "";
+                        alert("찜 취소 완료");
+                    }
+                })
+                .catch(error => {
+                    alert("오류 발생: " + error.message);
+                });
+        }
+        else {
+            fetch(`/gym/like/${gymId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+            })
+                .then(res => {
+                    if (res.status === 409) {
+                        // 이미 찜한 경우
+                        return res.text().then(msg => {
+                            alert(msg); // "이미 찜한 헬스장입니다."
+                        });
+                    } else if (!res.ok) {
+                        throw new Error('서버 오류 발생');
+                    } else {
+                        // 찜 성공
+                        likeBtns.innerText = "❤️ 찜 완료";
+                        likeBtns.style.backgroundColor = "#ffebee";
+                        likeBtns.style.color = "#e91e63";
+                        alert("찜 완료");
+                        return res.json();
+                    }
+                })
+                .catch(error => {
+                    alert("오류 발생: " + error.message);
+                });
+        }
+    });
+}
