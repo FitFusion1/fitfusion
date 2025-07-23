@@ -10,7 +10,6 @@
     <resultMap id="foodResultMap" type="com.fitfusion.dto.FoodDto">
         <id property="foodId" column="FOOD_ID"/>
         <result property="foodCode" column="FOOD_CODE"/>
-        <result property="foodBarcode" column="FOOD_BARCODE"/>
         <result property="foodName" column="FOOD_NAME"/>
         <result property="makerName" column="MAKER_NAME"/>
         <result property="foodGroupName" column="FOOD_GROUP_NAME"/>
@@ -59,7 +58,7 @@
 
 <!-- ★필드명 수정 끝나면 *부분 필드명으로 전부 채워넣기 -->
     <!-- 1. 전체 조회 -->
-    <select id="findAll" resultMap="foodResultMap">
+    <select id="findAll" resultType="com.fitfusion.dto.FoodDto">
         SELECT
             f.*,
             u.FOOD_UNIT_SYMBOL
@@ -80,7 +79,7 @@
     </select>
 
     <!-- 3. 키워드 검색 -->
-    <select id="searchFoods" parameterType="String" resultMap="foodResultMap">
+    <select id="searchFoodsByKeyword" parameterType="String" resultMap="foodResultMap">
         SELECT
             f.*,
             u.FOOD_UNIT_SYMBOL
@@ -113,7 +112,7 @@
     </select>
 
     <!-- 6. 페이징 검색 -->
-    <select id="searchFoodsByPaging" parameterType="map" resultMap="foodResultMap">
+    <select id="searchFoodsByPaging" resultMap="foodResultMap">
         SELECT
             f.*,
             u.FOOD_UNIT_SYMBOL
@@ -138,7 +137,6 @@
         INSERT INTO FITFUSION_FOOD_ITEMS (
         FOOD_ID,
         FOOD_CODE,
-        FOOD_BARCODE,
         FOOD_NAME,
         MAKER_NAME,
         FOOD_GROUP_NAME,
@@ -186,7 +184,6 @@
         ) VALUES (
         FITFUSION_FOOD_ITEMS_SEQ.NEXTVAL,
         #{foodCode, jdbcType=VARCHAR},
-        #{foodBarcode, jdbcType=VARCHAR},
         #{foodName, jdbcType=VARCHAR},
         #{makerName, jdbcType=VARCHAR},
         #{foodGroupName, jdbcType=VARCHAR},
@@ -249,7 +246,6 @@
         UPDATE FITFUSION_FOOD_ITEMS
         SET
             FOOD_CODE = #{foodCode, jdbcType=VARCHAR},
-            FOOD_BARCODE = #{foodBarcode, jdbcType=VARCHAR},
             FOOD_NAME = #{foodName, jdbcType=VARCHAR},
             MAKER_NAME = #{makerName, jdbcType=VARCHAR},
             FOOD_GROUP_NAME = #{foodGroupName, jdbcType=VARCHAR},
@@ -307,6 +303,11 @@
     <select id="findAllFoodNames" resultType="String">
         SELECT FOOD_NAME
         FROM FITFUSION_FOOD_ITEMS
+    </select>
+
+    <!-- 단일 음식 조회 API -->
+    <select id="findById" parameterType="int" resultType="com.fitfusion.dto.FoodDto">
+        SELECT * FROM FITFUSION_FOOD_ITEMS WHERE FOOD_ID = #{id}
     </select>
 
 </mapper>

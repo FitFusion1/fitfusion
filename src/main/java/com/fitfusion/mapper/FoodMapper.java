@@ -22,7 +22,7 @@ public interface FoodMapper {
     /**
      * 음식명 LIKE 검색
      */
-    List<FoodDto> searchFoods(@Param("keyword") String keyword);
+    List<FoodDto> searchFoodsByKeyword(@Param("keyword") String keyword);
 
     /**
      * 식품 대분류 코드(FOOD_CAT1_CD)로 검색
@@ -77,4 +77,7 @@ public interface FoodMapper {
      * @return 존재하면 1 이상, 존재하지 않으면 0
      */
     int existsByFoodCode(String foodCode);
+
+
+    FoodDto findById(Integer id);
 }
