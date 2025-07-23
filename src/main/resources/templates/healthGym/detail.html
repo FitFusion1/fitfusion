@@ -17,7 +17,12 @@
       <!-- 상단 이미지 + 찜 버튼 -->
       <div class="gym-header">
         <img src="/images/healthGym.jpg" alt="헬스장 이미지">
-        <button class="like-button">🤍 찜하기</button>
+        <div sec:authorize="isAuthenticated()">
+          <button id="like-btns" class="like-button"
+                  th:classappend="${isLiked} ? 'liked' : ''">
+            <span th:text="${isLiked} ? '❤️ 찜됨' : '🤍 찜하기'"></span>
+          </button>
+        </div>
       </div>
 
       <!-- 지도 페이지로 돌아가기 버튼 -->
@@ -120,10 +125,6 @@
             </div>
           </li>
         </ul>
-
-        <!-- 무한 스크롤 로딩 텍스트 -->
-        <p class="loading">리뷰를 불러오는 중...</p>
-
         <hr>
 
         <input type="hidden" id="latitude" th:value="${detailData.getLatitude()}" />
