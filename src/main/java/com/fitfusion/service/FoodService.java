@@ -23,7 +23,7 @@ public class FoodService {
     }
 
     public List<FoodDto> searchFoods(String keyword) {
-        return foodMapper.searchFoods(keyword);
+        return foodMapper.searchFoodsByKeyword(keyword);
     }
 
     public PageResponseDto<FoodDto> searchFoodsWithPaging(String keyword, int pageNum, int pageSize) {

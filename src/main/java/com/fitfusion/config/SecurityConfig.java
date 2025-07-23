@@ -22,9 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
-                /* csrf 때문에 api 안 돼서 잠깐 csrf 비활성화. push 전엔 풀어!!! ↑ ↓
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/gyms/**"))*/
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/gyms/**"))
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/**").permitAll()

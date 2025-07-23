@@ -27,8 +27,8 @@ public class FoodDto {
     @JsonDeserialize(using = EmptyStringToNullStringDeserializer.class)
     private String foodCode;
 
-    // 바코드 -- 삭제 예정 (확장 가능성 때문에 넣었는데 API에 자료 없음)
-    private String foodBarcode;
+    // 바코드 -- 삭제함 (확장 가능성 때문에 넣었는데 API에 자료 없음)
+    // private String foodBarcode;
 
     // 식품명 (DB 필드명 : FOOD_NAME) ex) 고구마_찐고구마, 고구마전, 도넛_고구마품은 꽈배기
     @JsonProperty("FOOD_NM_KR") // API 필드명
