@@ -19,7 +19,7 @@
             <p class="admin-subtitle">/admin/notice-detail</p>
         </div>
         <div class="admin-header-right">
-            <a th:href="@{/admin}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
+            <a th:href="@{/admin/notice}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
         </div>
     </div>
 
@@ -41,9 +41,9 @@
             <div style="color:#888;font-size:14px;" th:text="${notice.user.userId}"><i class="fas fa-user"></i> 작성자: 관리자</div>
         </div>
         <div class="action-buttons" style="margin-top:32px;">
-            <button class="admin-btn admin-btn-secondary"><i class="fas fa-edit"></i> 수정</button>
-            <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
-            <a href="#" class="admin-btn admin-btn-primary"><i class="fas fa-arrow-left"></i> 목록으로</a>
+            <a th:href="@{/admin/notice/modify/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-secondary"><i class="fas fa-edit"></i> 수정</a>
+            <a th:href="@{/admin/notice/delete/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');"><i class="fas fa-trash"></i> 삭제</a>
+            <a th:href="@{/admin/notice}" class="admin-btn admin-btn-primary"><i class="fas fa-arrow-left"></i> 목록으로</a>
         </div>
     </div>
 </section>

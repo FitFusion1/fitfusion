@@ -15,14 +15,6 @@
     <!-- 헤더 -->
     <div class="admin-header">
         <div class="admin-header-left">
-            <h1><i class="fas fa-film"></i> 운동 영상 콘텐츠 관리</h1>
-            <p class="admin-subtitle">/admin/videos</p>
-        </div>
-    </div>
-
-    <!-- 헤더 -->
-    <div class="admin-header">
-        <div class="admin-header-left">
             <h1><i class="fas fa-play-circle"></i> 헬스 비디오 플레이어</h1>
             <p class="admin-subtitle">/admin/video-play</p>
         </div>
@@ -35,14 +27,46 @@
     <div class="admin-section" style="max-width: 700px; margin: 0 auto;">
         <div class="admin-section-title"><i class="fas fa-dumbbell"></i> 샘플 운동 비디오</div>
         <div class="stat-card" style="flex-direction: column; align-items: stretch;">
-            <video controls style="width:100%; border-radius: 12px; background: #000;">
-                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+            <!-- 비디오 플레이어 -->
+            <video controls style="width:100%; max-height:480px; border-radius: 12px; background: #000;">
+                <source th:src="@{${video.filePath}}" type="video/mp4">
                 브라우저가 video 태그를 지원하지 않습니다.
             </video>
+
+            <!-- 제목 및 설명 -->
             <div style="margin-top: 18px;">
-                <h3 style="margin-bottom: 8px;">상체 근력 홈트레이닝</h3>
-                <p style="color: #555;">이 비디오는 집에서 쉽게 따라할 수 있는 상체 근력 운동 루틴을 소개합니다. 초보자도 따라할 수 있으며, 반복 횟수와 자세에 집중하세요.</p>
+                <h3 th:text="${video.title}" style="margin-bottom: 8px;">상체 근력 홈트레이닝</h3>
+                <p th:text="${video.description}" style="color: #555;">이 비디오는 집에서 쉽게 따라할 수 있는 상체 근력 운동 루틴을 소개합니다.</p>
             </div>
+
+            <!-- 상세 정보 -->
+            <div style="margin-top: 20px; padding: 16px; background: #f8f9fa; border-radius: 10px;">
+                <table style="width: 100%; font-size: 14px; color: #333;">
+                    <tr>
+                        <th style="text-align: left; padding: 6px 0;">영상 ID</th>
+                        <td th:text="${video.videoId}">1</td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left; padding: 6px 0;">카테고리</th>
+                        <td th:text="${video.categoryId}">상체</td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left; padding: 6px 0;">영상 길이</th>
+                        <td th:text="${video.duration}">4:32</td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left; padding: 6px 0;">업로드 일시</th>
+                        <td th:text="${#dates.format(video.uploadDate, 'yyyy-MM-dd HH:mm:ss')}">2025-06-03 12:34:56</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="admin-actions" style="margin-top: 24px; text-align: right;">
+                <a th:href="@{/admin/video/delete/{no}(no=${video.videoId})}" class="admin-btn admin-btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');">
+                    <i class="fas fa-trash"></i> 삭제
+                </a>
+            </div>
+
         </div>
     </div>
 </section>

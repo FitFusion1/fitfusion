@@ -50,7 +50,7 @@
                     <td th:text="${notice.user.userId}">관리자</td>
                     <td>
                         <a th:href="@{/admin/notice/modify/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-secondary"><i class="fas fa-edit"></i> 수정</a>
-                        <a th:href="@{/admin/notice/delete/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</a>
+                        <a th:href="@{/admin/notice/delete/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');"><i class="fas fa-trash"></i> 삭제</a>
                     </td>
                 </tr>
                 </tbody>

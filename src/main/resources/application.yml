@@ -9,6 +9,10 @@ spring:
   config:
     import:
       - classpath:securekey.yml
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
 server:
   port: 80
 mybatis:
@@ -16,6 +20,10 @@ mybatis:
   configuration:
     jdbc-type-for-null: null
   type-aliases-package: com.fitfusion.vo, com.fitfusion.dto
+
+fitfusion:
+  upload:
+    video-path: ${SAVE_DIRECTORY}
 
 kakao:
   rest-api-key: 258fb141165b1f58e8cb1847169c112f

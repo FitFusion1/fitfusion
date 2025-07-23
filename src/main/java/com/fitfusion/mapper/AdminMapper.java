@@ -1,7 +1,6 @@
 package com.fitfusion.mapper;
 
-import com.fitfusion.vo.Notice;
-import com.fitfusion.vo.User;
+import com.fitfusion.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -105,4 +104,66 @@ public interface AdminMapper {
      */
     void modifyNotice(Notice notice);
 
+    /**
+     * 모든 비디오를 조회한다.
+     * @return
+     */
+    List<Video> getAllVideos();
+
+    /**
+     * 해당 ID의 비디오를 조회한다.
+     * @param id
+     * @return
+     */
+    Video getVideoById(int id);
+
+    /**
+     * 해당 ID의 비디오와 유저를 조회한다.
+     * @param id
+     * @return
+     */
+    Video getVideoByIdWithUser(int id);
+
+    /**
+     * 해당 ID의 비디오와 유저와 운동을 조회한다.
+     * @param id
+     * @return
+     */
+    Video getVideoByIdWithUserAndExercises(int id);
+
+    /**
+     * 모든 운동 종목을 조회한다.
+     * @return
+     */
+    List<Exercise> getAllExercises();
+
+    /**
+     * 모든 영상 카테고리를 조회한다.
+     * @return
+     */
+    List<VideoCategory> getAllVideoCategories();
+
+    /**
+     * 운동 영상을 추가한다.
+     * @param video
+     */
+    void insertVideo(Video video);
+
+    /**
+     * 비디오의 수를 조회한다.
+     * @return
+     */
+    int countVideos();
+
+    /**
+     * 해당 아이디의 영상을 삭제한다.
+     * @param id
+     */
+    void deleteVideoById(int id);
+
+    /**
+     * 해당 비디오의 영상을 업데이트한다.
+     * @param video
+     */
+    void updateVideo(Video video);
 }

@@ -27,7 +27,7 @@
     <div class="admin-section">
         <div class="admin-section-title"><i class="fas fa-video"></i> 운동 영상 콘텐츠 관리</div>
         <div class="admin-table-actions" style="margin-bottom:16px;">
-            <a href="#" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> 영상 추가</a>
+            <a th:href="@{/admin/video/create}" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> 영상 추가</a>
         </div>
         <div class="admin-table-container">
             <table class="admin-table">
@@ -42,71 +42,27 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>201</td>
-                    <td>푸쉬업 가이드</td>
-                    <td>상체</td>
-                    <td>4:32</td>
-                    <td>2025-06-03</td>
+                <tr th:if="${!videos.isEmpty()}"
+                th:each="video, stat : ${videos}">
+                    <td th:text="${video.videoId}">1</td>
                     <td>
-                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
+                        <a th:text="${video.title}" th:href="@{/admin/video/{id}(id=${video.videoId})}"> 푸쉬업 가이드</a>
                     </td>
-                </tr>
-                <tr>
-                    <td>202</td>
-                    <td>유산소 점핑잭</td>
-                    <td>전신</td>
-                    <td>3:15</td>
-                    <td>2025-06-07</td>
+                    <td th:text="${video.categoryId}">상체</td>
+                    <td th:text="${video.duration}">4:32</td>
+                    <td th:text="${#dates.format(video.uploadDate, 'yyyy-MM-dd HH:mm:ss')}">2025-06-03</td>
                     <td>
-                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
+                        <div>
+                            <a th:href="@{/admin/video/modify/{id}(id=${video.videoId})}" class="admin-btn admin-btn-secondary" style="margin-right:8px;"><i class="fas fa-edit"></i> 수정</a>
+                            <a th:href="@{/admin/video/delete/{no}(no=${video.videoId})}" class="admin-btn admin-btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');">
+                                <i class="fas fa-trash"></i> 삭제
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
-
-    <!-- 운동 루틴 관리 -->
-    <!--<div class="admin-section">
-        <div class="admin-section-title"><i class="fas fa-dumbbell"></i> 운동 루틴 관리</div>
-        <div class="admin-table-actions" style="margin-bottom:16px;">
-            <a href="#" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> 루틴 추가</a>
-        </div>
-        <div class="admin-table-container">
-            <table class="admin-table">
-                <thead>
-                <tr>
-                    <th>루틴 ID</th>
-                    <th>루틴명</th>
-                    <th>카테고리</th>
-                    <th>등록일</th>
-                    <th>관리</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>101</td>
-                    <td>상체 근력 루틴</td>
-                    <td>근력</td>
-                    <td>2025-06-01</td>
-                    <td>
-                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>102</td>
-                    <td>유산소 루틴</td>
-                    <td>유산소</td>
-                    <td>2025-06-10</td>
-                    <td>
-                        <button class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> 삭제</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>-->
-
 </section>
 </html>
