@@ -21,6 +21,7 @@
     <select id="findSelectedGoalByUserId" resultMap="ExerciseGoalMap">
         select
             sg.user_id,
+            g.goal_id,
             g.progress_id,
             g.goal_name,
             g.goal_desc,
@@ -37,6 +38,9 @@
     </select>
 
     <insert id="insertUserGoal" parameterType="ExerciseGoal">
+        <selectKey resultType="int" keyProperty="goalId" order="BEFORE">
+            select exercise_goal_seq.nextval from dual
+        </selectKey>
         insert into FITFUSION_USER_GOALS (
             goal_id
           , goal_name
@@ -46,9 +50,8 @@
           , start_date
           , end_date
           , user_id
-          , progress_id
         ) values (
-          EXERCISE_GOAL_SEQ.NEXTVAL
+            #{goalId}
           , #{goalType}
           , #{goalDescription}
           , #{startWeight}
@@ -56,7 +59,6 @@
           , #{startDate}
           , #{endDate}
           , #{userId}
-          , #{progressId}
         )
     </insert>
 

@@ -12,7 +12,7 @@
             (
                 select e.category
                 from fitfusion_routine_exercise re2
-                         join fitfusion_exercises e on re2.exercise_id = e.exercise_id
+                join fitfusion_exercises e on re2.exercise_id = e.exercise_id
                 where re2.routine_id = r.routine_id
                     fetch first 1 row only
             ) as targetPart,
@@ -23,10 +23,15 @@
         where re3.routine_id = r.routine_id
             ) as summary,
             (
-        select (count(*) * 5) || '분'
+        select (sum(re4.sets) * 5) || '분'
         from fitfusion_routine_exercise re4
         where re4.routine_id = r.routine_id
-            ) as totalTime
+            ) as totalTime,
+        (
+        select count(*)
+        from fitfusion_routine_exercise re3
+        where re3.routine_id = r.routine_id
+        ) as exerciseCount
         from
             fitfusion_routine r
         where
@@ -60,6 +65,21 @@
         from dual
     </select>
     
+    <select id="getRoutineDetailByUserAndRoutineId" resultType="Routine">
+        select
+            routine_id               as routineId
+             , user_id                  as userId
+             , name                     as name
+             , difficulty_level         as difficultyLevel
+             , created_date             as createdDate
+             , updated_date             as updatedDate
+             , description              as description
+        from
+            fitfusion_routine
+        where
+            user_id = #{userId}
+          and routine_id = #{routineId}
+    </select>
     <select id="selectRoutineByUserAndRoutineId" parameterType="map" resultType="Routine">
         select
                routine_id               as routineId
@@ -90,4 +110,56 @@
         delete from fitfusion_routine
         where user_id = #{userId} and routine_id = #{routineId}
     </delete>
+    
+    <select id="getRoutineInfo" resultType="RoutineDetailDto">
+        SELECT
+            r.description AS description,
+            r.name AS routineName,
+            (
+                SELECT e.category
+                FROM fitfusion_routine_exercise re2
+                         JOIN fitfusion_exercises e ON re2.exercise_id = e.exercise_id
+                WHERE re2.routine_id = r.routine_id
+                    FETCH FIRST 1 ROW ONLY
+            ) AS targetPart,
+            (
+                SELECT sum(re.sets) * 5
+                FROM fitfusion_routine_exercise re
+                WHERE re.routine_id = r.routine_id
+            ) AS totalTime,
+            (
+                SELECT COUNT(*)
+                FROM fitfusion_routine_exercise re3
+                WHERE re3.routine_id = r.routine_id
+            ) AS totalExercises,
+            (
+                SELECT sets
+                FROM fitfusion_routine_exercise re4
+                WHERE re4.routine_id = r.routine_id
+                    FETCH FIRST 1 ROW ONLY
+            ) AS defaultSet
+        FROM fitfusion_routine r
+        WHERE r.routine_id = #{routineId}
+    </select>
+
+
+
+    <select id="selectRoutineExercises" resultType="ExerciseItemDto">
+        SELECT
+            e.exercise_id AS exerciseId,
+            re.routine_exercise_id AS routineExerciseId,
+            e.name AS name,
+            e.category AS category,
+            e.main_parts AS parts,
+            e.equipment AS equipment,
+            e.fatigue_level AS fatigueLevel,
+            re.sets AS sets,
+            re.reps AS reps,
+            re.weight AS weight,
+            e.description AS description
+        FROM fitfusion_routine_exercise re
+                 JOIN fitfusion_exercises e ON re.exercise_id = e.exercise_id
+        WHERE re.routine_id = #{routineId}
+        ORDER BY re.routine_exercise_id
+    </select>
 </mapper>

@@ -4,6 +4,15 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.ConditionMapper">
 
+    <select id="getConditionIdByUserId" resultType="int">
+        select nvl((
+           select condition_id as conditionId
+           from fitfusion_conditions
+           where user_id = #{userId}
+       ), 0)
+        from dual
+    </select>
+
     <select id="getConditionLevelByUserId" resultType="string" parameterType="int">
         select condition_level       as conditionLevel
         from fitfusion_conditions

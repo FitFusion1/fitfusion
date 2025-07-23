@@ -21,6 +21,7 @@ public class ExerciseGoalRegisterForm {
 
     private int userId;
     private int goalId;
+    private String goalName;
     @NotBlank(message = "목표는 필수 선택값입니다.", groups = Step1Group.class)
     private String goalType;
 
@@ -41,6 +42,6 @@ public class ExerciseGoalRegisterForm {
     private Date startDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "운동 시작일을 선택해주세요.", groups = Step3Group.class)
+    @NotNull(message = "운동 종료일을 선택해주세요.", groups = Step3Group.class)
     private Date endDate;
 }

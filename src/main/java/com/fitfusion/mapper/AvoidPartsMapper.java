@@ -11,4 +11,6 @@ public interface AvoidPartsMapper {
     void deleteAvoidPartsByUserId(int userId);
     void insertAvoidPart(AvoidPart avoidPart);
     List<String> getAvoidPartsByUserId(int userId);
+
+    void deleteAvoidPartsByConditionId(int conditionId);
 }

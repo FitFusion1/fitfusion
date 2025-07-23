@@ -101,4 +101,25 @@ public class ExerciseConditionService {
 
         return conditionId;
     }
+
+    public void deleteContitionByUserId(int userId) {
+        conditionMapper.deleteConditionByUserId(userId);
+    }
+
+    public int getConditionIdByUserId(int userId) {
+        return conditionMapper.getConditionIdByUserId(userId);
+    }
+
+    public void deleteTargetPartsByConditionId(int conditionId) {
+        targetPartsMapper.deleteTargetPartsByConditionId(conditionId);
+    }
+
+    public void deleteAvoidPartsByConditionId(int conditionId) {
+        avoidPartsMapper.deleteAvoidPartsByConditionId(conditionId);
+    }
+
+    public String getConditionLevelByUserId(int userId) {
+         return conditionMapper.getConditionLevelByUserId(userId);
+    }
+
 }

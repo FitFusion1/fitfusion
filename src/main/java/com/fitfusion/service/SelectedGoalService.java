@@ -29,6 +29,7 @@ public class SelectedGoalService {
         return selectMapper.findByUserId(userId);
     }
 
+
     public void deleteSelectedGoal(int userId) {
         selectMapper.deleteByUserId(userId);
     }

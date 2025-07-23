@@ -13,31 +13,41 @@
 </head>
 
 <div class="RoutineRecommendation">
-<div layout:fragment="content">
-<h1 class="RoutineRecommendation-title">오늘의 맞춤 추천 루틴</h1>
-<div class="RoutineRecommendation-description">
-    당신의 목표와 상태에 맞춰 추천된 루틴입니다. 아래 운동을 순서대로 수행해보세요!
-</div>
+    <div layout:fragment="content">
+        <h1 class="RoutineRecommendation-title">오늘의 맞춤 추천 루틴</h1>
+        <div class="RoutineRecommendation-description">
+            당신의 목표와 상태에 맞춰 추천된 루틴입니다. 아래 운동을 순서대로 수행해보세요!
+        </div>
 
-<div class="RoutineRecommendation-list">
-    <div class="RoutineRecommendation-card" th:each="ex : ${recommendedExercises}">
-        <h2 th:text="${ex.exercise.name}">운동 이름</h2>
-        <div class="RoutineRecommendation-info">
-            <span th:text="'카테고리: ' + ${ex.exercise.category}">운동 카테고리</span>
-            <span th:text="'운동 부위: ' + ${ex.exercise.mainParts}">운동 부위</span>
-            <span th:text="'난이도: ' + ${ex.exercise.fatigueLevel}">난이도</span>
-            <span th:text="'세트 수: ' + ${ex.sets} + '세트'">세트 수</span>
-            <span th:text="'반복 수: ' + ${ex.reps} + '회'">반복 수</span>
+        <div class="RoutineRecommendation-list">
+            <div class="RoutineRecommendation-card" th:each="ex : ${recommendedExercises}">
+                <h2 th:text="${ex.exercise.exerciseName}">운동 이름</h2>
+                <div class="RoutineRecommendation-info">
+                    <span th:text="'카테고리: ' + ${ex.exercise.category}">운동 카테고리</span>
+                    <span th:text="'운동 부위: ' + ${ex.exercise.mainParts}">운동 부위</span>
+                    <span th:text="'난이도: ' + ${ex.exercise.fatigueLevel}">난이도</span>
+                    <span th:text="'세트 수: ' + ${ex.sets} + '세트'">세트 수</span>
+                    <span th:text="'반복 수: ' + ${ex.reps} + '회'">반복 수</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="RoutineRecommendation-buttons">
+            <form th:action="@{/routine/create/save}" method="post">
+                <button type="submit">루틴 저장하기</button>
+            </form>
+                <button type="submit"
+                        style="display:inline";
+                        th:onclick="|location.href='@{/routine/create/ai}'|"
+                        >루틴새로고침</button>
+
+            <form th:action="@{/condition/save}" method="get" style="display:inline;">
+                <button type="submit">조건 설정하기</button>
+            </form>
+            <form th:action="@{/exercisegoal/goallist}" method="get" style="display:inline;">
+                <button type="submit">목표 설정하기</button>
+            </form>
         </div>
     </div>
-</div>
-
-<div class="RoutineRecommendation-buttons">
-    <form th:action="@{/routine/save}" method="post">
-        <button type="submit">루틴 저장하기</button>
-    </form>
-    <button onclick="location.reload()">루틴 새로고침</button>
-</div>
-</div>
 </div>
 </html>

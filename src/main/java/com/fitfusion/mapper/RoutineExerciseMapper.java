@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface RoutineExerciseMapper {
 
     void insertRoutineExerCise(RoutineExercise routineEx);
+
+    void deleteRoutineExercisesByRoutineId(int routineId);
 }

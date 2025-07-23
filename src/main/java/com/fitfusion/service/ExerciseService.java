@@ -122,7 +122,7 @@ public class ExerciseService {
 
         for (Map<String, String> data : list) {
             Exercise exercise = new Exercise();
-            exercise.setName(data.get("name"));
+            exercise.setExerciseName(data.get("name"));
             exercise.setDescription(data.get("description"));
             exercise.setEquipment(data.get("equipment"));
             exercise.setMainParts(data.get("main_parts"));
@@ -145,7 +145,7 @@ public class ExerciseService {
                 }
             }
             // 저장 시도 로그
-            System.out.println("[>> DB 저장 시도]: " + exercise.getName());
+            System.out.println("[>> DB 저장 시도]: " + exercise.getExerciseName());
 
             try {
                 exerciseMapper.insertExercise(exercise);

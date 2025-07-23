@@ -10,4 +10,6 @@ public interface TargetPartsMapper {
     void insertTargetPart(TargetPart targetPart);
     void deleteTargetPartsByUserId(int userId);
     List<String> getTargetPartsByUserId(int userId);
+
+    void deleteTargetPartsByConditionId(int conditionId);
 }

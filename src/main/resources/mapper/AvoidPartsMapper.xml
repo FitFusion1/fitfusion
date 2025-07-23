@@ -14,6 +14,11 @@
         where user_id = #{userId}
     </delete>
 
+    <delete id="deleteAvoidPartsByConditionId">
+        delete from fitfusion_user_condition_avoid_parts
+        where condition_id = #{conditionId}
+    </delete>
+
     <insert id="insertAvoidPart" parameterType="AvoidPart">
         insert into fitfusion_user_condition_avoid_parts (user_id, condition_id, body_part_name)
         values (#{userId}, #{conditionId} , #{bodyName})

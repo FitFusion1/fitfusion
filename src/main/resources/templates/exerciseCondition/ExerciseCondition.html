@@ -58,4 +58,9 @@
 </div>
 </div>
 </div>
+<th:block layout:fragment="script">
+    <script th:if="${alertMessage}" th:inline="javascript">
+        alert([[${alertMessage}]]);
+    </script>
+</th:block>
 </html>

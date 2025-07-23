@@ -1,7 +1,10 @@
 package com.fitfusion.web.controller;
 
 import com.fitfusion.enums.GoalType;
+import com.fitfusion.mapper.AvoidPartsMapper;
 import com.fitfusion.mapper.ExerciseGoalMapper;
+import com.fitfusion.mapper.TargetPartsMapper;
+import com.fitfusion.service.ExerciseConditionService;
 import com.fitfusion.service.ExerciseGoalService;
 import com.fitfusion.service.SelectedGoalService;
 import com.fitfusion.validation.Step1Group;
@@ -41,6 +44,12 @@ public class ExerciseGoalController {
     @Autowired
     private ExerciseGoalMapper exerciseGoalMapper;
     int userId = 1;
+    @Autowired
+    private ExerciseConditionService exerciseConditionService;
+    @Autowired
+    private TargetPartsMapper targetPartsMapper;
+    @Autowired
+    private AvoidPartsMapper avoidPartsMapper;
 
     @GetMapping("/step1")
     public String step1(Model model) {
@@ -72,8 +81,6 @@ public class ExerciseGoalController {
     public String step2(@Validated(Step2Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
                         BindingResult bindingResult,
                         Model model) {
-
-
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalTwo";
         }
@@ -87,8 +94,7 @@ public class ExerciseGoalController {
 
     @PostMapping("/step3")
     public String step3(@Validated(Step3Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
-                        BindingResult bindingResult,
-                        Model model) {
+                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalThree";
         }
@@ -103,22 +109,20 @@ public class ExerciseGoalController {
     @PostMapping("/step4")
     public String step4(@Validated(Step4Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
                         BindingResult bindingResult,
-                        SessionStatus status,
-                        Model model) {
+                        SessionStatus status) {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalFour";
         }
 
         formData.setUserId(userId);
-        exerciseGoalService.insertUserGoal(formData);
-
+        exerciseGoalService.insertUserGoalWithSelection(formData);
 
         status.setComplete();
         return "redirect:/exercisegoal/success";
     }
 
     @GetMapping("/success")
-    public String success(Model model) {
+    public String success() {
         return "exerciseGoal/CreateGoalSuccess";
     }
 
@@ -178,8 +182,8 @@ public class ExerciseGoalController {
         return "redirect:/exercisegoal/goallist";
     }
 
-    @GetMapping("/goalupdate")
-    public String goalUpdate(@RequestParam("goalId") int goalId, Model model) {
+    @GetMapping("/goalupdate/{goalId}")
+    public String goalUpdate(@PathVariable("goalId") int goalId, Model model) {
         ExerciseGoal exerciseGoal = exerciseGoalService.getUserGoalByUserId(userId, goalId);
         ExerciseGoalRegisterForm formData = modelMapper.map(exerciseGoal, ExerciseGoalRegisterForm.class);
         model.addAttribute("exerciseGoalForm", formData);
@@ -198,10 +202,45 @@ public class ExerciseGoalController {
         return "redirect:/exercisegoal/goallist";
     }
 
-    @PostMapping("/goaldelete")
-    public String goalDelete(@RequestParam("goalId") int goalId) {
+    @DeleteMapping("/goaldelete/{goalId}")
+    public String goalDelete(@PathVariable int goalId) {
+        SelectedGoal selectedGoal = selectedGoalService.getSelectedGoal(userId);
+
+        if (selectedGoal != null && selectedGoal.getGoalId() == goalId) {
+            selectedGoalService.deleteSelectedGoal(userId);
+        }
+
         exerciseGoalService.deleteGoal(goalId);
         return "redirect:/exercisegoal/goallist";
     }
 
+    @PostMapping("/checkgoal")
+    public String checkGoalAndCreateRoutine(){
+        ExerciseGoal goal = exerciseGoalService.getSelectedGoalByUserId(userId);
+        String goalType = (goal != null) ? goal.getGoalType() : null;
+
+        // 근육 증가일 경우만 /condition/save로 이동
+        if ("근육 증가".equals(goalType)) {
+            return "redirect:/condition/save";
+        }
+
+        // 그 외(목표가 없거나 근육 증가가 아닌 경우)는 기존 컨디션 삭제
+        int conditionId = exerciseConditionService.getConditionIdByUserId(userId);
+        if (conditionId > 0) {
+            exerciseConditionService.deleteTargetPartsByConditionId(conditionId);
+            exerciseConditionService.deleteAvoidPartsByConditionId(conditionId);
+            exerciseConditionService.deleteContitionByUserId(userId);
+        }
+
+        return "redirect:/routine/create/ai";
+    }
+
+    @GetMapping("/goaldetail/{goalId}")
+    public String goalDetail(@PathVariable("goalId") int goalId, Model model) {
+        model.addAttribute("goal", exerciseGoalService.getUserGoalByUserId(userId, goalId));
+        model.addAttribute("condition", exerciseConditionService.getConditionLevelByUserId(userId));
+        model.addAttribute("targetParts", targetPartsMapper.getTargetPartsByUserId(userId));
+        model.addAttribute("avoidParts", avoidPartsMapper.getAvoidPartsByUserId(userId));
+        return "exerciseGoal/GoalDetail";
+    }
 }

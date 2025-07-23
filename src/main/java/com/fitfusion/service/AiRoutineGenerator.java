@@ -27,37 +27,19 @@ public class AiRoutineGenerator {
 
     public List<RecommendedExercise> generateRoutine(ExerciseConditionForm condition, List<Exercise> allExercises, String goalTypeName) throws Exception {
         System.out.println("🎯 전달된 사용자 목표(goalTypeName): " + goalTypeName);
-        if (goalTypeName == null) {
-            throw new IllegalStateException("❗ 사용자 운동 목표(goalTypeName)가 null입니다. 목표를 먼저 설정해야 합니다.");
-        }
 
-        GoalType goalType;
-        try {
-            goalType = GoalType.fromGoalName(goalTypeName);
-            System.out.println("✅ GoalType enum 매핑 결과: " + goalType);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("❗ 잘못된 goalType 값입니다: " + goalTypeName);
-        }
+        List<BodyPart> avoidParts = condition.getAvoidParts() != null
+                ? condition.getAvoidParts().stream().map(this::stringToBodyPart).filter(Objects::nonNull).collect(Collectors.toList())
+                : new ArrayList<>();
 
-        ConditionLevel conditionLevel;
-        try {
-            conditionLevel = ConditionLevel.fromLevel(condition.getConditionLevel());
-            System.out.println("✅ ConditionLevel 매핑 결과: " + conditionLevel);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("❗ 잘못된 conditionLevel 값입니다: " + condition.getConditionLevel());
-        }
+        List<BodyPart> targetParts = condition.getTargetParts() != null
+                ? condition.getTargetParts().stream().map(this::stringToBodyPart).filter(Objects::nonNull).collect(Collectors.toList())
+                : new ArrayList<>();
 
-        List<BodyPart> avoidParts = condition.getAvoidParts().stream()
-                .map(this::stringToBodyPart)
-                .filter(Objects::nonNull)
-                .toList();
+        boolean hasCondition = condition.getConditionLevel() != null && !condition.getConditionLevel().isBlank();
+        boolean hasAnyCondition = !avoidParts.isEmpty() || !targetParts.isEmpty() || hasCondition;
 
-        List<BodyPart> targetParts = condition.getTargetParts().stream()
-                .map(this::stringToBodyPart)
-                .filter(Objects::nonNull)
-                .toList();
-
-        List<Exercise> partFiltered = allExercises.stream()
+        List<Exercise> baseExercises = allExercises.stream()
                 .filter(e -> {
                     String category = e.getCategory();
                     if (category == null) return false;
@@ -75,47 +57,75 @@ public class AiRoutineGenerator {
 
                     return true;
                 })
-                .toList();
+                .collect(Collectors.toList());
 
-        List<Exercise> filteredExercises = applyGoalSpecificFilter(partFiltered, goalType, conditionLevel);
+        // 아무 조건도 없으면 전부 랜덤 추천
+        if ((goalTypeName == null || goalTypeName.isBlank()) && !hasAnyCondition) {
+            List<Exercise> randomExercises = new ArrayList<>(allExercises);
+            Collections.shuffle(randomExercises);
+            return toRecommendedList(randomExercises.stream().limit(5).collect(Collectors.toList()));
+        }
+
+        // 조건은 있지만 목표가 없는 경우
+        if (goalTypeName == null || goalTypeName.isBlank()) {
+            Collections.shuffle(baseExercises);
+            return toRecommendedList(baseExercises.stream().limit(5).collect(Collectors.toList()));
+        }
+
+        // 목표가 있는 경우
+        GoalType goalType = GoalType.fromGoalName(goalTypeName);
+        ConditionLevel conditionLevel = goalType == GoalType.GAIN_MUSCLE
+                ? ConditionLevel.fromLevel(condition.getConditionLevel())
+                : null;
+
+        List<Exercise> filtered = applyGoalSpecificFilter(baseExercises, goalType, conditionLevel);
 
         Set<Integer> selectedExerciseIds = new HashSet<>();
         List<Exercise> ensuredTargetExercises = new ArrayList<>();
 
         for (BodyPart target : targetParts) {
-            partFiltered.stream()
+            baseExercises.stream()
                     .filter(e -> target.getBodyName().equalsIgnoreCase(e.getCategory()))
-                    .filter(e -> !selectedExerciseIds.contains(e.getId()))
+                    .filter(e -> !selectedExerciseIds.contains(e.getExerciseId()))
                     .findFirst()
                     .ifPresent(e -> {
                         ensuredTargetExercises.add(e);
-                        selectedExerciseIds.add(e.getId());
+                        selectedExerciseIds.add(e.getExerciseId());
                     });
         }
 
         List<Exercise> finalExercises = new ArrayList<>(ensuredTargetExercises);
-        for (Exercise e : filteredExercises) {
+
+        for (Exercise e : filtered) {
             if (finalExercises.size() >= 5) break;
-            if (!selectedExerciseIds.contains(e.getId())) {
+            if (!selectedExerciseIds.contains(e.getExerciseId())) {
                 finalExercises.add(e);
-                selectedExerciseIds.add(e.getId());
+                selectedExerciseIds.add(e.getExerciseId());
             }
         }
 
-        System.out.println("🎯 필터링 전 운동 수: " + allExercises.size());
-        System.out.println("🎯 파트 기준 필터링 후 수: " + partFiltered.size());
-        System.out.println("🎯 목표 기준 최종 필터링 후 수: " + finalExercises.size());
-
         if (finalExercises.isEmpty()) {
-            throw new IllegalStateException("❗ 조건에 맞는 운동이 없습니다. 필터 조건을 완화하거나 운동 목록을 보완하세요.");
+            throw new IllegalStateException("❗ 조건에 맞는 운동이 없습니다.");
         }
 
         String prompt = buildPrompt(condition, finalExercises, goalType);
         String response = callOpenAiApi(prompt);
 
-        System.out.println("⛳ OpenAI 응답 원문:\n" + response);
-
         return parseResponse(response, finalExercises);
+    }
+
+    private List<RecommendedExercise> toRecommendedList(List<Exercise> exercises) {
+        List<RecommendedExercise> result = new ArrayList<>();
+        for (Exercise e : exercises) {
+            RecommendedExercise re = new RecommendedExercise();
+            re.setExerciseId(e.getExerciseId());
+            re.setSets(3);
+            re.setReps(12);
+            re.setWeight(0);
+            re.setExercise(e);
+            result.add(re);
+        }
+        return result;
     }
 
     private List<Exercise> applyGoalSpecificFilter(List<Exercise> exercises, GoalType goalType, ConditionLevel conditionLevel) {
@@ -126,33 +136,20 @@ public class AiRoutineGenerator {
                     if (category == null) return false;
 
                     return switch (goalType) {
-                        case LOSS_WEIGHT -> (
-                                (category.equalsIgnoreCase(BodyPart.AEROBIC.getBodyName()) || category.equalsIgnoreCase(BodyPart.LEGS.getBodyName()))
-                                        && fatigue >= 3
-                        );
-                        case GAIN_WEIGHT -> (
-                                fatigue >= 3 &&
-                                        List.of(BodyPart.CHEST, BodyPart.BACK, BodyPart.LEGS).stream()
-                                                .map(BodyPart::getBodyName)
-                                                .toList().contains(category)
-                        );
+                        case LOSS_WEIGHT -> (List.of(BodyPart.AEROBIC.getBodyName(), BodyPart.LEGS.getBodyName()).contains(category) && fatigue >= 3);
+                        case GAIN_WEIGHT -> (fatigue >= 3 && List.of(BodyPart.CHEST, BodyPart.BACK, BodyPart.LEGS).stream()
+                                .map(BodyPart::getBodyName).collect(Collectors.toList()).contains(category));
                         case MAINTAIN_WEIGHT -> fatigue <= 3;
-                        case GAIN_MUSCLE -> (
-                                fatigue >= 3 &&
-                                        List.of(BodyPart.CHEST, BodyPart.BACK, BodyPart.SHOULDERS, BodyPart.LEGS, BodyPart.ARMS).stream()
-                                                .map(BodyPart::getBodyName)
-                                                .toList().contains(category)
-                                        && isAllowedByCondition(fatigue, conditionLevel)
-                        );
-                        case IMPROVE_HEALTH -> (
-                                fatigue <= 3 &&
-                                        List.of(BodyPart.CORE, BodyPart.SHOULDERS, BodyPart.AEROBIC, BodyPart.LEGS).stream()
-                                                .map(BodyPart::getBodyName)
-                                                .toList().contains(category)
-                        );
+                        case GAIN_MUSCLE -> (fatigue >= 3 &&
+                                List.of(BodyPart.CHEST, BodyPart.BACK, BodyPart.SHOULDERS, BodyPart.LEGS, BodyPart.ARMS).stream()
+                                        .map(BodyPart::getBodyName).collect(Collectors.toList()).contains(category)
+                                && (conditionLevel == null || isAllowedByCondition(fatigue, conditionLevel)));
+                        case IMPROVE_HEALTH -> (fatigue <= 3 &&
+                                List.of(BodyPart.CORE, BodyPart.SHOULDERS, BodyPart.AEROBIC, BodyPart.LEGS).stream()
+                                        .map(BodyPart::getBodyName).collect(Collectors.toList()).contains(category));
                     };
                 })
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private boolean isAllowedByCondition(int fatigue, ConditionLevel conditionLevel) {
@@ -173,7 +170,7 @@ public class AiRoutineGenerator {
 
         sb.append("\n사용 가능한 운동 목록은 다음과 같습니다:\n");
         for (Exercise ex : filteredExercises) {
-            sb.append("- [ID:").append(ex.getId()).append("] ").append(ex.getName()).append(": ").append(ex.getDescription()).append("\n");
+            sb.append("- [ID:").append(ex.getExerciseId()).append("] ").append(ex.getExerciseName()).append(": ").append(ex.getDescription()).append("\n");
         }
 
         sb.append("\n운동 루틴 구성 기준은 다음과 같습니다:\n");
@@ -188,10 +185,7 @@ public class AiRoutineGenerator {
         sb.append("\n위 목록 중에서만 운동을 선택하여 총 5개의 운동 루틴을 추천해주세요.\n")
                 .append("절대 존재하지 않는 ID나 목록에 없는 운동을 만들지 마세요.\n")
                 .append("응답은 다음 JSON 형식으로 반환해주세요:\n")
-                .append("[\n")
-                .append("  {\"exerciseId\": 1, \"sets\": 3, \"reps\": 15},\n")
-                .append("  {\"exerciseId\": 2, \"sets\": 4, \"reps\": 12}\n")
-                .append("]");
+                .append("[{\"exerciseId\": 1, \"sets\": 3, \"reps\": 15}, ...]");
 
         return sb.toString();
     }
@@ -199,14 +193,11 @@ public class AiRoutineGenerator {
     private String callOpenAiApi(String prompt) throws Exception {
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
 
-        JSONObject message = new JSONObject()
-                .put("role", "user")
-                .put("content", prompt);
-
+        JSONObject message = new JSONObject().put("role", "user").put("content", prompt);
         JSONObject payload = new JSONObject()
                 .put("model", "gpt-3.5-turbo")
                 .put("messages", new JSONArray().put(message))
-                .put("temperature", 0.7);
+                .put("temperature", 1.0);
 
         Request request = new Request.Builder()
                 .url("https://api.openai.com/v1/chat/completions")
@@ -227,64 +218,35 @@ public class AiRoutineGenerator {
 
         try {
             JSONObject json = new JSONObject(response);
+            if (json.has("error")) return list;
 
-            if (json.has("error")) {
-                System.err.println("OpenAI 오류: " + json.getJSONObject("error").getString("message"));
-                return list;
-            }
-
-            if (!json.has("choices")) {
-                System.err.println("OpenAI 응답에 'choices' 키가 없습니다.");
-                return list;
-            }
-
-            String content = json
-                    .getJSONArray("choices")
+            String content = json.getJSONArray("choices")
                     .getJSONObject(0)
                     .getJSONObject("message")
                     .getString("content")
                     .trim();
 
-            System.out.println("📦 OpenAI 응답 내용:\n" + content);
-
             JSONArray array = new JSONArray(content);
-
-            Set<Integer> validIds = filteredExercises.stream()
-                    .map(Exercise::getId)
-                    .collect(Collectors.toSet());
+            Set<Integer> validIds = filteredExercises.stream().map(Exercise::getExerciseId).collect(Collectors.toSet());
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject obj = array.getJSONObject(i);
                 int id = obj.getInt("exerciseId");
-                System.out.println(" - ID: " + id + " → " + (validIds.contains(id) ? "✅ 포함됨" : "❌ 없음"));
-            }
+                if (!validIds.contains(id)) continue;
 
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject obj = array.getJSONObject(i);
-                int exerciseId = obj.getInt("exerciseId");
-
-                Exercise matched = filteredExercises.stream()
-                        .filter(e -> e.getId() == exerciseId)
-                        .findFirst()
-                        .orElse(null);
-
-                if (matched == null) {
-                    System.err.println("❗ OpenAI가 추천한 ID " + exerciseId + " 는 필터링 목록에 없음 → 제외됨");
-                    continue;
-                }
+                Exercise matched = filteredExercises.stream().filter(e -> e.getExerciseId() == id).findFirst().orElse(null);
+                if (matched == null) continue;
 
                 RecommendedExercise re = new RecommendedExercise();
-                re.setExerciseId(exerciseId);
+                re.setExerciseId(id);
                 re.setSets(obj.getInt("sets"));
                 re.setReps(obj.getInt("reps"));
-                re.setWeight(obj.has("weight") ? obj.getInt("weight") : 0);
+                re.setWeight(obj.optInt("weight", 0));
                 re.setExercise(matched);
-
                 list.add(re);
             }
 
         } catch (Exception e) {
-            System.err.println("AI 응답 파싱 중 오류 발생:");
             e.printStackTrace();
         }
 

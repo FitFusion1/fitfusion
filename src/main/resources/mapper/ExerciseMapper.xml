@@ -25,10 +25,10 @@
                  )
     </insert>
 
-    <select id="findAllExercises" resultType="com.fitfusion.vo.Exercise">
+    <select id="findAllExercises" resultType="Exercise">
         SELECT
-            exercise_id     as id,
-            name            as name,
+            exercise_id     as exerciseId,
+            name            as exerciseName,
             description     as description,
             category        as category,
             main_parts      as mainParts,
@@ -39,8 +39,8 @@
 
     <select id="findExerciseById" resultType="Exercise">
         select
-            exercise_id     as id,
-            name            as name,
+            exercise_id     as exerciseId,
+            name            as exerciseName,
             description     as description,
             category        as category,
             main_parts      as mainParts,

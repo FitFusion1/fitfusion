@@ -6,36 +6,30 @@ import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.mapper.ExerciseGoalMapper;
 import com.fitfusion.vo.SelectedGoal;
 import com.fitfusion.web.form.ExerciseGoalRegisterForm;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class ExerciseGoalService {
 
-    @Autowired
-    private ExerciseGoalMapper exerciseGoalMapper;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private SelectedGoalService selectedGoalService;
+
+    private final ExerciseGoalMapper exerciseGoalMapper;
+    private final SelectedGoalService selectedGoalService;
 
 
-    public ExerciseGoalService(ExerciseGoalMapper exerciseGoalMapper) {
-        this.exerciseGoalMapper = exerciseGoalMapper;
+    public void insertUserGoalWithSelection(ExerciseGoalRegisterForm formData) {
+        exerciseGoalMapper.insertUserGoal(formData);
+        selectedGoalService.selectGoal(formData.getUserId(), formData.getGoalId());
     }
 
+    public void insertUserGoal(ExerciseGoalRegisterForm formData) {
 
-    public void insertUserGoal(ExerciseGoalRegisterForm form) {
-        ExerciseGoal exerciseGoal = modelMapper.map(form, ExerciseGoal.class);
-        exerciseGoal.setGoalType(exerciseGoal.getGoalType());
-        exerciseGoal.setStartWeight(exerciseGoal.getStartWeight());
-        exerciseGoal.setTargetWeight(exerciseGoal.getTargetWeight());
-        exerciseGoal.setGoalDescription(exerciseGoal.getGoalDescription());
-
-        exerciseGoalMapper.insertUserGoal(exerciseGoal);
+        exerciseGoalMapper.insertUserGoal(formData);
     }
 
     public ExerciseGoal getUserGoalByUserId(int userId, int goalId) {

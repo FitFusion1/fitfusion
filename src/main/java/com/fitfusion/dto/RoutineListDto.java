@@ -4,10 +4,11 @@ import lombok.Data;
 
 @Data
 public class RoutineListDto {
-    int routineId;
-    String routineName;
-    String targetPart;
-    String difficulty;
-    String totalTime;
-    String summary;
+    private int routineId;
+    private String routineName;
+    private String targetPart;
+    private String difficulty;
+    private String totalTime;
+    private String summary;
+    private int exerciseCount;
 }

@@ -15,7 +15,7 @@ public class ExerciseLog {
     private int sets;
     private int exerciseId;
     private int userId;
-    private boolean isChecked;
+    private String isChecked;
     private int durationMinutes;
     private int routineExerciseId;
 }

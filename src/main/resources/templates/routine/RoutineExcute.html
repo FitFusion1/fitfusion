@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+<head>
+    <title layout:fragment="title">오늘의 루틴 수행 체크</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
+</head>
+<div layout:fragment="content">
+    <div class="RoutineCompletion-container">
+        <h2 class="RoutineCompletion-title">오늘의 전신 루틴 수행 체크</h2>
+
+        <form th:action="@{/routine/execute/{routineId}(routineId=${routine.routineId})}" method="post" th:object="${routineLogDto}">
+            <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
+
+            <div class="RoutineCompletion-card" th:each="exercise, status : ${routine.exercises}">
+
+                <input type="hidden" th:name="|exerciseLogs[${status.index}].exerciseId|" th:value="${exercise.exerciseId}" />
+                <input type="hidden" th:name="|exerciseLogs[${status.index}].routineExerciseId|" th:value="${exercise.routineExerciseId}" />
+                <input type="hidden" th:name="|exerciseLogs[${status.index}].recommendedSets|" th:value="${exercise.sets}" />
+                <input type="hidden" th:name="|exerciseLogs[${status.index}].recommendedReps|" th:value="${exercise.reps}" />
+
+                <div class="RoutineCompletion-header">
+                    <!-- 왼쪽: 운동 정보 -->
+                    <div class="RoutineCompletion-info">
+                        <div class="RoutineCompletion-name" th:text="${exercise.name}">운동명</div>
+                        <p th:text="|부위: ${exercise.category} / 장비: ${exercise.equipment} / 난이도: ${exercise.fatigueLevel}|"></p>
+                        <p th:text="|세트: ${exercise.sets} / 반복: ${exercise.reps}|"></p>
+                        <p th:text="${exercise.description}"></p>
+                    </div>
+
+                    <!-- 오른쪽: 수행 체크 및 소요시간 -->
+                    <div class="RoutineCompletion-action">
+                        <div class="RoutineCompletion-top-row">
+                            <div class="RoutineCompletion-check-wrapper">
+
+                                <input type="hidden" th:name="|exerciseLogs[${status.index}].isChecked|" value="N" />
+
+                                <input type="checkbox"
+                                       th:id="'check-' + ${status.index}"
+                                       th:name="|exerciseLogs[${status.index}].isChecked|"
+                                       value="Y"
+                                       class="RoutineCompletion-check"
+                                       th:disabled="${#fields.hasErrors()}"/>
+                                <label th:for="'check-' + ${status.index}">수행 완료</label>
+                            </div>
+                            <button type="button"
+                                    class="RoutineCompletion-partialBtn"
+                                    th:onclick="|togglePartialInput(${status.index})|">부분 수행 입력
+                            </button>
+                        </div>
+
+                        <div class="RoutineCompletion-duration-wrapper">
+                            <label for="duration-${status.index}">운동 소요 시간 (분):</label>
+                            <input type="number"
+                                   class="RoutineCompletion-duration-input"
+                                   id="duration-${status.index}"
+                                   th:name="|exerciseLogs[${status.index}].durationMinutes|"
+                                   placeholder="예: 10"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 부분 수행 입력 -->
+                <div class="RoutineCompletion-partial" th:id="'partialBox-' + ${status.index}">
+                    <label>수행한 세트 수:</label>
+                    <input type="number"
+                           class="RoutineCompletion-input"
+                           th:field="*{exerciseLogs[__${status.index}__].sets}"
+                           placeholder="예: 2" />
+                    <span th:if="${#fields.hasErrors('exerciseLogs[__${status.index}__].sets')}"
+                          th:errors="*{exerciseLogs[__${status.index}__].sets}"
+                          class="error-message"></span>
+                    <label>각 세트별 평균 수행 개수:</label>
+                    <input type="number"
+                           class="RoutineCompletion-input"
+                           th:field="*{exerciseLogs[__${status.index}__].reps}"
+                           placeholder="예: 15, 12, 0" />
+                </div>
+                    <span th:if="${#fields.hasErrors('exerciseLogs[__${status.index}__].reps')}"
+                          th:errors="*{exerciseLogs[__${status.index}__].reps}"
+                          class="error-message"></span>
+            </div>
+
+            <button class="RoutineCompletion-submit" type="submit">오늘 루틴 완료</button>
+        </form>
+        <button class="RoutineCompletion-submit">루틴 목록으로 돌아가기</button>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const errorIndexes = /*[[${partialErrorIndexes}]]*/ [];
+        errorIndexes.forEach(index => {
+            const partialBox = document.getElementById(`partialBox-${index}`);
+            const checkBox = document.getElementById(`check-${index}`);
+            if (partialBox) {
+                partialBox.style.display = "block";
+            }
+            if (checkBox) {
+                checkBox.checked = false;
+                checkBox.disabled = true;
+            }
+        });
+
+        function togglePartialInput(id) {
+            const box = document.getElementById(`partialBox-${id}`);
+            const checkbox = document.getElementById(`check-${id}`);
+            if (box.style.display === "none" || box.style.display === "") {
+                box.style.display = "block";
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            } else {
+                box.style.display = "none";
+                checkbox.disabled = false;
+            }
+        }
+        /*]]>*/
+    </script>
+</th:block>
+</html>

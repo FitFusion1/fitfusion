@@ -4,6 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.RoutineExerciseMapper">
 
+
+
     <insert id="insertRoutineExerCise" parameterType="RoutineExercise">
         insert into fitfusion_routine_exercise (
             routine_exercise_id
