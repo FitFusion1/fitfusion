@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='admin'">
+<head>
+    <meta charset="UTF-8" />
+    <title>영상 수정</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/admin.css}">
+    </th:block>
+</head>
+
+<section layout:fragment="content" class="main">
+    <!-- 헤더 -->
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1><i class="fas fa-video"></i> 운동 영상 수정</h1>
+            <p class="admin-subtitle">/admin/video/edit</p>
+        </div>
+        <div class="admin-header-right">
+            <a th:href="@{/admin/video}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
+        </div>
+    </div>
+
+    <!-- 수정 폼 -->
+    <div class="admin-section" style="max-width: 600px; margin: 0 auto;">
+        <div class="admin-section-title"><i class="fas fa-edit"></i> 영상 정보 수정</div>
+        <form class="admin-form" th:action="@{'/admin/video/modify/' + ${videoId}}" method="post" enctype="multipart/form-data" onsubmit="return checkFileSize();">
+            <div class="admin-form-group">
+                <label for="title" class="admin-form-label">영상 제목</label>
+                <input type="text" id="title" name="title" required class="admin-form-input" th:value="${form.title}" >
+            </div>
+            <div class="admin-form-group">
+                <label for="description" class="admin-form-label">설명</label>
+                <textarea id="description" name="description" rows="4" required class="admin-form-textarea" th:text="${form.description}"></textarea>
+            </div>
+            <div class="admin-form-group">
+                <label for="file" class="admin-form-label">새 영상 파일 (선택)</label>
+                <input type="file" id="file" name="file" accept="video/*" class="admin-form-file">
+                <div id="fileName" class="file-info"></div>
+            </div>
+            <div class="admin-form-group">
+                <label for="thumbnail_path" class="admin-form-label">새 썸네일 이미지 (선택)</label>
+                <input type="file" id="thumbnail_path" name="thumbnail" accept="image/*" class="admin-form-file">
+                <img id="thumbnailPreview" class="preview-img" style="display:none;" />
+            </div>
+            <div class="admin-form-group">
+                <label for="category_id" class="admin-form-label">카테고리</label>
+                <select id="category_id" name="categoryId" required class="admin-form-select">
+                    <option value="">카테고리 선택</option>
+                    <option th:each="category : ${categories}"
+                            th:value="${category.categoryId}"
+                            th:text="${category.name}"
+                            th:selected="${form.categoryId} == ${category.categoryId}">
+                    </option>
+                </select>
+            </div>
+            <div class="admin-form-group">
+                <label for="exercise_id" class="admin-form-label">운동</label>
+                <select id="exercise_id" name="exerciseId" required class="admin-form-select">
+                    <option value="">운동 선택</option>
+                    <option th:each="exercise : ${exercises}"
+                            th:value="${exercise.id}"
+                            th:text="${exercise.name}"
+                            th:selected="${form.exerciseId} == ${exercise.id}">
+                    </option>
+                </select>
+            </div>
+            <div class="admin-form-actions">
+                <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%; font-size: 17px; padding: 14px 0;"><i class="fas fa-check"></i> 수정 완료</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    // 파일명 표시
+    const fileInput = document.getElementById('file');
+    fileInput.addEventListener('change', function () {
+        const fileInfo = document.getElementById('fileName');
+        if (this.files.length > 0) {
+            fileInfo.textContent = '선택한 파일: ' + this.files[0].name;
+        } else {
+            fileInfo.textContent = '';
+        }
+    });
+
+    // 썸네일 이미지 미리보기
+    const thumbnailInput = document.getElementById('thumbnail_path');
+    const thumbnailPreview = document.getElementById('thumbnailPreview');
+    thumbnailInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                thumbnailPreview.src = e.target.result;
+                thumbnailPreview.style.display = 'block';
+            }
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            thumbnailPreview.style.display = 'none';
+        }
+    });
+
+    // 파일 용량 제한 (100MB)
+    function checkFileSize() {
+        const maxSize = 100 * 1024 * 1024; // 100MB
+        const file = document.getElementById('file').files[0];
+        if (file && file.size > maxSize) {
+            alert("영상 파일은 100MB를 초과할 수 없습니다.");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+</html>

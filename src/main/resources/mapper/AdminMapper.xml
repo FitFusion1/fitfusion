@@ -210,7 +210,7 @@
                    #{content},
                    sysdate,
                    sysdate,
-                   #{user.userId} )
+                   #{user.userId})
     </insert>
 
 
@@ -244,4 +244,216 @@
             notice_id = #{noticeId}
     </update>
 
+    <!--
+        List<Video> getAllVideos();
+    -->
+    <select id="getAllVideos" resultType="Video">
+        SELECT
+            video_id            videoId,
+            title,
+            description,
+            file_path           filePath,
+            thumbnail_path      thumbnailPath,
+            duration,
+            upload_date         uploadDate,
+            uploaded_by         uploadedBy,
+            category_id         categoryId,
+            exercise_id         exerciseId
+        FROM
+            fitfusion_videos
+    </select>
+
+    <!--
+        Video getVideoById(int id);
+    -->
+    <select id="getVideoById" parameterType="int" resultType="Video">
+        SELECT
+            video_id            videoId,
+            title,
+            description,
+            file_path           filePath,
+            thumbnail_path      thumbnailPath,
+            duration,
+            upload_date         uploadDate,
+            uploaded_by         uploadedBy,
+            category_id         categoryId,
+            exercise_id         exerciseId
+        FROM
+            fitfusion_videos
+        WHERE
+            video_id = #{id}
+    </select>
+
+
+    <!--
+        Video getVideoByIdWithUser(int id);
+    -->
+    <select id="getVideoByIdWithUser" parameterType="int" resultType="Video">
+        SELECT
+            v.video_id            videoId,
+            v.title,
+            v.description,
+            v.file_path           filePath,
+            v.thumbnail_path      thumbnailPath,
+            v.duration,
+            v.upload_date         uploadDate,
+            v.uploaded_by         uploadedBy,
+            v.category_id         categoryId,
+            v.exercise_id         exerciseId,
+            u.user_id               userId,
+            u.username,
+            u.password,
+            u.name,
+            u.email,
+            u.gender,
+            u.height,
+            u.weight,
+            u.birth_date            birthDate,
+            u.created_date          createdDate,
+            u.updated_date          updatedDate,
+            u.deleted,
+            u.deleted_date          deletedDate,
+            u.experience_level      experienceLevel
+        FROM
+            fitfusion_videos v, fitfusion_users u
+        WHERE
+            video_id = #{id}
+            AND v.uploaded_by = u.user_id
+    </select>
+
+     <!--
+        Video getVideoByIdWithUserAndExercises(int id);
+     -->
+    <select id="getVideoByIdWithUserAndExercises" parameterType="int" resultType="Video">
+        SELECT
+            v.video_id            videoId,
+            v.title,
+            v.description,
+            v.file_path           filePath,
+            v.thumbnail_path      thumbnailPath,
+            v.duration,
+            v.upload_date         uploadDate,
+            v.uploaded_by         uploadedBy,
+            v.category_id         categoryId,
+            v.exercise_id         exerciseId,
+            u.user_id               userId,
+            u.username              "user.userId",
+            u.password              "user.password",
+            u.name                  "user.name",
+            u.email                 "user.email",
+            u.gender                "user.gender",
+            u.height                "user.height",
+            u.weight                "user.weight",
+            u.birth_date            "user.birthDate",
+            u.created_date          "user.createdDate",
+            u.updated_date          "user.updatedDate",
+            u.deleted               "user.deleted",
+            u.deleted_date          "user.deletedDate",
+            u.experience_level      "user.experienceLevel",
+            e.exercise_id           "exercise.id",
+            e.name                  "exercise.name",
+            e.description           "exercise.description",
+            e.category              "exercise.category",
+            e.main_parts            "exercise.equipment",
+            e.equipment             "exercise.mainParts",
+            e.fatigue_level         "exercise.fatigueLevel"
+        FROM
+            fitfusion_videos v, fitfusion_users u, fitfusion_exercises e
+        WHERE
+            video_id = #{id}
+          AND v.uploaded_by = u.user_id
+          AND v.exercise_id = e.exercise_id
+    </select>
+
+    <!--
+        List<Exercise> getAllExercises();
+    -->
+    <select id="getAllExercises" resultType="Exercise">
+        SELECT
+            exercise_id     id,
+            name,
+            description,
+            category,
+            main_parts      mainParts,
+            equipment,
+            fatigue_level   fatigueLevel
+        FROM
+            fitfusion_exercises
+    </select>
+
+    <!--
+        List<VideoCategory> getAllVideoCategories();
+    -->
+    <select id="getAllVideoCategories" resultType="VideoCategory">
+        SELECT
+            category_id     categoryId,
+            name
+        FROM
+            fitfusion_video_categories
+    </select>
+
+
+    <!--
+        void insertVideo(Video video);
+    -->
+    <insert id="insertVideo" parameterType="Video">
+        INSERT INTO fitfusion_videos (
+            video_id,
+            title,
+            description,
+            file_path,
+            thumbnail_path,
+            duration,
+            upload_date,
+            uploaded_by,
+            category_id,
+            exercise_id
+        ) VALUES (
+                     fitfusion_video_seq.nextval,
+                     #{title},
+                     #{description},
+                     #{filePath},
+                     #{thumbnailPath},
+                     #{duration},
+                     sysdate,
+                     #{uploadedBy},
+                     #{categoryId},
+                     #{exerciseId}
+                 )
+    </insert>
+
+    <!--
+        int countVideos();
+    -->
+    <select id="countVideos" resultType="int">
+        SELECT COUNT(*)
+        FROM fitfusion_videos
+    </select>
+
+    <!--
+        void deleteVideoById(int id)
+    -->
+    <delete id="deleteVideoById" parameterType="int">
+        DELETE FROM fitfusion_videos
+        WHERE
+            video_id = #{id}
+    </delete>
+
+    <!--
+        void updateVideo(Video video);
+    -->
+    <update id="updateVideo" parameterType="Video">
+        UPDATE fitfusion_videos
+        SET
+            title = #{title},
+            description = #{description},
+            file_path = #{filePath},
+            thumbnail_path = #{thumbnailPath},
+            duration = #{duration},
+            upload_date = #{uploadDate},
+            uploaded_by = #{uploadedBy},
+            category_id = #{categoryId},
+            exercise_id = #{exerciseId}
+        WHERE video_id = #{videoId}
+    </update>
 </mapper>
