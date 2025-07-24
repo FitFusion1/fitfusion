@@ -14,6 +14,6 @@ public class HomeController {
     // 임시로 만듦
     @GetMapping("/pose")
     public String pose() {
-        return "pose-checker/bicep_curl_pose_feedback";
+        return "pose-checker/pose-check";
     }
 }
