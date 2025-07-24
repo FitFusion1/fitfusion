@@ -199,40 +199,6 @@ function predictWebcam() {
 
             const checkPoints = [leftShoulder, leftElbow, leftWrist, rightShoulder, rightElbow, rightWrist];
 
-            const leftAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
-            const rightAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
-
-            if (165 > leftAngle && leftAngle > 100 && leftRepState === "up")
-                feedbackMessages.push("왼팔을 더 들어 올리세요!");
-            if (165 > rightAngle && rightAngle > 100 && rightRepState === "up")
-                feedbackMessages.push("오른팔을 더 들어 올리세요!");
-
-            // 팔꿈치 기준 위치가 어깨 - 골반 중간 지점
-            const leftHip = landmark[23];
-            const rightHip = landmark[24];
-
-            const shoulderWidth = Math.abs(rightShoulder.x - leftShoulder.x);
-            const leftRef = {
-                x: leftShoulder.x + 0.3 * shoulderWidth,
-                y: leftShoulder.y + 0.5 * (leftHip.y - leftShoulder.y)
-            };
-            const rightRef = {
-                x: rightShoulder.x - 0.3 * shoulderWidth,
-                y: rightShoulder.y + 0.5 * (rightHip.y - rightShoulder.y)
-            };
-
-            const deltaLeft = Math.hypot(leftElbow.x - leftRef.x, leftElbow.y - leftRef.y);
-            const deltaRight = Math.hypot(rightElbow.x - rightRef.x, rightElbow.y - rightRef.y);
-
-            if (deltaLeft > 0.04) feedbackMessages.push("왼쪽 팔꿈치를 고정하세요");
-            if (deltaRight > 0.04) feedbackMessages.push("오른쪽 팔꿈치를 고정하세요");
-
-            if (feedbackMessages.length > 0) {
-                feedbackDiv.innerText = feedbackMessages.join("\n");
-            } else {
-                feedbackDiv.innerText = "";
-            }
-
             // --- Draw reference points ---
             const refPoints = [leftRef, rightRef];
             refPoints.forEach((ref) => {
@@ -256,6 +222,34 @@ function predictWebcam() {
                     rightRepState = "up";
                 }
 
+                const leftAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
+                const rightAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
+
+                if (165 > leftAngle && leftAngle > 100 && leftRepState === "up")
+                    feedbackMessages.push("왼팔을 더 들어 올리세요!");
+                if (165 > rightAngle && rightAngle > 100 && rightRepState === "up")
+                    feedbackMessages.push("오른팔을 더 들어 올리세요!");
+
+                // 팔꿈치 기준 위치가 어깨 - 골반 중간 지점
+                const leftHip = landmark[23];
+                const rightHip = landmark[24];
+
+                const shoulderWidth = Math.abs(rightShoulder.x - leftShoulder.x);
+                const leftRef = {
+                    x: leftShoulder.x + 0.3 * shoulderWidth,
+                    y: leftShoulder.y + 0.5 * (leftHip.y - leftShoulder.y)
+                };
+                const rightRef = {
+                    x: rightShoulder.x - 0.3 * shoulderWidth,
+                    y: rightShoulder.y + 0.5 * (rightHip.y - rightShoulder.y)
+                };
+
+                const deltaLeft = Math.hypot(leftElbow.x - leftRef.x, leftElbow.y - leftRef.y);
+                const deltaRight = Math.hypot(rightElbow.x - rightRef.x, rightElbow.y - rightRef.y);
+
+                if (deltaLeft > 0.04) feedbackMessages.push("왼쪽 팔꿈치를 고정하세요");
+                if (deltaRight > 0.04) feedbackMessages.push("오른쪽 팔꿈치를 고정하세요");
+
                 if (leftAngle < 10 && leftRepState === 'down') {
                     leftRepCount++;
                     leftRepState = 'up';
@@ -274,6 +268,12 @@ function predictWebcam() {
             repCountDiv.innerText = `상태: ${leftRepState}`
             repCountDiv.innerText += `\n왼팔 반복 횟수: ${leftRepCount}`;
             repCountDiv.innerText += `\n오른팔 반복 횟수: ${rightRepCount}`;
+
+            if (feedbackMessages.length > 0) {
+                feedbackDiv.innerText = feedbackMessages.join("\n");
+            } else {
+                feedbackDiv.innerText = "";
+            }
         }
         // --- END: Feedback logic ---
 
