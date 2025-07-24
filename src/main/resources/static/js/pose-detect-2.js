@@ -118,6 +118,35 @@ async function enableCam(event) {
     }
 }
 
+function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ko-KR'; // or 'en-US' for English
+    speechSynthesis.speak(utterance);
+}
+
+const poseWarnings = {};  // { "허리를 올리세요": { start: 123456789, spoken: false } }
+
+function speakIfBadPosePersists(message, condition, holdDuration = 1000) {
+    const now = Date.now();
+
+    if (condition) {
+        if (!poseWarnings[message]) {
+            poseWarnings[message] = { start: now, spoken: false };
+        }
+
+        const { start, spoken } = poseWarnings[message];
+        const heldDuration = now - start;
+
+        if (!spoken && heldDuration > holdDuration) {
+            speak(message);
+            poseWarnings[message].spoken = true;
+        }
+    } else {
+        // Pose corrected — reset timer and flag
+        delete poseWarnings[message];
+    }
+}
+
 let repState = "ready";
 let repCount = 0;
 function predictWebcam() {
@@ -125,6 +154,7 @@ function predictWebcam() {
     video.style.width = videoWidth + 'px';
     canvasElement.style.height = videoHeight + 'px';
     canvasElement.style.width = videoWidth + 'px';
+    speak("준비 자세를 취해주십시오");
 
     function frameLoop() {
         if (!webcamRunning) return;
@@ -216,7 +246,7 @@ function predictWebcam() {
 
                 if (hipOffset > 0.03) {
                     if (pushupAngle < 20) {
-                        if (hipOffset > 0.05) {
+                        if (hipOffset > 0.07) {
                             return "sagging";
                         } else {
                             return "straight";
@@ -266,15 +296,15 @@ function predictWebcam() {
             }
 
             if (userDirection === "left") {
-                pushupAngle = calculateAngleToGround(leftAnkle, leftShoulder, leftWrist);
+                pushupAngle = calculateBendAngle(leftShoulder, leftAnkle, leftWrist);
                 backStraightness = calculateBendAngle(leftShoulder, leftHip, leftAnkle);
                 hipState = calculateHipPosition(leftShoulder, leftHip, leftAnkle);
                 armBendAngle = calculateBendAngle(leftShoulder, leftElbow, leftWrist);
                 elbowFlare = checkElbowFlare(leftShoulder, leftElbow);
             } else {
-                pushupAngle = calculateAngleToGround(rightAnkle, rightShoulder, rightWrist);
+                pushupAngle = calculateBendAngle(rightShoulder, rightAnkle, rightWrist);
                 backStraightness = calculateBendAngle(rightShoulder, rightHip, rightAnkle);
-                hipState = calculateHipPosition(rightHip, rightHip, rightAnkle);
+                hipState = calculateHipPosition(rightShoulder, rightHip, rightAnkle);
                 armBendAngle = calculateBendAngle(rightShoulder, rightElbow, rightWrist);
                 elbowFlare = checkElbowFlare(rightShoulder, rightElbow);
             }
@@ -288,25 +318,33 @@ function predictWebcam() {
             if (visiblePoints.filter(Boolean).length > 4) {
                 if (repState === "ready" && hipState === "straight") {
                     repState = "down";
+                    speak("시작하십시오")
                 }
-                if (hipState === "straight") {
-                    if (repState === "up" && pushupAngle > 30 && armBendAngle > 155) {
-                        repCount ++;
-                        repState = "down";
-                    } else if (repState === "down" && pushupAngle < 17 && armBendAngle < 110) {
-                        repState = "up";
+                if (repState !== "ready") {
+                    if (hipState === "straight") {
+                        if (repState === "up" && pushupAngle > 27 && armBendAngle > 145) {
+                            repCount ++;
+                            repState = "down";
+                            speak(repCount.toString());
+                        } else if (repState === "down" && pushupAngle < 17 && armBendAngle < 110) {
+                            repState = "up";
+                        }
+                    } else {
+                        if (hipState === "sagging") {
+                            feedbackMessages.push("허리를 올리세요!")
+                            let badHipForm = (hipState === "sagging");
+                            speakIfBadPosePersists("허리 올려", badHipForm, 1000);
+                        }
+                        if (hipState === "piking") {
+                            feedbackMessages.push("허리를 내리세요!")
+                            let badHipForm = (hipState === "piking");
+                            speakIfBadPosePersists("허리 내려", badHipForm, 1000)
+                        }
                     }
-                } else {
-                    if (hipState === "sagging") {
-                        feedbackMessages.push("허리를 올리세요!")
-                    }
-                    if (hipState === "piking") {
-                        feedbackMessages.push("허리를 내리세요!")
-                    }
+                    // if (elbowFlare && pushupAngle < 10) {
+                    //     feedbackMessages.push("팔꿈치를 몸 가까이 붙이세요!")
+                    // }
                 }
-                // if (elbowFlare && pushupAngle < 10) {
-                //     feedbackMessages.push("팔꿈치를 몸 가까이 붙이세요!")
-                // }
             }
 
             repCountDiv.innerText = `상태: ${repState}`
@@ -321,7 +359,6 @@ function predictWebcam() {
         // --- END: Feedback logic ---
 
         canvasCtx.restore();
-
         requestAnimationFrame(frameLoop);
     }
 
