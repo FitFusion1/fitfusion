@@ -1,4 +1,4 @@
-// FitFusion Pose Detection JavaScript
+// FitFusion Pose Detection JavaScript - pushup
 // MediaPipe PoseLandmarker with LIVE_STREAM and selective landmark rendering
 
 import {
@@ -99,7 +99,7 @@ async function enableCam(event) {
         localStream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = localStream;
         video.addEventListener("loadeddata", predictWebcam);
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.restore();
     } catch (e) {
         console.error(e);
     }
@@ -110,7 +110,6 @@ async function enableCam(event) {
             localStream.getTracks().forEach(track => track.stop());
             video.srcObject = null;
             localStream = null;
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
         }
         enableWebcamButton.innerText = "웹캠 시작하기";
     } else {
@@ -119,10 +118,8 @@ async function enableCam(event) {
     }
 }
 
-let leftRepState = "ready";
-let rightRepState = "ready";
-let leftRepCount = 0;
-let rightRepCount = 0;
+let repState = "ready";
+let repCount = 0;
 function predictWebcam() {
     video.style.height = videoHeight + 'px';
     video.style.width = videoWidth + 'px';
@@ -178,96 +175,142 @@ function predictWebcam() {
             const landmark = result.landmarks[0];
             let feedbackMessages = [];
 
-            function calculateAngle(a, b, c) {
-                const ab = [a.x - b.x, a.y - b.y];
-                const cb = [b.x - c.x, b.y - c.y];
-                const dot = ab[0]*cb[0] + ab[1]*cb[1];
-                const magAB = Math.hypot(ab[0], ab[1]);
-                const magCB = Math.hypot(cb[0], cb[1]);
-                const cosTheta = dot / (magAB * magCB);
+            // 발목-어깨선과 지면의 각도 구하기
+            function calculateAngleToGround(ankle, shoulder, wrist) {
+                const v1x = shoulder.x - ankle.x;
+                const v1y = shoulder.y - ankle.y;
+                const v2x = wrist.x - ankle.x;
+                const v2y = wrist.y - ankle.y;
+                const dot = v1x * v2x + v1y * v2y;
+                const magV1 = Math.hypot(v1x, v1y);
+                const magV2 = Math.hypot(v2x, v2y);
+                const cosTheta = dot / (magV1 * magV2);
+                const clampedCos = Math.max(-1, Math.min(1, cosTheta)); // avoid floating point issues
+                const angleRad = Math.acos(clampedCos);
+                return angleRad * (180 / Math.PI);
+            }
+
+            // 세 점 각도 계싼
+            function calculateBendAngle(a, b, c) {
+                const v1x = a.x - b.x;
+                const v1y = a.y - b.y;
+                const v2x = c.x - b.x;
+                const v2y = c.y - b.y;
+                const dot = v1x * v2x + v1y * v2y;
+                const magV1 = Math.hypot(v1x, v1y);
+                const magV2 = Math.hypot(v2x, v2y);
+                const cosTheta = dot / (magV1 * magV2);
                 const clampedCos = Math.max(-1, Math.min(1, cosTheta));
                 const angleRad = Math.acos(clampedCos);
                 return angleRad * (180 / Math.PI);
             }
 
+            // 허리 높이 계산
+            function calculateHipPosition(shoulder, hip, ankle) {
+                // Interpolate the expected y-position of the hip on a straight line between shoulder and ankle
+                const t = ((hip.x - shoulder.x) / (ankle.x - shoulder.x));
+                const expectedHipY = shoulder.y + t * (ankle.y - shoulder.y);
+
+                const hipOffset = hip.y - expectedHipY; // Positive if hip is below the line
+                console.log("hipoffset:", hipOffset);
+
+                if (hipOffset > 0.03) {
+                    if (pushupAngle < 20) {
+                        if (hipOffset > 0.05) {
+                            return "sagging";
+                        } else {
+                            return "straight";
+                        }
+                    }
+                    return "sagging";
+                } else if (hipOffset < -0.05) {
+                    return "piking";
+                } else {
+                    return "straight";
+                }
+            }
+
+
+            // 팔꿈치 위치 계산
+            // 밖으로 굽혔을 때(잘못된 자세일 때) true 반환
+            function checkElbowFlare(shoulder, elbow, threshold = 0.1) {
+                const xDiff = Math.abs(elbow.x - shoulder.x);
+                return xDiff < threshold;
+            }
+
             const leftShoulder = landmark[11];
             const leftElbow = landmark[13];
             const leftWrist = landmark[15];
+            const leftHip = landmark[23];
+            const leftAnkle = landmark[27];
             const rightShoulder = landmark[12];
             const rightElbow = landmark[14];
             const rightWrist = landmark[16];
+            const rightHip = landmark[24];
+            const rightAnkle = landmark[28];
 
-            const checkPoints = [leftShoulder, leftElbow, leftWrist, rightShoulder, rightElbow, rightWrist];
+            const checkPoints = [leftShoulder, leftElbow, leftWrist, leftHip, leftAnkle,
+                rightShoulder, rightElbow, rightWrist, rightHip, rightAnkle];
 
-            // --- Draw reference points ---
-            const refPoints = [leftRef, rightRef];
-            refPoints.forEach((ref) => {
-                const refX = ref.x * canvasElement.width;
-                const refY = ref.y * canvasElement.height;
-                canvasCtx.beginPath();
-                canvasCtx.arc(refX, refY, 4, 0, 2 * Math.PI);
-                canvasCtx.fillStyle = 'blue';
-                canvasCtx.fill();
-            });
+            let userDirection;
+            let pushupAngle;
+            let backStraightness;
+            let hipState;
+            let armBendAngle;
+            let elbowFlare;
+            if (leftShoulder.visibility > rightShoulder.visibility
+                && leftAnkle.visibility > rightAnkle.visibility) {
+                userDirection = "left";
+            } else {
+                userDirection = "right";
+            }
+
+            if (userDirection === "left") {
+                pushupAngle = calculateAngleToGround(leftAnkle, leftShoulder, leftWrist);
+                backStraightness = calculateBendAngle(leftShoulder, leftHip, leftAnkle);
+                hipState = calculateHipPosition(leftShoulder, leftHip, leftAnkle);
+                armBendAngle = calculateBendAngle(leftShoulder, leftElbow, leftWrist);
+                elbowFlare = checkElbowFlare(leftShoulder, leftElbow);
+            } else {
+                pushupAngle = calculateAngleToGround(rightAnkle, rightShoulder, rightWrist);
+                backStraightness = calculateBendAngle(rightShoulder, rightHip, rightAnkle);
+                hipState = calculateHipPosition(rightHip, rightHip, rightAnkle);
+                armBendAngle = calculateBendAngle(rightShoulder, rightElbow, rightWrist);
+                elbowFlare = checkElbowFlare(rightShoulder, rightElbow);
+            }
 
             // --- Rep counting ---
             let visiblePoints = [];
             for (let point of checkPoints) {
                 visiblePoints.push(checkVisibility(point));
             }
-            const allVisible = visiblePoints.every(Boolean);
-            if (allVisible) {
-                if (leftRepState === "ready" && rightRepState === "ready") {
-                    leftRepState = "up";
-                    rightRepState = "up";
+            console.log("pushupAngle:", pushupAngle, "armBendAngle:", armBendAngle, "backStraightness:", backStraightness);
+            if (visiblePoints.filter(Boolean).length > 4) {
+                if (repState === "ready" && hipState === "straight") {
+                    repState = "down";
                 }
-
-                const leftAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
-                const rightAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
-
-                if (165 > leftAngle && leftAngle > 100 && leftRepState === "up")
-                    feedbackMessages.push("왼팔을 더 들어 올리세요!");
-                if (165 > rightAngle && rightAngle > 100 && rightRepState === "up")
-                    feedbackMessages.push("오른팔을 더 들어 올리세요!");
-
-                // 팔꿈치 기준 위치가 어깨 - 골반 중간 지점
-                const leftHip = landmark[23];
-                const rightHip = landmark[24];
-
-                const shoulderWidth = Math.abs(rightShoulder.x - leftShoulder.x);
-                const leftRef = {
-                    x: leftShoulder.x + 0.3 * shoulderWidth,
-                    y: leftShoulder.y + 0.5 * (leftHip.y - leftShoulder.y)
-                };
-                const rightRef = {
-                    x: rightShoulder.x - 0.3 * shoulderWidth,
-                    y: rightShoulder.y + 0.5 * (rightHip.y - rightShoulder.y)
-                };
-
-                const deltaLeft = Math.hypot(leftElbow.x - leftRef.x, leftElbow.y - leftRef.y);
-                const deltaRight = Math.hypot(rightElbow.x - rightRef.x, rightElbow.y - rightRef.y);
-
-                if (deltaLeft > 0.04) feedbackMessages.push("왼쪽 팔꿈치를 고정하세요");
-                if (deltaRight > 0.04) feedbackMessages.push("오른쪽 팔꿈치를 고정하세요");
-
-                if (leftAngle < 10 && leftRepState === 'down') {
-                    leftRepCount++;
-                    leftRepState = 'up';
-                } else if (leftAngle > 170 && leftRepState === 'up') {
-                    leftRepState = 'down';
+                if (hipState === "straight") {
+                    if (repState === "up" && pushupAngle > 30 && armBendAngle > 155) {
+                        repCount ++;
+                        repState = "down";
+                    } else if (repState === "down" && pushupAngle < 17 && armBendAngle < 110) {
+                        repState = "up";
+                    }
+                } else {
+                    if (hipState === "sagging") {
+                        feedbackMessages.push("허리를 올리세요!")
+                    }
+                    if (hipState === "piking") {
+                        feedbackMessages.push("허리를 내리세요!")
+                    }
                 }
-
-                if (rightAngle < 10 && rightRepState === 'down') {
-                    rightRepCount++;
-                    rightRepState = 'up';
-                } else if (rightAngle > 170 && rightRepState === 'up') {
-                    rightRepState = 'down';
-                }
+                // if (elbowFlare && pushupAngle < 10) {
+                //     feedbackMessages.push("팔꿈치를 몸 가까이 붙이세요!")
+                // }
             }
 
-            repCountDiv.innerText = `상태: ${leftRepState}`
-            repCountDiv.innerText += `\n왼팔 반복 횟수: ${leftRepCount}`;
-            repCountDiv.innerText += `\n오른팔 반복 횟수: ${rightRepCount}`;
+            repCountDiv.innerText = `상태: ${repState}`
+            repCountDiv.innerText += `\n반복 횟수: ${repCount}`;
 
             if (feedbackMessages.length > 0) {
                 feedbackDiv.innerText = feedbackMessages.join("\n");
