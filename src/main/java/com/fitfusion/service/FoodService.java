@@ -15,7 +15,7 @@ public class FoodService {
     private final FoodMapper foodMapper;
 
     public List<FoodDto> findAllFoods() {
-        return foodMapper.findAll();
+        return foodMapper.findAllForExport();
     }
 
     public FoodDto findFoodById(Integer foodId) {

@@ -56,78 +56,56 @@
         <result property="apiRecordUpdateDate" column="API_RECORD_UPDATED_DATE"/>
     </resultMap>
 
+    <!-- ==========================================================
+          [1] 조회 (SELECT)
+         ========================================================== -->
+
 <!-- ★필드명 수정 끝나면 *부분 필드명으로 전부 채워넣기 -->
-    <!-- 1. 전체 조회 -->
-    <select id="findAll" resultType="com.fitfusion.dto.FoodDto">
-        SELECT
-            f.*,
-            u.FOOD_UNIT_SYMBOL
-        FROM FITFUSION_FOOD_ITEMS f
-                 LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
+    <!-- 1. 전체 조회 (배치용: 풀 데이터)-->
+    <select id="findAllForExport" resultMap="foodResultMap">
+        SELECT *
+        FROM FITFUSION_FOOD_ITEMS
     </select>
 
-    <!-- 2. 상세 조회 -->
-    <select id="findFoodByIdWithUnit" parameterType="Integer" resultMap="foodResultMap">
+    <!-- 2. 음식 기본 정보 조회 (UI 리스트용) -->
+    <select id="findAllBasic" resultMap="foodResultMap">
         SELECT
-            f.*,
-            u.FOOD_UNIT_SYMBOL
+            FOOD_ID,
+            FOOD_NAME,
+            FOOD_SERVING_SIZE_RAW,
+            CALORIES
+        FROM FITFUSION_FOOD_ITEMS
+        ORDER BY FOOD_NAME
+    </select>
+
+    <!-- 3. 검색 결과 (페이징 + 최소 필드) -->
+    <select id="searchFoodsByPaging" resultMap="foodResultMap">
+        SELECT FOOD_ID, FOOD_NAME, FOOD_SERVING_SIZE_RAW, CALORIES, IMAGE_URL
+        FROM FITFUSION_FOOD_ITEMS
+        WHERE FOOD_NAME LIKE '%' || #{keyword} || '%'
+        OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+    </select>
+
+    <!-- 4. 검색 결과 개수 -->
+    <select id="countFoodsByKeyword" resultType="int">
+        SELECT COUNT(*)
+        FROM FITFUSION_FOOD_ITEMS
+        WHERE FOOD_NAME LIKE '%' || #{keyword} || '%'
+    </select>
+
+    <!-- 5. 상세 조회 (모든 필드 + JOIN) -->
+    <select id="findFoodDetailById" parameterType="int" resultMap="foodResultMap">
+        SELECT f.*, u.FOOD_UNIT_SYMBOL
         FROM FITFUSION_FOOD_ITEMS f
                  LEFT JOIN FITFUSION_FOOD_UNITS u
                            ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
         WHERE f.FOOD_ID = #{foodId}
     </select>
 
-    <!-- 3. 키워드 검색 -->
-    <select id="searchFoodsByKeyword" parameterType="String" resultMap="foodResultMap">
-        SELECT
-            f.*,
-            u.FOOD_UNIT_SYMBOL
-        FROM FITFUSION_FOOD_ITEMS f
-                 LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
-        WHERE f.FOOD_NAME LIKE '%' || #{keyword} || '%'
-    </select>
-
-    <!-- 4. 카테고리 검색 -->
-    <select id="findByCategory" parameterType="String" resultMap="foodResultMap">
-        SELECT
-            f.*,
-            u.FOOD_UNIT_SYMBOL
-        FROM FITFUSION_FOOD_ITEMS f
-                 LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
-        WHERE f.FOOD_CAT1_CODE = #{foodCat1Code}
-    </select>
-
-    <!-- 5. 수입 여부 검색 -->
-    <select id="findByImported" parameterType="String" resultMap="foodResultMap">
-        SELECT
-            f.*,
-            u.FOOD_UNIT_SYMBOL
-        FROM FITFUSION_FOOD_ITEMS f
-                 LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
-        WHERE f.IS_IMPORTED = #{isImported}
-    </select>
-
-    <!-- 6. 페이징 검색 -->
-    <select id="searchFoodsByPaging" resultMap="foodResultMap">
-        SELECT
-            f.*,
-            u.FOOD_UNIT_SYMBOL
-        FROM FITFUSION_FOOD_ITEMS f
-                 LEFT JOIN FITFUSION_FOOD_UNITS u
-                           ON f.FOOD_SERVING_UNIT_ID = u.FOOD_UNIT_ID
-        WHERE f.FOOD_NAME LIKE '%' || #{keyword} || '%'
-        OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
-    </select>
-
-    <!-- 7. Count -->
-    <select id="countFoodsByKeyword" parameterType="String" resultType="int">
-        SELECT COUNT(*)
+    <!-- 6. 모든 음식명 (자동완성용) -->
+    <select id="findAllFoodNames" resultType="string">
+        SELECT FOOD_NAME
         FROM FITFUSION_FOOD_ITEMS
-        WHERE FOOD_NAME LIKE '%' || #{keyword} || '%'
     </select>
 
     <!-- 8. INSERT (API -> DB 저장용)
@@ -195,30 +173,30 @@
         #{foodCat2Code, jdbcType=VARCHAR},
         #{foodCat2Name, jdbcType=VARCHAR},
         #{foodServingSizeRaw, jdbcType=VARCHAR},
-        #{foodServingSizeValue, jdbcType=DOUBLE},
+        #{foodServingSizeValue, jdbcType=DECIMAL},
         #{foodServingUnitId, jdbcType=INTEGER},
         #{foodWeightRaw, jdbcType=VARCHAR},
-        #{foodWeightValue, jdbcType=DOUBLE},
+        #{foodWeightValue, jdbcType=DECIMAL},
         #{foodWeightUnitId, jdbcType=INTEGER},
         #{referenceIntake, jdbcType=VARCHAR},
-        #{calories, jdbcType=DOUBLE},
-        #{carbohydrateG, jdbcType=DOUBLE},
-        #{proteinG, jdbcType=DOUBLE},
-        #{fatG, jdbcType=DOUBLE},
-        #{sugarG, jdbcType=DOUBLE},
-        #{fiberG, jdbcType=DOUBLE},
-        #{calciumMg, jdbcType=DOUBLE},
-        #{ironMg, jdbcType=DOUBLE},
-        #{potassiumMg, jdbcType=DOUBLE},
-        #{sodiumMg, jdbcType=DOUBLE},
-        #{vitaminCMg, jdbcType=DOUBLE},
-        #{cholesterolMg, jdbcType=DOUBLE},
-        #{saturatedFatG, jdbcType=DOUBLE},
-        #{transFatG, jdbcType=DOUBLE},
-        #{unsaturatedFatG, jdbcType=DOUBLE},
-        #{totalFattyAcidsG, jdbcType=DOUBLE},
-        #{sugarAlcoholG, jdbcType=DOUBLE},
-        #{caffeineMg, jdbcType=DOUBLE},
+        #{calories, jdbcType=DECIMAL},
+        #{carbohydrateG, jdbcType=DECIMAL},
+        #{proteinG, jdbcType=DECIMAL},
+        #{fatG, jdbcType=DECIMAL},
+        #{sugarG, jdbcType=DECIMAL},
+        #{fiberG, jdbcType=DECIMAL},
+        #{calciumMg, jdbcType=DECIMAL},
+        #{ironMg, jdbcType=DECIMAL},
+        #{potassiumMg, jdbcType=DECIMAL},
+        #{sodiumMg, jdbcType=DECIMAL},
+        #{vitaminCMg, jdbcType=DECIMAL},
+        #{cholesterolMg, jdbcType=DECIMAL},
+        #{saturatedFatG, jdbcType=DECIMAL},
+        #{transFatG, jdbcType=DECIMAL},
+        #{unsaturatedFatG, jdbcType=DECIMAL},
+        #{totalFattyAcidsG, jdbcType=DECIMAL},
+        #{sugarAlcoholG, jdbcType=DECIMAL},
+        #{caffeineMg, jdbcType=DECIMAL},
         #{originCountryName, jdbcType=VARCHAR},
         #{isImported, jdbcType=VARCHAR},
         #{imageUrl, jdbcType=VARCHAR},
@@ -298,12 +276,6 @@
         DELETE FROM FITFUSION_FOOD_ITEMS
         WHERE FOOD_ID = #{foodId, jdbcType=INTEGER}
     </delete>
-
-    <!-- 12. 모든 FOOD_NAME 목록 -->
-    <select id="findAllFoodNames" resultType="String">
-        SELECT FOOD_NAME
-        FROM FITFUSION_FOOD_ITEMS
-    </select>
 
     <!-- 단일 음식 조회 API -->
     <select id="findById" parameterType="int" resultType="com.fitfusion.dto.FoodDto">

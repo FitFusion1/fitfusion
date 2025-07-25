@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -70,23 +71,22 @@ public class FoodController {
 
     /**
      * 공공데이터 API에서 음식정보 import
-     * - 요청 바디의 keyword가 없으면 전체 import
+     * - 요청 바디의 keyword가 없으면 전체 import는 미구현 (예외 처리)
      * - keyword가 있으면 해당 키워드 기준 import
      */
     @PostMapping("/importFromApi")
     public ResponseEntity<String> importFoodsFromApi(@RequestBody Map<String, String> request) {
         String keyword = request.get("keyword");
-        int savedCount = (keyword == null || keyword.isBlank())
-                ? foodApiService.importAllFoods()
-                : foodApiService.importFoodsAndSave(keyword);
 
-        String message = String.format(
-                "%d개의 데이터를 저장했습니다. (검색어: %s)",
-                savedCount,
-                (keyword == null || keyword.isBlank()) ? "전체" : keyword
-        );
+        if (keyword == null || keyword.isBlank()) {
+            // 전체 import 기능은 현재 서비스에 없음 → 안내 메시지 반환
+            return ResponseEntity.badRequest().body("❌ 전체 데이터 import 기능은 지원되지 않습니다. (키워드 필요)");
+        }
 
-        return ResponseEntity.ok(message);
+        // importByKeywords()는 리스트를 받음 → keyword를 리스트로 변환
+        String summary = foodApiService.importByKeywords(List.of(keyword));
+
+        return ResponseEntity.ok(summary);
     }
 
 //    바로 아래 @GetMapping("/totalCount") 멀쩡하면 지워도 됨
