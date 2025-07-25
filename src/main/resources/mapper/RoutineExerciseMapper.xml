@@ -25,4 +25,8 @@
         )
     </insert>
 
+    <delete id="deleteRoutineExercisesByRoutineId" parameterType="map">
+        delete from fitfusion_routine_exercise
+        where routine_id = #{routineId}
+    </delete>
 </mapper>

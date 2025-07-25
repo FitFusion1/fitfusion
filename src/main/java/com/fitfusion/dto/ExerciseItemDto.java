@@ -13,8 +13,8 @@ public class ExerciseItemDto {
     private String parts;
     private String equipment;
     private int fatigueLevel;
-    private int sets;
-    private int reps;
+    private Integer sets;
+    private Integer reps;
     private String weight;
     private String description;
     private int durationMinute;

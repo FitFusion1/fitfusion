@@ -2,7 +2,6 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{/layout/base}" th:with="menu='posts'">
 
 <head>
@@ -16,104 +15,127 @@
     <div class="RoutineEdit-container">
         <h1 class="RoutineEdit-title"
             th:text="${routine.routineId > 0} ? '루틴 수정' : '루틴 생성'">루틴 수정 / 생성</h1>
-        <form th:action="${routine.routineId > 0} ? @{/routine/update/custom} : @{/routine/save/custom}" method="post" class="RoutineEdit-form">
+
+        <div th:if="${routineError}" style="color: red;">
+            <p th:text="${routineError}"></p>
+        </div>
+
+        <form th:object="${routine}"
+              th:action="${routine.routineId > 0} ? @{/routine/update/custom} : @{/routine/save/custom}"
+              method="post" class="RoutineEdit-form">
+            <input type="hidden" name="_method" th:if="${routine.routineId > 0}" value="put"/>
+            <input type="hidden" th:field="*{routineId}"/>
+
+            <!-- 루틴 이름 -->
             <div class="RoutineEdit-formGroup">
                 <label for="routineName">루틴 이름</label>
-                <input type="text" id="routineName" placeholder="예: 하체 집중 루틴"
-                       th:value="${routine.routineId > 0} ? ${routine.routineName} : ''">
+                <input type="text" id="routineName" th:field="*{routineName}" placeholder="예: 하체 집중 루틴">
             </div>
 
+            <!-- 루틴 설명 -->
             <div class="RoutineEdit-formGroup">
                 <label for="description">루틴 설명</label>
-                <textarea id="description" placeholder="루틴에 대한 간단한 설명을 입력하세요."
-                          th:text="${routine.routineId > 0} ? ${routine.description} : ''"></textarea>
+                <textarea id="description" th:field="*{description}"
+                          placeholder="루틴에 대한 간단한 설명을 입력하세요."></textarea>
             </div>
-            <button class="RoutineEdit-addBtn">+ 운동 추가</button>
+
+            <!-- 운동 추가 버튼 -->
+            <button type="button" class="RoutineEdit-addBtn">+ 운동 추가</button>
+
+            <!-- 운동 목록 -->
             <div class="RoutineEdit-exerciseList">
                 <h3>운동 목록</h3>
-                <div id="exerciseTemplate" style="display: none;">
-                    <div class="RoutineEdit-exerciseCard">
-                        <button class="RoutineEdit-deleteBtn" onclick="deleteExerciseCard(this)">삭제</button>
-                        <div class="RoutineEdit-formGroup">
-                            <label>운동 이름</label>
-                            <select name="exercises[#].exerciseId">
-                                <option th:each="ex : ${exerciseList}"
-                                        th:value="${ex.exerciseId}"
-                                        th:text="${ex.exerciseName}"
-                                        th:selected="${exercise != null} and ${exercise.exerciseId} == ${ex.exerciseId}">
-                                </option>
-                            </select>
-                            <div class="RoutineEdit-formGroup">
-                                <label>세트 수</label>
-                                <input type="number" name="exercises[#}.sets">
-                            </div>
-                            <div class="RoutineEdit-formGroup">
-                                <label>반복 수</label>
-                                <input type="number" name="exercises[#}.reps">
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="RoutineEdit-exerciseCard"
-                     th:if="${routine != null}"
-                     th:each="exercise, status : ${routine.exercises}">
-                    <button class="RoutineEdit-deleteBtn"
-                            onclick="deleteExerciseCard(this)">삭제
-                    </button>
+                <!-- 기존 운동 목록 -->
+                <div class="RoutineEdit-exerciseCard" th:each="exercise, status : *{exercises}">
                     <div class="RoutineEdit-formGroup">
                         <label>운동 이름</label>
-                        <select name="exericses[__index__].exerciseId">
+                        <select th:field="*{exercises[__${status.index}__].exerciseId}">
                             <option th:each="ex : ${exerciseList}"
                                     th:value="${ex.exerciseId}"
-                                    th:text="${ex.exerciseName}"
-                                    th:selected="${ex.exerciseId} == ${exercise.exerciseId}">
-                            </option>
+                                    th:text="${ex.exerciseName}"></option>
+                        </select>
+                    </div>
+
+                    <div class="RoutineEdit-formGroup">
+                        <label>세트 수</label>
+                        <input type="number" th:field="*{exercises[__${status.index}__].sets}">
+                        <p th:if="${setsErrors != null and setsErrors[__${status.index}__] != null}" th:text="${setsErrors[__${status.index}__]}" class="error-text"></p>
+                    </div>
+
+                    <div class="RoutineEdit-formGroup">
+                        <label>반복 수</label>
+                        <input type="number" th:field="*{exercises[__${status.index}__].reps}">
+                        <p th:if="${repsErrors != null and repsErrors[__${status.index}__] != null}" th:text="${repsErrors[__${status.index}__]}" class="error-text"></p>
+                    </div>
+
+                    <button type="button" class="RoutineEdit-deleteBtn" onclick="deleteExerciseCard(this)">삭제</button>
+                </div>
+            </div>
+
+            <!-- 동적 추가용 템플릿 -->
+            <div id="exerciseTemplate" style="display:none;">
+                <div class="RoutineEdit-exerciseCard">
+                    <div class="RoutineEdit-formGroup">
+                        <label>운동 이름</label>
+                        <select class="exerciseId">
+                            <option th:each="ex : ${exerciseList}"
+                                    th:value="${ex.exerciseId}"
+                                    th:text="${ex.exerciseName}"></option>
                         </select>
                     </div>
                     <div class="RoutineEdit-formGroup">
                         <label>세트 수</label>
-                        <input type="number" th:value="${exercise.sets}">
+                        <input type="number" class="sets">
                     </div>
                     <div class="RoutineEdit-formGroup">
                         <label>반복 수</label>
-                        <input type="number" th:value="${exercise.reps}">
+                        <input type="number" class="reps">
                     </div>
+                    <button type="button" class="RoutineEdit-deleteBtn" onclick="deleteExerciseCard(this)">삭제</button>
                 </div>
             </div>
 
-            <button type="submit"
-                    class="RoutineEdit-saveBtn"
-                    th:text="${routine != null} ? '루틴 수정하기' : '루틴 저장하기'">루틴 저장
+            <!-- 저장 버튼 -->
+            <button type="submit" class="RoutineEdit-saveBtn"
+                    th:text="${routine.routineId > 0} ? '루틴 수정하기' : '루틴 저장하기'">
+                루틴 저장
             </button>
         </form>
     </div>
 </div>
+
 <th:block layout:fragment="script">
     <script>
-        let exerciseIndex = 0;
-
-        function addExerciseCard() {
-            const template = document.getElementById('exerciseTemplate').innerHTML;
-            const newCardGtml = template.replace(/#/g, exerciseIndex++);
-            const newCard = document.createElement('div');
-            newCard.innerHTML = newCardGtml;
-            document.querySelector('.RoutineEdit-exerciseList').prepend(newCard.firstElementChild);
-        }
-
-        function deleteExerciseCard(btn) {
-            const card = btn.closest('.RoutineEdit-exerciseCard');
-            card.remove();
-        }
-
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelector('.RoutineEdit-addBtn').addEventListener('click', addExerciseCard);
-            const isNew = document.querySelector('.RoutineEdit-title').textContent.includes('루틴 생성');
-            if (isNew) {
+            let exerciseIndex = [[${routine.exercises.size()}]];
+
+            function addExerciseCard() {
+                const template = document.getElementById('exerciseTemplate').innerHTML;
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = template;
+                const card = wrapper.firstElementChild;
+
+                card.querySelector('.exerciseId').setAttribute('name', `exercises[${exerciseIndex}].exerciseId`);
+                card.querySelector('.sets').setAttribute('name', `exercises[${exerciseIndex}].sets`);
+                card.querySelector('.reps').setAttribute('name', `exercises[${exerciseIndex}].reps`);
+
+                exerciseIndex++;
+                document.querySelector('.RoutineEdit-exerciseList').appendChild(card);
+            }
+
+            window.deleteExerciseCard = function (btn) {
+                btn.closest('.RoutineEdit-exerciseCard').remove();
+            };
+
+            if (exerciseIndex === 0) {
                 addExerciseCard();
             }
-        })
 
+            document.querySelector('.RoutineEdit-addBtn').addEventListener('click', function () {
+                addExerciseCard();
+            });
+        });
     </script>
 </th:block>
 </html>

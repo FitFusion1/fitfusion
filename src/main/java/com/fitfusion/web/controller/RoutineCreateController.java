@@ -1,5 +1,6 @@
 package com.fitfusion.web.controller;
 
+import com.fitfusion.dto.ExerciseItemDto;
 import com.fitfusion.dto.RoutineDetailDto;
 import com.fitfusion.dto.RoutineListDto;
 import com.fitfusion.service.*;
@@ -12,14 +13,13 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -72,15 +72,57 @@ public class RoutineCreateController {
 
     @GetMapping("/create/custom")
     public String customRoutine(Model model) {
-        RoutineDetailDto routine = new RoutineDetailDto();
-        List<Exercise> exerciseList = exerciseService.getAllExercises();
-        routine.setExercises(new ArrayList<>());
-        model.addAttribute("routine", routine);
-        model.addAttribute("exerciseList", exerciseList);
+        if (!model.containsAttribute("routine")) {
+            RoutineDetailDto routine = new RoutineDetailDto();
+            routine.setExercises(new ArrayList<>());
+            model.addAttribute("routine", routine);
+        }
+
+        model.addAttribute("exerciseList", exerciseService.getAllExercises());
         return "routine/RoutineEdit";
     }
+
+    @PostMapping("/save/custom")
+    public String saveCustomRoutine(@ModelAttribute RoutineDetailDto routine, RedirectAttributes redirectAttributes) {
+
+        boolean hasError = false;
+        Map<Integer, String> setsErrors = new HashMap<>();
+        Map<Integer, String> repsErrors = new HashMap<>();
+
+        if (routine.getRoutineName() == null || routine.getRoutineName().trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("routineError", "루틴 이름을 입력해주세요.");
+            hasError = true;
+        }
+
+
+        for (int i = 0; i < routine.getExercises().size(); i++) {
+            Integer sets = routine.getExercises().get(i).getSets();
+            Integer reps = routine.getExercises().get(i).getReps();
+
+            if (sets == null || sets == 0) {
+                setsErrors.put(i, "세트 수는 0보다 커야합니다.");
+                hasError = true;
+            }
+            if (reps == null || reps == 0) {
+                repsErrors.put(i, "반복 수는 0보다 커야합니다.");
+                hasError = true;
+            }
+        }
+
+        if (hasError){
+            redirectAttributes.addFlashAttribute("routine", routine);
+            redirectAttributes.addFlashAttribute("setsErrors", setsErrors);
+            redirectAttributes.addFlashAttribute("repsErrors", repsErrors);
+            return "redirect:/routine/create/custom";
+        }
+
+        routineService.saveCustomRoutine(userId, routine);
+        return "redirect:/routine/list";
+    }
+
     @PostMapping("/save/ai")
     public String saveRecommendedRoutine() throws Exception {
+
         ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(userId);
         List<Exercise> allExercises = exerciseService.getAllExercises();
         String goalType = exerciseGoalService.getSelectedGoalByUserId(userId).getGoalType();
@@ -97,9 +139,4 @@ public class RoutineCreateController {
         return "redirect:/routine/list";
     }
 
-    @PostMapping("/save/custom")
-    public String saveCustomRoutine(@ModelAttribute RoutineDetailDto routine) {
-        routineService.saveCustomRoutine(userId, routine);
-        return "redirect:/routine/list";
-    }
 }

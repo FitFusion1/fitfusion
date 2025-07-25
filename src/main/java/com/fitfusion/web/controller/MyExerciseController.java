@@ -1,6 +1,7 @@
 package com.fitfusion.web.controller;
 
 import com.fitfusion.dto.ExerciseLogDto;
+import com.fitfusion.dto.RoutineLogDto;
 import com.fitfusion.service.ExerciseGoalService;
 import com.fitfusion.service.ExerciseLogService;
 import com.fitfusion.service.ExerciseService;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Controller
@@ -39,6 +41,14 @@ public class MyExerciseController {
 
     @GetMapping("/exerciselog")
     public String ExerciseLogPage(Model model) {
+        List<RoutineLogDto> routineLogs = exerciseLogService.getRoutineLogByUserId(userId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for (RoutineLogDto log : routineLogs) {
+            if (log.getLogDate() != null) {
+                log.setFormattedDate(sdf.format(log.getLogDate()));
+            }
+        }
+        model.addAttribute("routineLogs", routineLogs);
         return "myexercise/ExerciseLog";
     }
 

@@ -4,9 +4,38 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.ExerciseLogMapper">
 
+    <select id="findRoutineLogDetail" resultType="ExerciseLogDto">
+        SELECT
+            e.name                  AS exerciseName,
+            l.log_id                AS logId,
+            l.log_date              AS logDate,
+            l.reps                  AS reps,
+            l.sets                  AS sets,
+            l.weight                AS weight,
+            l.exercise_id           AS exerciseId,
+            l.is_checked            AS isChecked,
+            l.duration_minutes      AS durationMinutes,
+            l.user_id               AS userId,
+            l.routine_exercise_id   AS routineExerciseId,
+            r.routine_id            AS routineId,
+            r.name                  AS routineName
+        FROM
+            fitfusion_exercise_logs l,
+            fitfusion_exercises e,
+            fitfusion_routine_exercise re,
+            fitfusion_routine r
+        WHERE
+            l.user_id = #{userId}
+          AND l.exercise_id = e.exercise_id
+          AND re.routine_exercise_id = l.routine_exercise_id
+          AND r.routine_id = re.routine_id
+        ORDER BY
+            l.log_date DESC
+    </select>
+
     <select id="findExerciseLog" resultType="ExerciseLogDto">
         select
-            e.name                    as "exerciseName"
+            e.name                    as exerciseName
           , l.log_id                  as logId
           , l.log_date                as logDate
           , l.reps                    as reps

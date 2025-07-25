@@ -49,11 +49,9 @@ public class RoutineController {
         return "routine/RoutineEdit";
     }
 
-    @PostMapping("/update/{routineId}")
-    public String routineUpdate(@PathVariable("routineId") int routineId, Routine routine) {
-        routine.setRoutineId(routineId);
-        routine.setUserId(userId);
-        routineService.updateRoutine(routine);
+    @PutMapping("/update/custom")
+    public String routineUpdate(@ModelAttribute RoutineDetailDto routine) {
+        routineService.updateCustomRoutine(userId, routine);
         return "redirect:/routine/list";
     }
 

@@ -11,6 +11,7 @@ import java.util.Date;
 public class ExerciseLogDto {
     private int exerciseId;
     private int routineExerciseId;
+    private int routineId;
     private int userId;
     private int logId;
     private int weight;
@@ -27,4 +28,6 @@ public class ExerciseLogDto {
     private Integer recommendedSets;
     private Integer recommendedReps;
     private Exercise exercise;
+    private String routineName;
+
 }

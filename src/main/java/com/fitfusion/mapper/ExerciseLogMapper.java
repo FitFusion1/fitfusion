@@ -12,4 +12,6 @@ public interface ExerciseLogMapper {
     void insertExerciseLog(ExerciseLog log);
 
     List<ExerciseLogDto> findExerciseLog(int userId);
+
+    List<ExerciseLogDto> findRoutineLogDetail(int userId);
 }

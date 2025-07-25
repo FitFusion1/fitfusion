@@ -110,6 +110,10 @@ public class RoutineService {
 
     @Transactional
     public void updateCustomRoutine(int userId, RoutineDetailDto routineDto) {
+        System.out.println("받은 routineDto: " + routineDto);
+        System.out.println("운동 리스트: " + routineDto.getExercises());
+
+
         Routine routine = new Routine();
 
         routine.setRoutineId(routineDto.getRoutineId());

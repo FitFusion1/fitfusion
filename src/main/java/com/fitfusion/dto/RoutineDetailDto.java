@@ -3,6 +3,7 @@ package com.fitfusion.dto;
 import com.fitfusion.vo.Exercise;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
