@@ -2,12 +2,14 @@ package com.fitfusion.web.controller;
 
 import com.fitfusion.dto.ExerciseLogDto;
 import com.fitfusion.dto.RoutineLogDto;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseGoalService;
 import com.fitfusion.service.ExerciseLogService;
 import com.fitfusion.service.ExerciseService;
 import com.fitfusion.service.RoutineService;
 import com.fitfusion.vo.ExerciseLog;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,23 +27,22 @@ public class MyExerciseController {
     private final ExerciseGoalService goalService;
     private final RoutineService routineService;
     private final ExerciseLogService logService;
-    private final int userId = 1;
     private final ExerciseLogService exerciseLogService;
 
     @GetMapping("")
-    public String MyExercisePage(Model model) {
-        List<ExerciseLogDto> recentLogs = exerciseLogService.getExerciseLogByUserId(userId);
+    public String MyExercisePage(@AuthenticationPrincipal SecurityUser user, Model model) {
+        List<ExerciseLogDto> recentLogs = exerciseLogService.getExerciseLogByUserId(user.getUser().getUserId());
 
-        model.addAttribute("goal", goalService.getSelectedGoalByUserId(userId));
-        model.addAttribute("routineList", routineService.getRoutineByUserId(userId));
+        model.addAttribute("goal", goalService.getSelectedGoalByUserId(user.getUser().getUserId()));
+        model.addAttribute("routineList", routineService.getRoutineByUserId(user.getUser().getUserId()));
         model.addAttribute("recentLogs", recentLogs);
 
         return "myexercise/MyExerciseMain";
     }
 
     @GetMapping("/exerciselog")
-    public String ExerciseLogPage(Model model) {
-        List<RoutineLogDto> routineLogs = exerciseLogService.getRoutineLogByUserId(userId);
+    public String ExerciseLogPage(@AuthenticationPrincipal SecurityUser user, Model model) {
+        List<RoutineLogDto> routineLogs = exerciseLogService.getRoutineLogByUserId(user.getUser().getUserId());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         for (RoutineLogDto log : routineLogs) {
             if (log.getLogDate() != null) {

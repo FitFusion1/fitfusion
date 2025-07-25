@@ -75,9 +75,9 @@ public class RoutineService {
         return routineMapper.getRoutineDetailByUserAndRoutineId(userId, routineId);
     }
 
-    public RoutineDetailDto getRoutineDetail(int routineId) {
-        RoutineDetailDto routine = routineMapper.getRoutineInfo(routineId);
-        List<ExerciseItemDto> exercises = routineMapper.selectRoutineExercises(routineId);
+    public RoutineDetailDto getRoutineDetail(int routineId, int userId) {
+        RoutineDetailDto routine = routineMapper.getRoutineInfo(routineId, userId);
+        List<ExerciseItemDto> exercises = routineMapper.selectRoutineExercises(routineId, userId);
         routine.setRoutineId(routineId);
         routine.setExercises(exercises);
         routine.setTotalExercises(exercises.size());

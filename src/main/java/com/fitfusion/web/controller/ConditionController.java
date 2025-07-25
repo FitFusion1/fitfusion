@@ -2,12 +2,14 @@ package com.fitfusion.web.controller;
 
 import com.fitfusion.enums.BodyPart;
 import com.fitfusion.enums.ConditionLevel;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseConditionService;
 import com.fitfusion.service.ExerciseGoalService;
 import com.fitfusion.service.SelectedGoalService;
 import com.fitfusion.web.form.ExerciseConditionForm;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,6 @@ import java.util.List;
 @RequestMapping("/condition")
 public class ConditionController {
 
-    private final int userId = 1;
     private final ExerciseConditionService conditionService;
     private final ExerciseGoalService goalService;
 
@@ -39,7 +40,7 @@ public class ConditionController {
     }
 
     @PostMapping("/save")
-    public String saveCondition(@ModelAttribute ExerciseConditionForm formData, HttpSession session, Model model) {
+    public String saveCondition(@AuthenticationPrincipal SecurityUser user, @ModelAttribute ExerciseConditionForm formData, HttpSession session, Model model) {
         List<String> avoidParts = formData.getAvoidParts();
         List<String> targetParts = formData.getTargetParts();
         String condition = formData.getConditionLevel();
@@ -72,7 +73,7 @@ public class ConditionController {
         }
 
 
-        int conditionId = conditionService.saveConditionAndAvoidAndTartget(userId, formData.getConditionLevel(), formData.getAvoidParts(), formData.getTargetParts());
+        int conditionId = conditionService.saveConditionAndAvoidAndTartget(user.getUser().getUserId(), formData.getConditionLevel(), formData.getAvoidParts(), formData.getTargetParts());
 
         session.setAttribute("targetParts", formData.getTargetParts());
         session.setAttribute("avoidParts", formData.getAvoidParts());

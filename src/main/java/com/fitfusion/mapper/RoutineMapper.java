@@ -24,7 +24,7 @@ public interface RoutineMapper {
 
     Routine getRoutineDetailByUserAndRoutineId(int userId, int routineId);
 
-    RoutineDetailDto getRoutineInfo(int routineId);
+    RoutineDetailDto getRoutineInfo(int routineId, int userId);
 
-    List<ExerciseItemDto> selectRoutineExercises(int routineId);
+    List<ExerciseItemDto> selectRoutineExercises(int routineId, int userId);
 }

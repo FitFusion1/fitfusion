@@ -140,6 +140,7 @@
             ) AS defaultSet
         FROM fitfusion_routine r
         WHERE r.routine_id = #{routineId}
+          and r.user_id = #{userId}
     </select>
 
 
@@ -158,8 +159,12 @@
             re.weight AS weight,
             e.description AS description
         FROM fitfusion_routine_exercise re
-                 JOIN fitfusion_exercises e ON re.exercise_id = e.exercise_id
+           , fitfusion_exercises e
+           , fitfusion_routine r
         WHERE re.routine_id = #{routineId}
+          AND r.user_id = #{userId}
+          AND r.routine_id = re.routine_id
+          AND re.exercise_id = e.exercise_id
         ORDER BY re.routine_exercise_id
     </select>
 </mapper>

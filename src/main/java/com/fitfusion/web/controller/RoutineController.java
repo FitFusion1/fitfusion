@@ -4,6 +4,7 @@ import com.fitfusion.dto.ExerciseLogDto;
 import com.fitfusion.dto.RoutineDetailDto;
 import com.fitfusion.dto.RoutineListDto;
 import com.fitfusion.dto.RoutineLogDto;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseLogService;
 import com.fitfusion.service.ExerciseService;
 import com.fitfusion.service.RoutineService;
@@ -13,6 +14,7 @@ import com.fitfusion.vo.Routine;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,20 +31,19 @@ public class RoutineController {
 
     private final RoutineService routineService;
     private final ExerciseLogService exerciseLogservice;
-    private final int userId = 1;
     private final ExerciseService exerciseService;
 
 
     @GetMapping("/list")
-   public String createRoutine(Model model) {
-        List<RoutineListDto> routines = routineService.getRoutineListByUserId(userId);
+   public String createRoutine(@AuthenticationPrincipal SecurityUser user, Model model) {
+        List<RoutineListDto> routines = routineService.getRoutineListByUserId(user.getUser().getUserId());
         model.addAttribute("routines", routines);
         return "routine/RoutineList";
     }
 
     @GetMapping("/update/{routineId}")
-    public String routineUpdate(@PathVariable("routineId") int routineId, Model model) {
-        RoutineDetailDto routines = routineService.getRoutineDetail(routineId);
+    public String routineUpdate(@AuthenticationPrincipal SecurityUser user, @PathVariable("routineId") int routineId, Model model) {
+        RoutineDetailDto routines = routineService.getRoutineDetail(routineId, user.getUser().getUserId());
         List<Exercise> exerciseList = exerciseService.getAllExercises();
         model.addAttribute("routine", routines);
         model.addAttribute("exerciseList", exerciseList);
@@ -50,24 +51,24 @@ public class RoutineController {
     }
 
     @PutMapping("/update/custom")
-    public String routineUpdate(@ModelAttribute RoutineDetailDto routine) {
-        routineService.updateCustomRoutine(userId, routine);
+    public String routineUpdate(@AuthenticationPrincipal SecurityUser user, @ModelAttribute RoutineDetailDto routine) {
+        routineService.updateCustomRoutine(user.getUser().getUserId(), routine);
         return "redirect:/routine/list";
     }
 
     @GetMapping("/execute/{routineId}")
-    public String routineExecute(@PathVariable("routineId") int routineId, Model model) {
-        RoutineDetailDto routine = routineService.getRoutineDetail(routineId);
+    public String routineExecute(@AuthenticationPrincipal SecurityUser user, @PathVariable("routineId") int routineId, Model model) {
+        RoutineDetailDto routine = routineService.getRoutineDetail(routineId, user.getUser().getUserId());
         model.addAttribute("routine", routine);
         model.addAttribute("routineLogDto", new RoutineLogDto());
         return "/routine/RoutineExcute";
     }
 
     @PostMapping("/execute/{routineId}")
-    public String saveExecute(@PathVariable("routineId") int routineId,
+    public String saveExecute(@AuthenticationPrincipal SecurityUser user,
+                              @PathVariable("routineId") int routineId,
                               @ModelAttribute("routineLogDto") RoutineLogDto routineDto,
                               BindingResult bindingResult,
-                              HttpSession session,
                               Model model) {
 
         List<Integer> partialErrorIndexes = new ArrayList<>();
@@ -90,7 +91,7 @@ public class RoutineController {
         model.addAttribute("partialErrorIndexes", partialErrorIndexes);
 
         if (bindingResult.hasErrors()) {
-            RoutineDetailDto routine = routineService.getRoutineDetail(routineId);
+            RoutineDetailDto routine = routineService.getRoutineDetail(routineId, user.getUser().getUserId());
             model.addAttribute("routine", routine);
             model.addAttribute("routineLogDto", routineDto);
             return "/routine/RoutineExcute";
@@ -99,7 +100,7 @@ public class RoutineController {
         for (ExerciseLogDto dto : routineDto.getExerciseLogs()) {
             ExerciseLog log = new ExerciseLog();
 
-            log.setUserId(userId);
+            log.setUserId(user.getUser().getUserId());
             log.setRoutineExerciseId(dto.getRoutineExerciseId()); // 버그 수정: exerciseId → routineExerciseId
             log.setExerciseId(dto.getExerciseId());
 
@@ -133,14 +134,15 @@ public class RoutineController {
 
 
     @DeleteMapping("/delete/{routineId}")
-    public String routineDelete(@PathVariable int routineId) {
-        routineService.deleteRoutineListByUserAndRoutine(userId, routineId);
+    public String routineDelete(@AuthenticationPrincipal SecurityUser user,
+                                @PathVariable int routineId) {
+        routineService.deleteRoutineListByUserAndRoutine(user.getUser().getUserId(), routineId);
         return "redirect:/routine/list";
     }
 
     @GetMapping("/detail/{routineId}")
-    public String routineDetail(@PathVariable int routineId, Model model) {
-        RoutineDetailDto routine = routineService.getRoutineDetail(routineId);
+    public String routineDetail(@AuthenticationPrincipal SecurityUser user, @PathVariable int routineId, Model model) {
+        RoutineDetailDto routine = routineService.getRoutineDetail(routineId, user.getUser().getUserId());
         model.addAttribute("routine", routine);
         return "routine/RoutineDetail";
     }

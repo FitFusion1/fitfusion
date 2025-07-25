@@ -3,6 +3,7 @@ package com.fitfusion.web.controller;
 import com.fitfusion.dto.ExerciseItemDto;
 import com.fitfusion.dto.RoutineDetailDto;
 import com.fitfusion.dto.RoutineListDto;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.*;
 import com.fitfusion.vo.Exercise;
 import com.fitfusion.vo.ExerciseGoal;
@@ -11,6 +12,7 @@ import com.fitfusion.vo.Routine;
 import com.fitfusion.web.form.ExerciseConditionForm;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,16 +33,15 @@ public class RoutineCreateController {
     private final AiRoutineGenerator aiRoutineGenerator;
     private final RoutineService routineService;
 
-    private final int userId = 1;
     private final ExerciseGoalService exerciseGoalService;
 
     @GetMapping("/create/ai")
-    public String aiRoutine(HttpSession session, RedirectAttributes redirectAttributes, Model model) {
+    public String aiRoutine(@AuthenticationPrincipal SecurityUser user, HttpSession session, RedirectAttributes redirectAttributes, Model model) {
         try {
-            ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(userId);
+            ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
             List<Exercise> exercises = exerciseService.getAllExercises();
 
-            ExerciseGoal goal = exerciseGoalService.getSelectedGoalByUserId(userId);
+            ExerciseGoal goal = exerciseGoalService.getSelectedGoalByUserId(user.getUser().getUserId());
             String goalType = (goal != null) ? goal.getGoalType() : null;
             Boolean conditionSet = (Boolean) session.getAttribute("conditionSet");
 
@@ -83,7 +84,7 @@ public class RoutineCreateController {
     }
 
     @PostMapping("/save/custom")
-    public String saveCustomRoutine(@ModelAttribute RoutineDetailDto routine, RedirectAttributes redirectAttributes) {
+    public String saveCustomRoutine(@AuthenticationPrincipal SecurityUser user, @ModelAttribute RoutineDetailDto routine, RedirectAttributes redirectAttributes) {
 
         boolean hasError = false;
         Map<Integer, String> setsErrors = new HashMap<>();
@@ -116,26 +117,33 @@ public class RoutineCreateController {
             return "redirect:/routine/create/custom";
         }
 
-        routineService.saveCustomRoutine(userId, routine);
+        for (int i = 0; i < routine.getExercises().size(); i++) {
+            System.out.println("DEBUG => exercise index=" + i
+                    + ", sets=" + routine.getExercises().get(i).getSets()
+                    + ", reps=" + routine.getExercises().get(i).getReps());
+        }
+
+
+        routineService.saveCustomRoutine(user.getUser().getUserId(), routine);
         return "redirect:/routine/list";
     }
 
     @PostMapping("/save/ai")
-    public String saveRecommendedRoutine() throws Exception {
+    public String saveRecommendedRoutine(@AuthenticationPrincipal SecurityUser user) throws Exception {
 
-        ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(userId);
+        ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
         List<Exercise> allExercises = exerciseService.getAllExercises();
-        String goalType = exerciseGoalService.getSelectedGoalByUserId(userId).getGoalType();
+        String goalType = exerciseGoalService.getSelectedGoalByUserId(user.getUser().getUserId()).getGoalType();
 
 
         List<RecommendedExercise> recommendedExercises = aiRoutineGenerator.generateRoutine(condition, allExercises, goalType);
-        routineService.saveRecommendedRoutine(userId, recommendedExercises);
+        routineService.saveRecommendedRoutine(user.getUser().getUserId(), recommendedExercises);
         return "redirect:/routine/list";
     }
 
     @PostMapping("/update/custom")
-    public String updateCustomRoutine(@ModelAttribute RoutineDetailDto routine) {
-        routineService.updateCustomRoutine(userId, routine);
+    public String updateCustomRoutine(@AuthenticationPrincipal SecurityUser user, @ModelAttribute RoutineDetailDto routine) {
+        routineService.updateCustomRoutine(user.getUser().getUserId(), routine);
         return "redirect:/routine/list";
     }
 
