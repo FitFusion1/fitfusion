@@ -6,7 +6,7 @@
 <head>
     <title>회원가입</title>
     <th:block layout:fragment="css">
-        <link rel="stylesheet" th:href="@{/css/register.css}">
+<!--        <link rel="stylesheet" th:href="@{/css/register.css}">-->
     </th:block>
 </head>
 
@@ -29,6 +29,7 @@
                           data-error-cat="duplicate">중복된 아이디입니다.</span>
                     <span class="valid-message"
                           data-valid-cat="username">사용가능한 아이디입니다.</span>
+                    <span class="error-message invalid" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
                 </span>
             </label>
             <label th:with="field='이메일'">이메일
@@ -42,6 +43,7 @@
                           data-error-cat="duplicate">중복된 이메일입니다.</span>
                     <span class="valid-message"
                           data-valid-cat="email">사용가능한 이메일입니다.</span>
+                    <span class="error-message invalid" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
                 </span>
             </label>
             <label th:with="field='비밀번호'">비밀번호
@@ -51,6 +53,7 @@
                           th:text="|${field}을(를) 입력해주세요.|"></span>
                     <span class="error-message"
                           data-error-cat="length">비밀번호는 6글자 이상 입력해주세요.</span>
+                    <span class="error-message invalid" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
                 </span>
             </label>
             <div class="button-container">
@@ -68,6 +71,7 @@
                           th:text="|${field}을(를) 입력해주세요.|"></span>
                     <span class="error-message"
                           data-error-cat="format">올바른 한글 이름 형식을 입력해주세요.</span>
+                    <span class="error-message invalid" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
                 </span>
             </label>
             <label th:with="field='생년월일'">생년월일
@@ -76,6 +80,7 @@
                        th:max="${#dates.format(currentDate, 'yyyy-MM-dd')}">
                 <span class="error-message" data-error-cat="empty"
                       th:text="|${field}을(를) 입력해주세요.|"></span>
+                <span class="error-message invalid" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></span>
             </label>
             <label th:with="field='성별'">성별
                 <select th:field="*{gender}">
@@ -85,6 +90,7 @@
                 </select>
                 <span class="error-message" data-error-cat="empty"
                       th:text="|${field}을(를) 입력해주세요.|"></span>
+                <span class="error-message invalid" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
             </label>
             <div class="button-container">
                 <button type="button" class="back-btn">뒤로</button>
@@ -101,6 +107,7 @@
                       th:text="|${field}을(를) 입력해주세요.|"></span>
                 <span class="error-message"
                       data-error-cat="format">올바른 값을 입력해주세요.</span>
+                <span class="error-message invalid" th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></span>
             </label>
             <label th:with="field='체중'">체중 (kg)
                 <input type="text" th:field="*{weight}"
@@ -109,6 +116,7 @@
                       th:text="|${field}을(를) 입력해주세요.|"></span>
                 <span class="error-message"
                       data-error-cat="format">올바른 값을 입력해주세요.</span>
+                <span class="error-message invalid" th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
             </label>
             <label th:with="field='숙련도'">숙련도
                 <select th:field="*{experienceLevel}">
@@ -119,6 +127,7 @@
                 </select>
                 <span class="error-message" data-error-cat="empty"
                       th:text="|${field}을(를) 선택해주세요.|"></span>
+                <span class="error-message invalid" th:if="${#fields.hasErrors('experienceLevel')}" th:errors="*{experienceLevel}"></span>
             </label>
             <div class="button-container">
                 <button type="button" class="back-btn">뒤로</button>
@@ -127,5 +136,5 @@
         </div>
     </form>
 </div>
-<script layout:fragment="script" th:src="@{/js/register.js}"></script>
+<!--<script layout:fragment="script" th:src="@{/js/register.js}"></script>-->
 </html>

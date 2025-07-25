@@ -121,7 +121,7 @@
             <if test="'username'.equals(type)">
                USERNAME = #{identifier}
             </if>
-            <if test="'email',equals(type)">
+            <if test="'email'.equals(type)">
                EMAIL = #{identifier}
             </if>
     </select>
@@ -137,5 +137,51 @@
         where
             USER_ID = #{id}
     </select>
+
+    <!--
+        User getUserByUsername(String username);
+    -->
+    <select id="getUserByUsername" resultType="User">
+        SELECT
+            USER_ID
+            , USERNAME
+            , PASSWORD
+            , NAME
+            , EMAIL
+            , GENDER
+            , HEIGHT
+            , WEIGHT
+            , BIRTH_DATE        birthDate
+            , DELETED
+            , EXPERIENCE_LEVEL  experienceLevel
+        FROM
+            FITFUSION_USERS
+        WHERE
+            USERNAME = #{username}
+    </select>
+
+    <!--
+    User getUserByEmail(String email);
+-->
+    <select id="getUserByEmail" resultType="User">
+        SELECT
+            USER_ID
+             , USERNAME
+             , PASSWORD
+             , NAME
+             , EMAIL
+             , GENDER
+             , HEIGHT
+             , WEIGHT
+             , BIRTH_DATE       birthDate
+             , DELETED
+             , EXPERIENCE_LEVEL experienceLevel
+        FROM
+            FITFUSION_USERS
+        WHERE
+            EMAIL = #{email}
+    </select>
+
+
 
 </mapper>

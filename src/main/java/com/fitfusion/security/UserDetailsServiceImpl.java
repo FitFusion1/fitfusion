@@ -22,11 +22,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String inputValue)
             throws UsernameNotFoundException {
         Map<String, Object> condition = new HashMap<>();
-
+        condition.put("type", "username");
         if (inputValue.contains("@")) {
             condition.put("type", "email");
-        } else {
-            condition.put("type", "username");
         }
         condition.put("identifier", inputValue);
 

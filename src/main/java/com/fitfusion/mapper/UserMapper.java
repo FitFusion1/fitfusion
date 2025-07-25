@@ -20,10 +20,12 @@ public interface UserMapper {
     /**
      * 아이디 혹은 이메일과 그 유형을 전달받아서
      * 유저 객체를 전달받는다.
-     * @param condition {type: username 혹은 이메일, identifier: 값}
+     * @param condition {type: username 혹은 email, identifier: 값}
      * @return 유저 객체
      */
     Optional<User> getUserWithRoleNames(Map<String, Object> condition);
     List<String> getRoleNamesByUserId(int id);
+    User getUserByUsername(String username);
+    User getUserByEmail(String email);
 
 }
