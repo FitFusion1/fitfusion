@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+<head>
+    <meta charset="UTF-8">
+    <title>운동 목표 상세</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}">
+    </th:block>
+</head>
+<div layout:fragment="content">
+    <div class="GoalDetail-container">
+        <div class="GoalDetail-title" th:text="${goal.goalType}">근육 증가</div>
+
+        <!-- 정보 영역 -->
+        <div class="GoalDetail-info">
+            <div class="GoalDetail-label">목표 유형</div>
+            <div class="GoalDetail-value" th:text="${goal.goalType}">근육 증가 (GAIN_MUSCLE)</div>
+        </div>
+
+        <div class="GoalDetail-info">
+            <div class="GoalDetail-label">운동 기간</div>
+            <div class="GoalDetail-value" th:text="${#dates.format(goal.startDate, 'yyyy-MM-dd')} + ' ~ ' + ${#dates.format(goal.endDate,'yyyy-MM-dd')}">2025년 7월 1일 ~ 2025년 8월 31일</div>
+        </div>
+
+        <div class="GoalDetail-info">
+            <div class="GoalDetail-label">주 운동 부위</div>
+            <div class="GoalDetail-value" th:text="${targetParts}">가슴, 어깨, 하체</div>
+        </div>
+
+        <div class="GoalDetail-info">
+            <div class="GoalDetail-label">피해야 할 부위</div>
+            <div class="GoalDetail-value" th:text="${avoidParts}">팔, 복근</div>
+        </div>
+
+        <div class="GoalDetail-info">
+            <div class="GoalDetail-label">컨디션 레벨</div>
+            <div class="GoalDetail-value" th:text="${condition}">3</div>
+        </div>
+
+        <div class="GoalDetail-info">
+            <div class="GoalDetail-label">설명</div>
+            <div class="GoalDetail-description" th:text="${goal.goalDescription}">
+                근육량을 효과적으로 늘리기 위한 2개월 루틴입니다. 고중량 저반복 위주의 훈련을 중심으로 구성되어 있으며, 피해야 할 부위인 팔 부위는 최대한 제외하였습니다. 컨디션에 따라 충분한 휴식을
+                병행하는 것을 권장합니다.
+            </div>
+        </div>
+
+        <!-- 버튼 영역 -->
+        <div class="GoalDetail-buttonRow">
+            <!-- 왼쪽 버튼들 -->
+            <div class="GoalDetail-leftButtons">
+                <button class="GoalDetail-btn GoalDetail-backBtn" onclick="location.href='/exercisegoal/goallist'">← 목록으로
+                </button>
+                <button class="GoalDetail-btn GoalDetail-mainBtn" onclick="location.href='/myexercise'">🏠 운동 메인페이지
+                </button>
+            </div>
+
+            <!-- 오른쪽 버튼들 -->
+            <div class="GoalDetail-rightButtons">
+                <button class="GoalDetail-btn GoalDetail-editBtn" th:onclick="|location.href='@{/exercisegoal/goalupdate/{goalId}(goalId=${goal.goalId})}'|">
+                    수정
+                </button>
+                <button class="GoalDetail-btn GoalDetail-deleteBtn"
+                        onclick="confirm('정말 삭제하시겠습니까?') && (window.location.href='/exercisegoal/goaldelete')">삭제
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

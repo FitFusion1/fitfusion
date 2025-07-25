@@ -19,6 +19,7 @@ public class ExerciseService {
     @Autowired
     private ExerciseMapper exerciseMapper;
     private final RestTemplate restTemplate;
+    @Autowired
     private final ObjectMapper objectMapper;
 
     @Value("${openai.api.key}")
@@ -27,6 +28,14 @@ public class ExerciseService {
     public ExerciseService() {
         this.restTemplate = new RestTemplate();
         this.objectMapper = new ObjectMapper();
+    }
+
+    public List<Exercise> getAllExercises() {
+        return exerciseMapper.findAllExercises();
+    }
+
+    public Exercise getExerciseById(int exerciseId) {
+        return exerciseMapper.findExerciseById(exerciseId);
     }
 
     public List<Map<String, String>> fetchExerciseInfoWithFallback() {
@@ -49,18 +58,18 @@ public class ExerciseService {
 
                 String prompt = String.format("""
                     다음 운동 정보를 한국어로 자연스럽게 번역하고, 부족한 내용은 일반적인 지식을 바탕으로 보완해 주세요.
-                    
+
                     [운동 이름]: %s
                     [운동 설명]: %s
                     [운동 부위]: %s
                     [사용 장비]: %s
                     [카테고리]: %s
-                    
+
                     요청 조건:
-                    
+
                     - 운동 이름은 간결한 명사형 표현으로 작성하며, 실제 검색 시 자주 쓰이는 자연스러운 이름 사용 (예: 벤치 프레스, 덤벨 숄더 프레스)
                     - 이름에 불필요한 단어나 인사말(- 헬로 등)은 포함하지 말 것
-                    
+
                     - 운동 설명은 반드시 '1. ~', '2. ~' 형식의 번호 단계로만 구성
                     - 각 단계는 줄바꿈 없이 한 줄로 이어서 작성 (예: 1. ~ 2. ~ 3. ~ 형태), 줄바꿈 문자(\\n) 포함 금지
                     - **운동을 실제 수행하는 단계별 동작**만 포함할 것
@@ -68,7 +77,7 @@ public class ExerciseService {
                     - 예: "이 운동은 초보자에게 좋습니다", "삼두근을 강화합니다" → 작성 금지
                     - 설명이 부족하거나 비어 있을 경우 일반적인 상식에 기반하여 보완
                     - HTML 태그 없이 **텍스트만 출력**
-                    
+
                     - 운동 부위는 반드시 **해부학적으로 지정된 정확한 한국어 근육명**으로 작성 (예: 삼두근, 광배근, 대퇴사두근 등)
                     - 모든 근육 명칭은 **영문이 아닌 한국어로 정확하게 표기** (예: trapezius → 승모근, lats → 광배근)
                     - '팔근육', '허벅지' '어깨근육' '팔뚝근육' '장딴지근육' 등 **모호한 표현은 금지**
@@ -76,7 +85,7 @@ public class ExerciseService {
                     - 아래와 같은 **잘못된 띄어쓰기 예시**를 절대 포함하지 말 것: (전면 삼각근, 상완 이두근, 대퇴 사두근, 승모 근 등)
                     - 예외 없이 근육 이름은 **모두 붙여서 작성** (예: '광배근' O, '광 배 근' X)
                     - 근육명은 모두 **전문 용어 표기 규칙**을 따라야 하며, **절대 띄어쓰지 말 것** (예: 전면삼각근 O, 전면 삼각근 X)
-                    
+
                     - 카테고리는 다음 중 하나로 지정: **등, 가슴, 어깨, 하체, 복근, 팔, 유산소, 스트레칭**
                       - 아래 기준에 해당하면 '유산소'로 분류:
                        · 비교적 낮은 강도로 반복적으로 수행하는 장시간 운동
@@ -90,7 +99,7 @@ public class ExerciseService {
                     - 카테고리는 넓은 신체 부위, 운동 부위는 구체적인 근육 명칭으로 구분
                     - 장비, 부위, 카테고리는 일반인이 쉽게 이해할 수 있도록 용어를 변환해 작성 (예: 전면 델토이드 → 전면 삼각근, 케이블 기계 → 케이블 기구)
                     - 장비 명칭에 띄어쓰기 금지
-                    
+
                     - 마지막으로, 이 운동의 피로도 수준을 1~5 중 하나의 숫자로 fatique_level 항목으로 작성:
                           · 1 = 매우 낮음: 스트레칭, 요가, 걷기 등 매우 저강도
                           · 2 = 낮음: 맨몸 스쿼트, 플랭크, 쉬운 코어 운동 등 저강도
@@ -113,7 +122,7 @@ public class ExerciseService {
 
         for (Map<String, String> data : list) {
             Exercise exercise = new Exercise();
-            exercise.setName(data.get("name"));
+            exercise.setExerciseName(data.get("name"));
             exercise.setDescription(data.get("description"));
             exercise.setEquipment(data.get("equipment"));
             exercise.setMainParts(data.get("main_parts"));
@@ -136,7 +145,7 @@ public class ExerciseService {
                 }
             }
             // 저장 시도 로그
-            System.out.println("[>> DB 저장 시도]: " + exercise.getName());
+            System.out.println("[>> DB 저장 시도]: " + exercise.getExerciseName());
 
             try {
                 exerciseMapper.insertExercise(exercise);

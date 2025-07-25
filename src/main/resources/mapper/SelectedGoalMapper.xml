@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.fitfusion.mapper.SelectedGoalMapper">
-    
+
     <select id="findByUserId" resultType="SelectedGoal">
         SELECT
             USER_ID AS userId
