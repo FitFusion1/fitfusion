@@ -14,6 +14,7 @@ import java.util.Date;
 public class ExerciseGoal {
     private int goalId;
     private int userId;
+    private String goalName;
     private int progressId;
     private String goalType;
     private String goalDescription;

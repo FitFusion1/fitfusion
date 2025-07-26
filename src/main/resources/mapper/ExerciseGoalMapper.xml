@@ -5,7 +5,42 @@
 
 <mapper namespace="com.fitfusion.mapper.ExerciseGoalMapper">
 
+    <!-- ✅ 명시적 매핑을 위한 resultMap 정의 -->
+    <resultMap id="ExerciseGoalMap" type="com.fitfusion.vo.ExerciseGoal">
+        <result property="goalId" column="goal_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="progressId" column="progress_id"/>
+        <result property="goalType" column="goal_name"/>
+        <result property="goalDescription" column="goal_desc"/>
+        <result property="startWeight" column="start_weight"/>
+        <result property="targetWeight" column="target_weight"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+    </resultMap>
+
+    <select id="findSelectedGoalByUserId" resultMap="ExerciseGoalMap">
+        select
+            sg.user_id,
+            g.goal_id,
+            g.progress_id,
+            g.goal_name,
+            g.goal_desc,
+            g.start_weight,
+            g.target_weight,
+            g.start_date,
+            g.end_date
+        from
+            fitfusion_user_selected_goal sg,
+            fitfusion_user_goals g
+        where
+            sg.user_id = #{userId}
+        and sg.goal_id = g.goal_id
+    </select>
+
     <insert id="insertUserGoal" parameterType="ExerciseGoal">
+        <selectKey resultType="int" keyProperty="goalId" order="BEFORE">
+            select exercise_goal_seq.nextval from dual
+        </selectKey>
         insert into FITFUSION_USER_GOALS (
             goal_id
           , goal_name
@@ -15,9 +50,8 @@
           , start_date
           , end_date
           , user_id
-          , progress_id
         ) values (
-          EXERCISE_GOAL_SEQ.NEXTVAL
+            #{goalId}
           , #{goalType}
           , #{goalDescription}
           , #{startWeight}
@@ -25,7 +59,6 @@
           , #{startDate}
           , #{endDate}
           , #{userId}
-          , #{progressId}
         )
     </insert>
 
@@ -80,4 +113,5 @@
         where
             GOAL_ID = #{goalId}
     </delete>
+
 </mapper>
