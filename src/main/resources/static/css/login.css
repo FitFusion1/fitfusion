@@ -23,6 +23,19 @@
     animation: card-fade-in 0.3s ease;
 }
 
+.login-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.logo-image {
+    max-width: 200px;
+    height: auto;
+    object-fit: contain;
+}
+
 @keyframes card-fade-in {
     from {
         transform: translateY(-30px);
