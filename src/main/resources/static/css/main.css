@@ -204,6 +204,19 @@ footer {
     animation: modal-fade-in 0.2s;
 }
 
+.login-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.logo-image {
+    max-width: 180px;
+    height: auto;
+    object-fit: contain;
+}
+
 @keyframes modal-fade-in {
     from {
         transform: translateY(-30px);
@@ -232,9 +245,10 @@ footer {
 }
 
 .login-modal h2 {
-    margin-bottom: 1rem;
-    font-size: 1.3rem;
     color: #121212;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
     text-align: center;
 }
 
