@@ -82,6 +82,7 @@ public class RoutineService {
         routine.setExercises(exercises);
         routine.setTotalExercises(exercises.size());
 
+
         return routine;
     }
 

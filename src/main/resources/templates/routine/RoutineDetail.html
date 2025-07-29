@@ -42,7 +42,7 @@
             <input type="hidden" name="routineId" th:value="${routine.routineId}"/>
             <button type="button"
                     class="RoutineDetail-btn RoutineDetail-primary"
-                    th:onclick="|location.href='@{/routine/execute/{routineId}(routineId=${routine.routineId})}'|">
+                    th:onclick="|location.href='@{/exerciseLog/execute/{routineId}(routineId=${routine.routineId})}'|">
                 수행하기</button>
 
             <input type="hidden" name="routineId" th:value="${routine.routineId}">

@@ -21,8 +21,13 @@
         <div class="ExerciseLog-log-header">
             <h2 th:text="${routine.formattedDate} + '  -  ' + ${routine.routineName}">2025년 7월 6일 - 루틴: 상체 강화 루틴</h2>
             <div class="ExerciseLog-btn-group">
-                <button class="ExerciseLog-btn">수정</button>
-                <button class="ExerciseLog-btn">삭제</button>
+                <button class="ExerciseLog-btn"
+                        th:onclick="|location.href='@{/exerciseLog/updateLog/{routineId}/{sessionId}(routineId=${routine.routineId},sessionId=${routine.sessionId})}'|">수정</button>
+                <form th:action="@{/exerciseLog/deleteLog/{sessionId}(sessionId=${routine.sessionId})}" method="post">
+                    <input type="hidden" name="_method" value="DELETE"/>
+                    <input type="hidden" name="sessionId" th:value="${routine.sessionId}"/>
+                    <button class="ExerciseLog-btn">삭제</button>
+                </form>
             </div>
         </div>
         <table class="ExerciseLog-table">
@@ -31,14 +36,16 @@
                 <th>운동명</th>
                 <th>세트</th>
                 <th>반복</th>
+                <th>수행 시간</th>
                 <th>중량 (kg)</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="exercise : ${routine.exerciseLogs}">
-                <td th:text="${exercise.exerciseName}" class="ExerciseLog-exercise-name">벤치프레스</td>
+                <td th:text="*{exercise.exerciseName}" class="ExerciseLog-exercise-name">벤치프레스</td>
                 <td th:text="${exercise.sets}">3</td>
                 <td th:text="${exercise.reps}">10</td>
+                <td th:text="${exercise.durationMinutes}">10</td>
                 <td th:text="${exercise.weight}">60</td>
             </tr>
 

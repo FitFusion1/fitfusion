@@ -14,15 +14,15 @@
     <div class="RoutineCompletion-container">
         <h2 class="RoutineCompletion-title">오늘의 전신 루틴 수행 체크</h2>
 
-        <form th:action="@{/routine/execute/{routineId}(routineId=${routine.routineId})}" method="post" th:object="${routineLogDto}">
+        <form th:action="@{/exerciseLog/execute/{routineId}(routineId=${routine.routineId})}" method="post" th:object="${routineLogDto}">
             <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
 
             <div class="RoutineCompletion-card" th:each="exercise, status : ${routine.exercises}">
 
                 <input type="hidden" th:name="|exerciseLogs[${status.index}].exerciseId|" th:value="${exercise.exerciseId}" />
                 <input type="hidden" th:name="|exerciseLogs[${status.index}].routineExerciseId|" th:value="${exercise.routineExerciseId}" />
-                <input type="hidden" th:name="|exerciseLogs[${status.index}].recommendedSets|" th:value="${exercise.sets}" />
-                <input type="hidden" th:name="|exerciseLogs[${status.index}].recommendedReps|" th:value="${exercise.reps}" />
+                <input type="hidden" th:field="*{exerciseLogs[__${status.index}__].recommendedSets}" />
+                <input type="hidden" th:field="*{exerciseLogs[__${status.index}__].recommendedReps}" />
 
                 <div class="RoutineCompletion-header">
                     <!-- 왼쪽: 운동 정보 -->
@@ -38,11 +38,9 @@
                         <div class="RoutineCompletion-top-row">
                             <div class="RoutineCompletion-check-wrapper">
 
-                                <input type="hidden" th:name="|exerciseLogs[${status.index}].isChecked|" value="N" />
-
                                 <input type="checkbox"
                                        th:id="'check-' + ${status.index}"
-                                       th:name="|exerciseLogs[${status.index}].isChecked|"
+                                       th:field="*{exerciseLogs[__${status.index}__].isChecked}"
                                        value="Y"
                                        class="RoutineCompletion-check"
                                        th:disabled="${#fields.hasErrors()}"/>

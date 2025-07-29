@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.ExerciseLogMapper">
+
+    <select id="getNextSessionId" resultType="int">
+        SELECT fitfusion_session_seq.NEXTVAL FROM dual
+    </select>
+
+    <update id="updateRoutineName" parameterType="RoutineLogDto">
+        update
+            fitfusion_routine
+        set
+            name = #{routineName}
+        where
+            routine_id = #{routineId}
+    </update>
+    
+    <update id="updateExerciseLog" parameterType="ExerciseLogDto">
+            update
+                fitfusion_exercise_logs
+            set
+                sets = #{sets}
+              , reps = #{reps}
+              , weight = #{weight}
+              , log_date = #{logDate}
+              , duration_minutes = #{durationMinutes}
+            where
+                log_id = #{logId}
+            and user_id = #{userId}
+    </update>
+
+    <delete id="deleteExerciseLogByUserAndLogId">
+        delete from fitfusion_exercise_logs
+        where user_id = #{userId}
+          and session_id = #{sessionId}
+    </delete>
+
+    <select id="getRoutineInfo" resultType="RoutineLogDto">
+        SELECT
+            routine_id   AS routineId,
+            name         AS routineName
+        FROM fitfusion_routine
+        WHERE routine_id = #{routineId}
+    </select>
+
+    <select id="getRoutineLogDetail" resultType="ExerciseLogDto">
+        SELECT
+            l.log_id              AS logId,
+            l.log_date            AS logDate,
+            l.reps                AS reps,
+            l.sets                AS sets,
+            l.weight              AS weight,
+            l.exercise_id         AS exerciseId,
+            l.is_checked          AS isChecked,
+            l.duration_minutes    AS durationMinutes,
+            l.user_id             AS userId,
+            l.routine_exercise_id AS routineExerciseId,
+            e.name                AS exerciseName
+        FROM
+            fitfusion_exercise_logs l,
+            fitfusion_exercises e,
+            fitfusion_routine_exercise re
+        WHERE
+            l.exercise_id = e.exercise_id
+          AND l.routine_exercise_id = re.routine_exercise_id
+          AND re.routine_id = #{routineId}
+          AND l.user_id = #{userId}
+          AND l.session_id = #{sessionId}
+        ORDER BY l.log_date DESC
+    </select>
+
+
+    <select id="findRoutineLogsDetail" resultType="ExerciseLogDto">
+        SELECT
+            e.name                  AS exerciseName,
+            l.session_id            AS sessionId,
+            l.log_id                AS logId,
+            l.log_date              AS logDate,
+            l.reps                  AS reps,
+            l.sets                  AS sets,
+            l.weight                AS weight,
+            l.exercise_id           AS exerciseId,
+            l.is_checked            AS isChecked,
+            l.duration_minutes      AS durationMinutes,
+            l.user_id               AS userId,
+            l.routine_exercise_id   AS routineExerciseId,
+            r.name                  AS routineName,
+            re.routine_id           as routineId
+        FROM
+            fitfusion_exercise_logs l,
+            fitfusion_exercises e,
+            fitfusion_routine_exercise re,
+            fitfusion_routine r
+        WHERE
+            l.user_id = #{userId}
+          AND l.exercise_id = e.exercise_id
+          AND l.routine_exercise_id = re.routine_exercise_id
+          AND re.routine_id = r.routine_id
+        ORDER BY
+            l.log_date DESC
+    </select>
+
+    <select id="findExerciseLog" resultType="ExerciseLogDto">
+        select
+            e.name                    as exerciseName
+          , l.log_id                  as logId
+          , l.log_date                as logDate
+          , l.reps                    as reps
+          , l.sets                    as sets
+          , l.weight                  as weight
+          , l.exercise_id             as exerciseId
+          , l.is_checked              as isChecked
+          , l.duration_minutes        as durationMinutes
+          , l.user_id                 as userId
+          , l.routine_exercise_id     as routineExerciseId
+        from
+            fitfusion_exercise_logs l, fitfusion_exercises e
+        where
+            user_id = #{userId}
+        and l.exercise_id = e.exercise_id
+        order by l.log_date desc
+    </select>
+
+    <insert id="insertExerciseLog" parameterType="ExerciseLog">
+        insert into fitfusion_exercise_logs (
+            log_id
+          , log_date
+          , sets
+          , reps
+          , duration_minutes
+          , is_checked
+          , user_id
+          , exercise_id
+          , routine_exercise_id
+          , session_id
+          ) values (
+            seq_exercise_log.nextval
+          , sysdate
+          , #{sets}
+          , #{reps}
+          , #{durationMinutes}
+          , #{isChecked}
+          , #{userId}
+          , #{exerciseId}
+          , #{routineExerciseId}
+          , #{sessionId}
+        )
+    </insert>
+
+</mapper>

@@ -52,7 +52,7 @@
     <div class="MyExercise-section">
         <div class="MyExercise-section-header">
             <h2>📋 최근 수행 운동</h2>
-            <button th:onclick="|location.href='@{/myexercise/exerciselog}'|">전체보기</button>
+            <button th:onclick="|location.href='@{/exerciseLog/list}'|">전체보기</button>
         </div>
         <div class="MyExercise-card-container" th:with="displayList=${#lists.size(recentLogs) > 4} ? ${recentLogs.subList(0, 4)} : ${recentLogs}">
             <div class="MyExercise-card" th:each="log : ${displayList}">
