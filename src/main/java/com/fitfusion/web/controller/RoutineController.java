@@ -68,6 +68,9 @@ public class RoutineController {
         return "routine/RoutineDetail";
     }
 
-
+    @GetMapping("/targetRecommend")
+    public String targetRecommend(Model model) {
+        return "routine/TargetRoutineRecommendations";
+    }
 
 }

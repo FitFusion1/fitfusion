@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.ExerciseStatusMapper">
+
+
+    <select id="getTotalRoutineCount" parameterType="int" resultType="int">
+        select count(*)
+        from fitfusion_routine
+        where user_id = #{userId}
+    </select>
+
+    <select id="getCompletedRoutineSessions" parameterType="int" resultType="int">
+        select count(distinct session_id)
+        from fitfusion_exercise_logs
+        where user_id = #{userId}
+    </select>
+
+    <select id="getAverageCompletionRate" parameterType="int" resultType="double">
+        select
+            nvl(avg(completion_rate), 0)
+        from (
+            select (sum(case when is_checked = '1' then 1 else 0 end) * 1.0 / count(*)) * 100 as completion_rate
+            from fitfusion_exercise_logs
+            where user_id = #{userId}
+            group by session_id
+        )
+    </select>
+
+    <select id="getBalanceParts" parameterType="int" resultType="map">
+        SELECT e.category AS part, COUNT(*) AS cnt
+        FROM fitfusion_exercise_logs l
+                 JOIN fitfusion_exercises e ON l.exercise_id = e.exercise_id
+        WHERE l.user_id = #{userId}
+        GROUP BY e.category
+    </select>
+
+
+
+    <select id="getMonthlyTotalTime" parameterType="int" resultType="int">
+        select
+            nvl(sum(duration_minutes), 0)
+        from
+            fitfusion_exercise_logs
+        where
+            user_id = #{userId}
+        and log_date between trunc(sysdate, 'MM') and last_day(sysdate)
+    </select>
+
+    <select id="getCompletedRoutineCount" parameterType="int" resultType="int">
+        select
+            count(distinct trunc(log_date))
+        from
+            fitfusion_exercise_logs
+        where
+            user_id = #{userId}
+        and log_date between trunc(sysdate, 'IW') and trunc(sysdate, 'IW') + 6
+    </select>
+
+    <select id="getMostUsedBodyPart" parameterType="int" resultType="String">
+        select
+            e.category
+        from
+            fitfusion_exercise_logs l, fitfusion_exercises e
+        where
+            l.user_id = #{userId}
+        and l.exercise_id = e.exercise_id
+        group by e.category
+        order by count(*) desc
+        fetch first 1 row only
+    </select>
+
+    <select id="getLeastUsedBodyPart" parameterType="int" resultType="String">
+        select
+            e.category
+        from
+            fitfusion_exercise_logs l, fitfusion_exercises e
+        where
+            l.user_id = #{userId}
+          and l.exercise_id = e.exercise_id
+        group by e.category
+        order by count(*) asc
+        fetch first 1 row only
+    </select>
+
+    <select id="getDailyRoutineCount" parameterType="int" resultType="map">
+        select
+            to_char(log_date, 'DY', 'NLS_DATE_LANGUAGE=KOREAN') as day,
+            count(*) as count
+        from
+            fitfusion_exercise_logs
+        where
+            user_id = #{userId}
+        and log_date between trunc(sysdate, 'IW') and trunc(sysdate, 'IW') + 6
+        group by to_char(log_date, 'DY', 'NLS_DATE_LANGUAGE=KOREAN'),
+                 to_char(log_date, 'D')
+        order by to_char(log_date, 'D')
+    </select>
+
+    <select id="getPersonalRecords" parameterType="int" resultType="map">
+        select
+            e.name                              as "exerciseName"
+          , max(l.weight)                       as "maxWeight"
+          , to_char(max(l.log_date), 'MM.DD')   as "recordDate"
+        from
+            fitfusion_exercise_logs l, fitfusion_exercises e
+        where
+            l.user_id = #{userId}
+        and l.exercise_id = e.exercise_id
+        group by e.name
+        order by max(l.weight) desc
+        fetch first 3 rows only
+    </select>
+</mapper>
