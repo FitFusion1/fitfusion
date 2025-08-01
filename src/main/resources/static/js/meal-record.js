@@ -1,254 +1,90 @@
-// 전역 변수
-const foodData = {
-    all: [],
-    frequent: [],
-    favorite: [],
-    manual: []
-};
-
-const favorites = new Set();
-let selectedFoods = new Map();
-let currentTab = 'all';
-
-// 영양정보 모달 표시 함수
-function showNutritionModal(foodId) {
-    const food =
-        foodData.all.find(f => f.id === foodId) ||
-        foodData.frequent.find(f => f.id === foodId) ||
-        foodData.favorite.find(f => f.id === foodId) ||
-        foodData.manual.find(f => f.id === foodId);
-
-    if (!food) return;
-
-    document.getElementById('modalKcal').textContent = food.calories ?? 0;
-    document.getElementById('modalCarb').textContent = food.carbohydrateG ?? 0;
-    document.getElementById('modalSugars').textContent = food.sugarG ?? 0;
-    document.getElementById('modalSugarAlcohol').textContent = food.sugarAlcoholG ?? 0;
-    document.getElementById('modalFiber').textContent = food.fiberG ?? 0;
-    document.getElementById('modalProtein').textContent = food.proteinG ?? 0;
-    document.getElementById('modalFat').textContent = food.fatG ?? 0;
-    document.getElementById('modalSatFat').textContent = food.saturatedFatG ?? 0;
-    document.getElementById('modalTransFat').textContent = food.transFatG ?? 0;
-    document.getElementById('modalCholesterol').textContent = food.cholesterolMg ?? 0;
-    document.getElementById('modalUnsatFat').textContent = food.unsaturatedFatG ?? 0;
-    document.getElementById('modalSodium').textContent = food.sodiumMg ?? 0;
-    document.getElementById('modalCaffeine').textContent = food.caffeineMg ?? 0;
-    document.getElementById('modalCalcium').textContent = food.calciumMg ?? 0;
-
-    const modalEl = document.getElementById('nutritionModal');
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const resultContainers = {
-        all: document.getElementById("pane-all"),
-        frequent: document.getElementById("pane-frequent"),
-        favorite: document.getElementById("pane-favorite"),
-        manual: document.getElementById("pane-manual")
-    };
-
-    const searchInput = document.getElementById("searchInput");
-    const searchBtn = document.getElementById("searchBtn");
+document.addEventListener("DOMContentLoaded", function () {
     const mealSelect = document.getElementById("mealSelect");
-    const saveBtn = document.getElementById("saveBtn");
 
-    document.getElementById("tabMenu").addEventListener("click", e => {
-        if (e.target.tagName === "BUTTON") {
-            currentTab = e.target.id.replace("tab-", "");
-            renderResults();
-            updateSaveBtn();
-        }
-    });
+    // ✅ 모달 요소
+    const modalFoodName = document.getElementById("modalFoodName");
+    const modalFoodId = document.getElementById("modalFoodId");
+    const modalMealTime = document.getElementById("modalMealTime");
+    const modalGramInput = document.getElementById("modalGramInput");
 
-    async function fetchAndRender(keyword) {
-        if (keyword === "") {
-            foodData.all = [];
-            renderResults();
-            return;
-        }
-        try {
-            const response = await fetch(`/api/foods/search?keyword=${encodeURIComponent(keyword)}`);
-            if (!response.ok) throw new Error("검색 실패");
+    // ✅ 영양소 표시 영역
+    const modalKcal = document.getElementById("modalKcal");
+    const modalCarb = document.getElementById("modalCarb");
+    const modalSugars = document.getElementById("modalSugars");
+    const modalSugarAlcohol = document.getElementById("modalSugarAlcohol");
+    const modalFiber = document.getElementById("modalFiber");
+    const modalProtein = document.getElementById("modalProtein");
+    const modalFat = document.getElementById("modalFat");
+    const modalSatFat = document.getElementById("modalSatFat");
+    const modalTransFat = document.getElementById("modalTransFat");
+    const modalCholesterol = document.getElementById("modalCholesterol");
+    const modalUnsatFat = document.getElementById("modalUnsatFat");
+    const modalSodium = document.getElementById("modalSodium");
+    const modalCaffeine = document.getElementById("modalCaffeine");
+    const modalCalcium = document.getElementById("modalCalcium");
 
-            const result = await response.json();
-            foodData.all = result.map(dto => ({
-                id: dto.foodId,
-                name: dto.foodName || dto.FOOD_NM_KR,
-                serving: dto.foodServingSizeRaw || '100g',
-                kcal: dto.calories || 0,
-                carb: dto.carbohydrateG || 0,
-                sugars: dto.sugarG || 0,
-                sugarAlcohol: dto.sugarAlcoholG || 0,
-                fiber: dto.fiberG || 0,
-                protein: dto.proteinG || 0,
-                fat: dto.fatG || 0,
-                satFat: dto.saturatedFatG || 0,
-                transFat: dto.transFatG || 0,
-                cholesterol: dto.cholesterolMg || 0,
-                unsatFat: dto.unsaturatedFatG || 0,
-                sodium: dto.sodiumMg || 0,
-                caffeine: dto.caffeineMg || 0,
-                alcohol: 0,
-                calcium: dto.calciumMg || 0,
-                baseGram: dto.foodWeightValue || 100,
-                unit: 'g'
-            }));
+    // ✅ 즐겨찾기 관리
+    const favorites = new Set();
 
-            favorites.clear();
-            result.forEach(dto => {
-                if (dto.isFavorite) favorites.add(dto.foodId);
-            });
+    // ✅ "선택" 버튼 클릭 시 모달 데이터 세팅
+    document.querySelectorAll('[data-bs-target="#nutritionModal"]').forEach(btn => {
+        btn.addEventListener("click", () => {
+            const foodId = btn.dataset.foodId;
+            const foodName = btn.dataset.foodName;
 
-            renderResults();
-        } catch (error) {
-            console.error(" 검색 오류:", error);
-        }
-    }
+            modalFoodName.textContent = foodName;
+            modalFoodId.value = foodId;
+            modalMealTime.value = mealSelect.value;
 
-    searchInput.addEventListener("input", () => {
-        fetchAndRender(searchInput.value.trim());
-    });
+            modalKcal.textContent = btn.dataset.calories || 0;
+            modalCarb.textContent = btn.dataset.carb || 0;
+            modalSugars.textContent = btn.dataset.sugars || 0;
+            modalSugarAlcohol.textContent = btn.dataset.sugarAlcohol || 0;
+            modalFiber.textContent = btn.dataset.fiber || 0;
+            modalProtein.textContent = btn.dataset.protein || 0;
+            modalFat.textContent = btn.dataset.fat || 0;
+            modalSatFat.textContent = btn.dataset.satFat || 0;
+            modalTransFat.textContent = btn.dataset.transFat || 0;
+            modalCholesterol.textContent = btn.dataset.cholesterol || 0;
+            modalUnsatFat.textContent = btn.dataset.unsatFat || 0;
+            modalSodium.textContent = btn.dataset.sodium || 0;
+            modalCaffeine.textContent = btn.dataset.caffeine || 0;
+            modalCalcium.textContent = btn.dataset.calcium || 0;
 
-    searchBtn.addEventListener("click", () => {
-        fetchAndRender(searchInput.value.trim());
-    });
-
-    document.getElementById('openManualModalBtn')?.addEventListener('click', () => {
-        const modalEl = document.getElementById('manualFoodModal');
-        if (modalEl) {
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-        } else {
-            console.warn(' manualFoodModal ID를 가진 요소가 없습니다.');
-        }
-    });
-
-    mealSelect.addEventListener("change", updateSaveBtn);
-
-    saveBtn.addEventListener("click", () => {
-        if (saveBtn.disabled) return;
-        const meal = mealSelect.value;
-        const items = Array.from(selectedFoods.values())
-            .map(({ food, amount }) => `${food.name} (${amount}${food.unit || 'g'})`)
-            .join(', ');
-        alert(`${meal}에 ${selectedFoods.size}개 음식 기록:\n${items}`);
-        selectedFoods.clear();
-        renderResults();
-        updateSaveBtn();
-    });
-
-    function renderResults() {
-        Object.keys(resultContainers).forEach(tab => {
-            const pane = resultContainers[tab];
-            const ulId = `resultList-${tab}`;
-            const ul = document.getElementById(ulId);
-            if (!ul) return;
-
-            ul.innerHTML = '';
-            ul.style.display = 'none';
-
-            if (tab !== currentTab) {
-                pane.style.display = 'none';
-                return;
-            }
-
-            const keyword = searchInput.value.trim();
-            const filtered = foodData[tab].filter(f => f.name.includes(keyword));
-
-            if (filtered.length === 0) {
-                pane.style.display = '';
-                return;
-            }
-
-            pane.style.display = '';
-            ul.style.display = '';
-
-            filtered.forEach(originalFood => {
-                let food, amount;
-                if (selectedFoods.has(originalFood.id)) {
-                    const stored = selectedFoods.get(originalFood.id);
-                    food = stored.food;
-                    amount = stored.amount;
-                } else {
-                    food = originalFood;
-                    amount = null;
-                }
-
-                const li = document.createElement('li');
-                li.className = "meal-record-list-item d-flex justify-content-between align-items-center meal-record-clickable-area";
-                li.setAttribute("data-food-id", food.id);
-
-                const isFavorite = favorites.has(food.id);
-                const starClass = isFavorite ? 'bi-star-fill text-warning' : 'bi-star text-light';
-
-                let innerHTML = `
-                    <div class="flex-grow-1">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi ${starClass} meal-record-favorite-icon" style="cursor:pointer;" data-food-id="${food.id}"></i>
-                            <strong>${food.name}</strong>
-                        </div>
-                        <small class="text-secondary">${food.serving} / ${food.kcal}kcal</small>
-                    </div>
-                `;
-
-                if (amount !== null) {
-                    innerHTML += `
-                        <div class="d-flex align-items-center gap-2">
-                            <span>${amount}${food.unit || 'g'}</span>
-                            <button class="btn btn-sm btn-danger meal-record-remove-btn" type="button">✕</button>
-                        </div>
-                    `;
-                } else {
-                    innerHTML += `
-                        <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-sm btn-outline-primary meal-record-add-btn" type="button">+</button>
-                        </div>
-                    `;
-                }
-
-                li.innerHTML = innerHTML;
-
-                li.querySelector('.meal-record-favorite-icon').addEventListener('click', (ev) => {
-                    ev.stopPropagation();
-                    toggleFavorite(food.id);
-                    renderResults();
-                });
-
-                const addBtn = li.querySelector('.meal-record-add-btn');
-                if (addBtn) {
-                    addBtn.addEventListener('click', (ev) => {
-                        ev.stopPropagation();
-                        addFoodDirectly(food.id);
-                    });
-                }
-
-                const removeBtn = li.querySelector('.meal-record-remove-btn');
-                if (removeBtn) {
-                    removeBtn.addEventListener('click', (ev) => {
-                        ev.stopPropagation();
-                        selectedFoods.delete(food.id);
-                        renderResults();
-                        updateSaveBtn();
-                    });
-                }
-
-                li.addEventListener('click', () => {
-                    showNutritionModal(food.id);
-                });
-
-                ul.appendChild(li);
-            });
+            // ✅ ratio 계산용으로 원본 데이터 저장
+            modalGramInput.dataset.baseCalories = btn.dataset.calories || 0;
+            modalGramInput.dataset.baseCarb = btn.dataset.carb || 0;
+            modalGramInput.dataset.baseProtein = btn.dataset.protein || 0;
+            modalGramInput.dataset.baseFat = btn.dataset.fat || 0;
         });
-    }
+    });
 
-    function updateSaveBtn() {
-        const count = selectedFoods.size;
-        const meal = mealSelect.value;
-        saveBtn.disabled = (count === 0 || !meal);
-        saveBtn.textContent = count === 0 ? "기록하기" : `${count}개 기록하기`;
-    }
+    // ✅ 즐겨찾기 버튼 토글
+    const favoriteBtn = document.getElementById("modalFavoriteBtn");
+    favoriteBtn.addEventListener("click", () => {
+        const foodId = modalFoodId.value;
+        if (!foodId) return;
 
-    renderResults();
-    updateSaveBtn();
+        if (favorites.has(foodId)) {
+            favorites.delete(foodId);
+            favoriteBtn.classList.remove("btn-warning");
+            favoriteBtn.classList.add("btn-outline-warning");
+        } else {
+            favorites.add(foodId);
+            favoriteBtn.classList.add("btn-warning");
+            favoriteBtn.classList.remove("btn-outline-warning");
+        }
+    });
+
+    // ✅ 섭취량 변경 시 동적 계산 (비율 기반)
+    modalGramInput.addEventListener("input", () => {
+        const gram = parseFloat(modalGramInput.value);
+        const base = 100;
+        const ratio = gram / base;
+
+        modalKcal.textContent = (modalGramInput.dataset.baseCalories * ratio).toFixed(1);
+        modalCarb.textContent = (modalGramInput.dataset.baseCarb * ratio).toFixed(1);
+        modalProtein.textContent = (modalGramInput.dataset.baseProtein * ratio).toFixed(1);
+        modalFat.textContent = (modalGramInput.dataset.baseFat * ratio).toFixed(1);
+    });
 });
