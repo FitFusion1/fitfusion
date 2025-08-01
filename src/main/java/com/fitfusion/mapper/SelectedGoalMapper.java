@@ -13,4 +13,5 @@ public interface SelectedGoalMapper {
     void updateSelectedGoal(SelectedGoal selectedGoal);
 
     void deleteByUserId(int userId);
+
 }

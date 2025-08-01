@@ -6,6 +6,7 @@ import com.fitfusion.mapper.TargetPartsMapper;
 import com.fitfusion.vo.AvoidPart;
 import com.fitfusion.vo.Condition;
 import com.fitfusion.vo.TargetPart;
+import com.fitfusion.web.form.ExerciseConditionForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ExerciseConditionService {
 
@@ -21,7 +23,20 @@ public class ExerciseConditionService {
     private final ConditionMapper conditionMapper;
     private final TargetPartsMapper targetPartsMapper;
 
-    @Transactional
+    
+    public ExerciseConditionForm getConditionAndAvoidAndTargetByUserId(int userId) {
+        List<String> avoidParts = avoidPartsMapper.getAvoidPartsByUserId(userId);
+        List<String> targetParts = targetPartsMapper.getTargetPartsByUserId(userId);
+        String condition = conditionMapper.getConditionLevelByUserId(userId);
+        
+        ExerciseConditionForm formData = new ExerciseConditionForm();
+        formData.setAvoidParts(avoidParts);
+        formData.setTargetParts(targetParts);
+        formData.setConditionLevel(condition);
+        
+        return formData;
+    }
+    
     public int saveConditionAndAvoidAndTartget(int userId, String conditionLevel, List<String> avoidParts, List<String> targetParts) {
         avoidPartsMapper.deleteAvoidPartsByUserId(userId);
         targetPartsMapper.deleteTargetPartsByUserId(userId);
@@ -86,4 +101,25 @@ public class ExerciseConditionService {
 
         return conditionId;
     }
+
+    public void deleteContitionByUserId(int userId) {
+        conditionMapper.deleteConditionByUserId(userId);
+    }
+
+    public int getConditionIdByUserId(int userId) {
+        return conditionMapper.getConditionIdByUserId(userId);
+    }
+
+    public void deleteTargetPartsByConditionId(int conditionId) {
+        targetPartsMapper.deleteTargetPartsByConditionId(conditionId);
+    }
+
+    public void deleteAvoidPartsByConditionId(int conditionId) {
+        avoidPartsMapper.deleteAvoidPartsByConditionId(conditionId);
+    }
+
+    public String getConditionLevelByUserId(int userId) {
+         return conditionMapper.getConditionLevelByUserId(userId);
+    }
+
 }

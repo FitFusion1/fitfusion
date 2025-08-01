@@ -11,9 +11,4 @@ public class HomeController {
         return "home";
     }
 
-    // 임시로 만듦
-    @GetMapping("/pose")
-    public String pose() {
-        return "example";
-    }
 }

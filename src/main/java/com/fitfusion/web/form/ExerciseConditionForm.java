@@ -8,5 +8,5 @@ import java.util.List;
 public class ExerciseConditionForm {
     private List<String> avoidParts;
     private List<String> targetParts;
-    private String Condition;
+    private String conditionLevel;
 }

@@ -30,7 +30,7 @@
     <!--
         User getUserByIdWithRoleNames(int id);
     -->
-    <resultMap id="getUserByIdWithRoleNames" type="User">
+    <resultMap id="UserWithRoleNamesResultMap" type="User">
         <id column="user_id" property="userId"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
@@ -51,7 +51,7 @@
                     select="getRoleNamesById"/>
     </resultMap>
 
-    <select id="getUserByIdWithRoleNames" resultMap="getUserByIdWithRoleNames">
+    <select id="getUserByIdWithRoleNames" resultMap="UserWithRoleNamesResultMap">
         SELECT
             user_id,
             username,
@@ -90,7 +90,7 @@
     -->
     <select id="getAllUsers" resultType="User">
         SELECT
-            user_id             userId,
+            user_id,
             username,
             password,
             name,
@@ -98,12 +98,12 @@
             gender,
             height,
             weight,
-            birth_date          birthDate,
-            created_date        createdDate,
-            updated_date        updatedDate,
+            birth_date,
+            created_date,
+            updated_date,
             deleted,
-            deleted_date        deletedDate,
-            experience_level    experience_level
+            deleted_date,
+            experience_level
         FROM
             fitfusion_users
         ORDER BY user_id DESC

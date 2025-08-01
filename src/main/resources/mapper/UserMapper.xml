@@ -34,31 +34,31 @@
             FROM DUAL
         </selectKey>
         INSERT INTO FITFUSION_USERS
-        ( USER_ID
-        , USERNAME
-        , PASSWORD
-        , NAME
-        , EMAIL
-        , GENDER
-        , HEIGHT
-        , WEIGHT
-        , BIRTH_DATE
-        , EXPERIENCE_LEVEL
-        )
+            ( USER_ID
+            , USERNAME
+            , PASSWORD
+            , NAME
+            , EMAIL
+            , GENDER
+            , HEIGHT
+            , WEIGHT
+            , BIRTH_DATE
+            , EXPERIENCE_LEVEL
+            )
         VALUES
-        ( #{userId}
-        , #{username}
-        , #{password}
-        , #{name}
-        , #{email}
-        , #{gender}
-        , #{height}
-        , #{weight}
-        , #{birthDate}
-        , #{experienceLevel}
-        )
+            ( #{userId}
+            , #{username}
+            , #{password}
+            , #{name}
+            , #{email}
+            , #{gender}
+            , #{height}
+            , #{weight}
+            , #{birthDate}
+            , #{experienceLevel}
+            )
     </insert>
-
+    
     <!--
         void insertUserRole(@Param("userId") int userId,
                         @Param("roleName") String roleName);
@@ -99,31 +99,31 @@
             }
     -->
     <select id="getUserWithRoleNames" parameterType="map"
-            resultMap="UserResultMapWithRoleNames">
+        resultMap="UserResultMapWithRoleNames">
         SELECT
-        USER_ID
-        , USERNAME
-        , PASSWORD
-        , NAME
-        , EMAIL
-        , GENDER
-        , HEIGHT
-        , WEIGHT
-        , BIRTH_DATE
-        , CREATED_DATE
-        , UPDATED_DATE
-        , DELETED
-        , DELETED_DATE
-        , EXPERIENCE_LEVEL
+            USER_ID
+             , USERNAME
+             , PASSWORD
+             , NAME
+             , EMAIL
+             , GENDER
+             , HEIGHT
+             , WEIGHT
+             , BIRTH_DATE
+             , CREATED_DATE
+             , UPDATED_DATE
+             , DELETED
+             , DELETED_DATE
+             , EXPERIENCE_LEVEL
         FROM
-        FITFUSION_USERS
+            FITFUSION_USERS
         WHERE
-        <if test="'username'.equals(type)">
-            USERNAME = #{identifier}
-        </if>
-        <if test="'email',equals(type)">
-            EMAIL = #{identifier}
-        </if>
+            <if test="'username'.equals(type)">
+               USERNAME = #{identifier}
+            </if>
+            <if test="'email'.equals(type)">
+               EMAIL = #{identifier}
+            </if>
     </select>
 
     <!--
@@ -137,5 +137,51 @@
         where
             USER_ID = #{id}
     </select>
+
+    <!--
+        User getUserByUsername(String username);
+    -->
+    <select id="getUserByUsername" resultType="User">
+        SELECT
+            USER_ID
+            , USERNAME
+            , PASSWORD
+            , NAME
+            , EMAIL
+            , GENDER
+            , HEIGHT
+            , WEIGHT
+            , BIRTH_DATE        birthDate
+            , DELETED
+            , EXPERIENCE_LEVEL  experienceLevel
+        FROM
+            FITFUSION_USERS
+        WHERE
+            USERNAME = #{username}
+    </select>
+
+    <!--
+    User getUserByEmail(String email);
+-->
+    <select id="getUserByEmail" resultType="User">
+        SELECT
+            USER_ID
+             , USERNAME
+             , PASSWORD
+             , NAME
+             , EMAIL
+             , GENDER
+             , HEIGHT
+             , WEIGHT
+             , BIRTH_DATE       birthDate
+             , DELETED
+             , EXPERIENCE_LEVEL experienceLevel
+        FROM
+            FITFUSION_USERS
+        WHERE
+            EMAIL = #{email}
+    </select>
+
+
 
 </mapper>

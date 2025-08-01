@@ -25,8 +25,29 @@
                  )
     </insert>
 
-    <select id="findAll" resultType="com.fitfusion.vo.Exercise">
-        SELECT * FROM FITFUSION_EXERCISES
+    <select id="findAllExercises" resultType="Exercise">
+        SELECT
+            exercise_id     as exerciseId,
+            name            as exerciseName,
+            description     as description,
+            category        as category,
+            main_parts      as mainParts,
+            equipment       as equipment,
+            fatigue_level   as fatigueLevel
+        FROM FITFUSION_EXERCISES
+    </select>
+
+    <select id="findExerciseById" resultType="Exercise">
+        select
+            exercise_id     as exerciseId,
+            name            as exerciseName,
+            description     as description,
+            category        as category,
+            main_parts      as mainParts,
+            equipment       as equipment,
+            fatigue_level   as fatigueLevel
+        from fitfusion_exercises
+        where exercise_id = #{id}
     </select>
 
 </mapper>

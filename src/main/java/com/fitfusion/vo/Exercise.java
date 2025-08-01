@@ -8,8 +8,8 @@ import org.apache.ibatis.type.Alias;
 @AllArgsConstructor
 @Alias("Exercise")
 public class Exercise {
-    private int id;
-    private String name;
+    private int exerciseId;
+    private String exerciseName;
     private String description;
     private String category;
     private String equipment;
