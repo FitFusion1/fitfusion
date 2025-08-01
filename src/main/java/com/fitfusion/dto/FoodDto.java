@@ -92,17 +92,16 @@ public class FoodDto {
     // 영양성분함량기준량의 중 단위 ID (DB 필드명 : FOOD_SERVING_UNIT_ID) ex) g  (FOOD_UNITS 테이블에서 ID 매핑)
     private Integer foodServingUnitId;
 
-    // 아직 서비스에 로직 추가 안 함. foodServingSizeValue랑 공통기능인데 메서드 못 쓰나
     // 식품 전체 중량 (DB 컬럼 FOOD_WEIGHT_RAW) ex) 150.000g, 1,000.000g, 591.000mL
     @JsonProperty("Z10500")
     @JsonDeserialize(using = EmptyStringToNullStringDeserializer.class)
     // API 응답값 그대로 저장 (디버깅/백업용) ex) 150.000g
     private String foodWeightRaw;
 
-    // 식품 전체 중량 수치값 ex) 150.000
+    // 식품 중량 수치값 ex) 150.000
     private Double foodWeightValue;
 
-    // 식품 전체 중량 단위 ID (DB 필드명 : FOOD_WEIGHT_ID) (단위 매핑 ID (FOOD_UNITS.FOOD_UNIT_ID)) (예: g → 1, mL → 2)
+    // 식품 중량 단위 ID (DB 필드명 : FOOD_WEIGHT_ID) (단위 매핑 ID (FOOD_UNITS.FOOD_UNIT_ID)) (예: g → 1, mL → 2)
     private Integer foodWeightUnitId;
 
     // 1회 섭취참고량 (DB 컬럼 : REFERENCE_INTAKE) ex) '생·숙면 200g, 건면 100g, 당면 30g, 유탕면(봉지)120g, 유탕면(용기)80g', '드레싱 15g, 덮밥소스 165g', 80ml(g), 1식
@@ -185,10 +184,10 @@ public class FoodDto {
     @JsonDeserialize(using = EmptyStringToNullDoubleDeserializer.class)
     private Double unsaturatedFatG;
 
-    // 총 지방산 (DB 필드명 : TOTAL_FATTY_ACIDS_G) ex) 0.02, 0.58
-    @JsonProperty("AMT_NUM154")
-    @JsonDeserialize(using = EmptyStringToNullDoubleDeserializer.class)
-    private Double totalFattyAcidsG;
+//    // 총 지방산 (DB 필드명 : TOTAL_FATTY_ACIDS_G) ex) 0.02, 0.58 - 활용 가능성 낮아서 제거함
+//    @JsonProperty("AMT_NUM154")
+//    @JsonDeserialize(using = EmptyStringToNullDoubleDeserializer.class)
+//    private Double totalFattyAcidsG;
 
     // 당알콜 (API 필드명 AMT_NUM53) ex) 0.42
     @JsonProperty("AMT_NUM53")

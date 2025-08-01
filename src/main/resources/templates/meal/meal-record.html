@@ -2,90 +2,98 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      layout:decorate="~{/layout/base}"
-      th:with="menu='posts'">
+      layout:decorate="~{/layout/base}">
 
 <head>
-    <title layout:fragment="title">음식 검색 및 기록</title>
-
-    <th:block th:if="${_csrf != null}" th:fragment="csrfMeta">
-        <meta name="_csrf" th:fragment="csrfMeta" />
-        <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-    </th:block>
-
-    <th:block layout:fragment="css">
-        <link rel="stylesheet" th:href="@{/css/meal-record.css}">
-    </th:block>
+  <title layout:fragment="title">음식 검색 및 기록</title>
+  <th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/meal-record.css}">
+  </th:block>
 </head>
 
 <div layout:fragment="content">
-    <div class="meal-record-container container my-4">
+  <div class="meal-record-container container my-4">
 
-        <!-- 탭 -->
-        <ul class="meal-record-tab-nav nav nav-tabs mb-3" id="tabMenu" role="tablist">
-            <li class="meal-record-tab-item nav-item">
-                <button class="meal-record-tab-button nav-link active" id="tab-all" data-bs-toggle="tab" data-bs-target="#pane-all" type="button" role="tab">전체</button>
-            </li>
-            <li class="meal-record-tab-item nav-item">
-                <button class="meal-record-tab-button nav-link" id="tab-frequent" data-bs-toggle="tab" data-bs-target="#pane-frequent" type="button" role="tab">자주 먹는 음식</button>
-            </li>
-            <li class="meal-record-tab-item nav-item">
-                <button class="meal-record-tab-button nav-link" id="tab-favorite" data-bs-toggle="tab" data-bs-target="#pane-favorite" type="button" role="tab">즐겨찾기</button>
-            </li>
-            <li class="meal-record-tab-item nav-item">
-                <button class="meal-record-tab-button nav-link" id="tab-manual" data-bs-toggle="tab" data-bs-target="#pane-manual" type="button" role="tab">직접 등록</button>
-            </li>
+    <!-- ✅ 탭 -->
+    <ul class="meal-record-tab-nav nav nav-tabs mb-3" id="tabMenu" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" id="tab-all" data-bs-toggle="tab" data-bs-target="#pane-all"
+                type="button" role="tab">전체</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="tab-frequent" data-bs-toggle="tab" data-bs-target="#pane-frequent"
+                type="button" role="tab">자주 먹는 음식</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="tab-favorite" data-bs-toggle="tab" data-bs-target="#pane-favorite"
+                type="button" role="tab">즐겨찾기</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="tab-manual" data-bs-toggle="tab" data-bs-target="#pane-manual"
+                type="button" role="tab">직접 등록</button>
+      </li>
+    </ul>
+
+    <!-- ✅ 검색 -->
+    <form th:action="@{/meal/record}" method="get" class="meal-record-search-form input-group mb-3">
+      <input type="text" name="keyword" th:value="${keyword}" class="meal-record-input form-control"
+             placeholder="고구마, 닭가슴살...">
+      <button class="btn btn-outline-secondary" type="submit">검색</button>
+    </form>
+
+    <!-- ✅ 검색 결과 -->
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="pane-all">
+        <ul class="meal-record-result-list list-group">
+          <li th:each="food : ${foods}" class="meal-record-list-item d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-star meal-record-favorite-icon" style="cursor:pointer;"></i>
+                <strong th:text="${food.foodName}">음식명</strong>
+              </div>
+              <div class="meal-record-subinfo">
+                <span th:text="${food.makerName ?: '제조사 없음'}"></span>
+                <span class="divider">|</span>
+                <span th:text="${food.foodServingSizeRaw ?: '100g'}"></span>
+                <span class="divider">|</span>
+                <span th:text="${food.calories != null ? food.calories + ' kcal' : '0 kcal'}"></span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary meal-record-add-btn"
+                    th:attr="
+                                    data-food-id=${food.foodId},
+                                    data-food-name=${food.foodName},
+                                    data-calories=${food.calories},
+                                    data-carb=${food.carbohydrateG},
+                                    data-protein=${food.proteinG},
+                                    data-fat=${food.fatG}"
+                    data-bs-toggle="modal" data-bs-target="#nutritionModal">+
+            </button>
+          </li>
         </ul>
-
-        <!-- 검색 -->
-        <div class="meal-record-input-group input-group mb-3">
-            <input type="text" id="searchInput" class="meal-record-input form-control" placeholder="고구마, 닭가슴살...">
-            <button class="meal-record-search-btn btn btn-outline-secondary" id="searchBtn">검색</button>
-        </div>
-
-        <!-- 탭 내용 -->
-        <div class="meal-record-tab-content tab-content">
-            <div class="meal-record-tab-pane tab-pane fade show active" id="pane-all" role="tabpanel">
-                <ul class="meal-record-result-list list-group" id="resultList-all"></ul>
-            </div>
-            <div class="meal-record-tab-pane tab-pane fade" id="pane-frequent" role="tabpanel">
-                <ul class="meal-record-result-list list-group" id="resultList-frequent"></ul>
-            </div>
-            <div class="meal-record-tab-pane tab-pane fade" id="pane-favorite" role="tabpanel">
-                <ul class="meal-record-result-list list-group" id="resultList-favorite"></ul>
-            </div>
-            <div class="meal-record-tab-pane tab-pane fade" id="pane-manual" role="tabpanel">
-                <div class="meal-record-manual-tip mb-2">
-                    <div class="d-flex justify-content-start align-items-center gap-2">
-                        <span class="text-muted mb-0">찾는 음식이 없나요?</span>
-                        <button class="meal-record-manual-btn btn btn-sm btn-primary" id="openManualModalBtn">직접 등록</button>
-                    </div>
-                </div>
-                <ul class="meal-record-result-list list-group" id="resultList-manual"></ul>
-            </div>
-        </div>
-
-        <!-- 하단 고정 바 -->
-        <div class="meal-record-fixed-bottom fixed-bottom-bar d-flex align-items-center justify-content-between gap-2">
-            <select id="mealSelect" class="meal-record-meal-select form-select w-auto">
-                <option value="아침">아침</option>
-                <option value="점심">점심</option>
-                <option value="저녁">저녁</option>
-                <option value="간식">간식</option>
-            </select>
-            <span>에</span>
-            <button id="saveBtn" class="meal-record-save-btn btn btn-primary flex-grow-1" disabled>기록하기</button>
-        </div>
-
-        <!-- fragment import -->
-        <div th:replace="fragments/modal-meal-record-nutrition :: meal-record-nutrition-modal"></div>
-        <div th:replace="fragments/modal-meal-record-manual-food :: meal-record-manual-food-modal"></div>
+      </div>
     </div>
+
+    <!-- ✅ 하단 고정 바 -->
+    <form id="recordForm" method="post" th:action="@{/meal/record/save}" class="meal-record-fixed-bottom fixed-bottom-bar d-flex align-items-center justify-content-between gap-2">
+      <select name="mealTime" id="mealSelect" class="meal-record-meal-select form-select w-auto">
+        <option value="아침">아침</option>
+        <option value="점심">점심</option>
+        <option value="저녁">저녁</option>
+        <option value="간식">간식</option>
+      </select>
+      <span>에</span>
+      <input type="hidden" id="selectedFoodsInput" name="selectedFoods">
+      <button id="saveBtn" class="btn btn-primary flex-grow-1" disabled>기록하기</button>
+    </form>
+
+    <!-- ✅ 모달 (Fragment) -->
+    <div th:replace="fragments/modal-meal-record-nutrition :: meal-record-nutrition-modal"></div>
+    <div th:replace="fragments/modal-meal-record-manual-food :: meal-record-manual-food-modal"></div>
+  </div>
 </div>
 
-<th:block layout:fragment="script">ㅎㅎㅎ
-    <script th:src="@{/js/meal-record.js}"></script>
+<th:block layout:fragment="script">
+  <script th:src="@{/js/meal-record.js}"></script>
 </th:block>
-
 </html>

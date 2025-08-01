@@ -1,3 +1,8 @@
+.meal-record-container {
+    max-width: 1200px;  /* ✅ 전체 폭 제한 (원하는 만큼 조절 가능) */
+    margin: 0 auto;    /* ✅ 가운데 정렬 */
+}
+
 /* 전체 페이지 어두운 배경 */
 body {
     margin: 0 !important;
@@ -11,13 +16,27 @@ body {
     background-color: #222;
     color: #f1f1f1;
     border: 1px solid #333;
-    padding: 16px 20px;
+    border-radius: 6px;    /* 둥글게 */
+    padding: 14px 20px;    /* 패딩 정리 */
     cursor: pointer;
     transition: background-color 0.2s;
+    margin-bottom: 8px;    /* 항목 간 간격 */
 }
 
 .meal-record-list-item:hover {
     background-color: #333;
+}
+
+/* 마지막 아이템 여백 제거 */
+.meal-record-result-list .meal-record-list-item:last-child {
+    margin-bottom: 0;
+}
+
+/* 음식명 강조 */
+.meal-record-list-item .fw-bold {
+    font-size: 16px;
+    margin-bottom: 4px;
+    display: block; /* 줄바꿈 */
 }
 
 /* 버튼 컬러 어울리게 */
@@ -157,4 +176,20 @@ footer {
     color: #fff;
     background-color: #00d084;
     border-color: #00d084;
+}
+
+.meal-record-subinfo {
+    font-size: 13px;          /* 글씨 크기 */
+    color: #bbb;              /* 연한 회색 */
+    margin-top: 4px;          /* 음식명과 간격 */
+    padding-left: 20px;       /* 음식명보다 들여쓰기 */
+    display: flex;            /* 가로 정렬 */
+    align-items: center;      /* 수직 정렬 */
+    /* ✅ gap 제거 → margin으로 간격 제어 */
+}
+
+.meal-record-subinfo .divider {
+    margin: 0 3px;            /* ✅ 구분 기호 좌우 여백 좁게 */
+    color: #666;              /* 구분 기호 색상 */
+    font-weight: normal;      /* 굵기 보통 */
 }

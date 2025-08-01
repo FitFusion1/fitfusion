@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fitfusion.mapper.MealRecordMapper">
+
+    <!-- 오늘 섭취 영양소 합계 -->
+    <select id="getTodayNutritionSummary" parameterType="int" resultType="map">
+        SELECT
+        NVL(SUM(CALORIES), 0) AS totalCalories,
+        NVL(SUM(CARBOHYDRATE_G), 0) AS totalCarbs,
+        NVL(SUM(PROTEIN_G), 0) AS totalProtein,
+        NVL(SUM(FAT_G), 0) AS totalFat
+        FROM MEAL_RECORDS
+        WHERE USER_ID = #{userId}
+        AND TRUNC(RECORD_DATE) = TRUNC(SYSDATE)
+    </select>
+
+    <!-- 식단 기록 추가 -->
+    <insert id="insertMealRecord" parameterType="com.fitfusion.dto.MealRecordDto">
+        INSERT INTO MEAL_RECORDS (
+        RECORD_ID, USER_ID, MEAL_TIME, CALORIES, CARBOHYDRATE_G, PROTEIN_G, FAT_G, RECORD_DATE
+        ) VALUES (
+        SEQ_MEAL_RECORDS.NEXTVAL,
+        #{userId}, #{mealTime}, #{calories}, #{carbohydrateG}, #{proteinG}, #{fatG}, SYSDATE
+        )
+    </insert>
+
+</mapper>

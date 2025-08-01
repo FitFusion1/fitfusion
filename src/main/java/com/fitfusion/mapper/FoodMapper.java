@@ -39,8 +39,6 @@ public interface FoodMapper {
             @Param("pageSize") int pageSize
     );
 
-
-
     /**
      * 특정 음식 상세 조회 (단위 정보 포함)
      *
@@ -64,7 +62,6 @@ public interface FoodMapper {
      * @return  FoodDto 리스트
      */
     List<FoodDto> searchFoodsByKeyword(@Param("keyword") String keyword);
-
 
     /**
      * 키워드별 데이터 개수

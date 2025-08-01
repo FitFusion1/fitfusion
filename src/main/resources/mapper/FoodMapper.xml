@@ -37,7 +37,6 @@
         <result property="saturatedFatG" column="SATURATED_FAT_G"/>
         <result property="transFatG" column="TRANS_FAT_G"/>
         <result property="unsaturatedFatG" column="UNSATURATED_FAT_G"/>
-        <result property="totalFattyAcidsG" column="TOTAL_FATTY_ACIDS_G"/>
         <result property="potassiumMg" column="POTASSIUM_MG"/>
         <result property="fiberG" column="FIBER_G"/>
         <result property="imageUrl" column="IMAGE_URL"/>
@@ -108,6 +107,38 @@
         FROM FITFUSION_FOOD_ITEMS
     </select>
 
+    <!-- 7. 키워드로 음식명 또는 제조사 검색 -->
+    <select id="searchFoodsByKeyword" resultMap="foodResultMap">
+        SELECT
+        FOOD_ID,
+        FOOD_NAME,
+        MAKER_NAME,
+        FOOD_SERVING_SIZE_RAW,
+        CALORIES,
+        CARBOHYDRATE_G,
+        PROTEIN_G,
+        FAT_G,
+        SUGAR_G,
+        SODIUM_MG,
+        CHOLESTEROL_MG,
+        SATURATED_FAT_G,
+        TRANS_FAT_G,
+        UNSATURATED_FAT_G,
+        CALCIUM_MG,
+        CAFFEINE_MG,
+        IMAGE_URL
+        FROM FITFUSION_FOOD_ITEMS
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (
+            FOOD_NAME LIKE '%' || #{keyword} || '%'
+            OR MAKER_NAME LIKE '%' || #{keyword} || '%'
+            )
+        </if>
+        ORDER BY FOOD_NAME ASC
+        FETCH FIRST 50 ROWS ONLY
+    </select>
+
     <!-- 8. INSERT (API -> DB 저장용)
         FoodDto에 해당하는 컬럼들을 DB에 저장함
     -->
@@ -147,7 +178,6 @@
         SATURATED_FAT_G,
         TRANS_FAT_G,
         UNSATURATED_FAT_G,
-        TOTAL_FATTY_ACIDS_G,
         SUGAR_ALCOHOL_G,
         CAFFEINE_MG,
         ORIGIN_COUNTRY_NAME,
@@ -194,7 +224,6 @@
         #{saturatedFatG, jdbcType=DECIMAL},
         #{transFatG, jdbcType=DECIMAL},
         #{unsaturatedFatG, jdbcType=DECIMAL},
-        #{totalFattyAcidsG, jdbcType=DECIMAL},
         #{sugarAlcoholG, jdbcType=DECIMAL},
         #{caffeineMg, jdbcType=DECIMAL},
         #{originCountryName, jdbcType=VARCHAR},
@@ -256,7 +285,6 @@
             SATURATED_FAT_G = #{saturatedFatG, jdbcType=DECIMAL},
             TRANS_FAT_G = #{transFatG, jdbcType=DECIMAL},
             UNSATURATED_FAT_G = #{unsaturatedFatG, jdbcType=DECIMAL},
-            TOTAL_FATTY_ACIDS_G = #{totalFattyAcidsG, jdbcType=DECIMAL},
             SUGAR_ALCOHOL_G = #{sugarAlcoholG, jdbcType=DECIMAL},
             CAFFEINE_MG = #{caffeineMg, jdbcType=DECIMAL},
             ORIGIN_COUNTRY_NAME = #{originCountryName, jdbcType=VARCHAR},

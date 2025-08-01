@@ -3,9 +3,10 @@ package com.fitfusion;
 import com.fitfusion.config.RestTemplateConfig;
 import com.fitfusion.dto.FoodDto;
 import com.fitfusion.dto.FoodSaveResult;
-import com.fitfusion.mapper.FoodMapper;
 import com.fitfusion.service.FoodApiService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,26 +14,13 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
-
-/**
- * ✅ FoodApiServiceTest
- * - 공공데이터 API 연동 기능 및 DB 저장 기능 검증
- * - 실제 API 호출 (인터넷 필요)
- * - DB 저장 시 FoodMapper 사용 (DB 연결 필요)
- * *  실행 조건: 해당 api 키 존재,
- *              DTO에 알맞는 FITFUSION_FOOD_ITEMS 테이블 존재
- */
-
-
 
 @Slf4j
 @SpringBootTest(classes = {FoodApiService.class, RestTemplateConfig.class})
 @EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
-//@TestPropertySource(properties = {"logging.level.root=DEBUG"})
-@MapperScan("com.fitfusion.mapper") // MyBatis Mapper 스캔 추가
+@MapperScan("com.fitfusion.mapper")
 class FoodApiServiceTest {
 
     @Autowired
@@ -41,56 +29,81 @@ class FoodApiServiceTest {
     @MockBean
     private com.fitfusion.mapper.UserMapper userMapper;
 
-    /**
-     *  API 첫 페이지 데이터 '조회' 테스트
-     * - 특정 키워드로 API 호출
-     * - 첫 페이지 결과를 가져와 음식명과 코드 출력
-     */
-    @Test
-    void testFetchPreview() {
-        String keyword = "거봉"; // 테스트용 키워드
-        List<FoodDto> list = foodApiService.fetchPreview(keyword);
-        log.info("✅ [{}] 첫 페이지 결과: {}건", keyword, list.size());
+    @BeforeEach
+    void beforeTest() {
+        log.info("===============================================================");
+        log.info("✅ 테스트 시작");
+        log.info("===============================================================");
+    }
 
-        list.forEach(food -> log.info(" - {} ({})", food.getFoodName(), food.getFoodCode()));
+    @AfterEach
+    void afterTest() {
+        log.info("===============================================================");
+        log.info("✅ 테스트 종료");
+        log.info("===============================================================");
     }
 
     /**
-     * DB 저장 기능 테스트
-     * - 특정 키워드로 API에서 '첫 페이지' 데이터를 가져온 뒤
-     * - FoodDto 리스트를 'DB에 저장' (FoodMapper 사용)
-     * - 저장 성공, 중복, 실패 개수 출력
-     */
-    @Test
-    void testSaveFoods() {
-        String keyword = "거봉";
-        List<FoodDto> list = foodApiService.fetchPreview(keyword);
-        FoodSaveResult result = foodApiService.saveFoods(list);
-        log.info("✅ 저장 결과 → {}", result);
-    }
-
-    /**
-     * totalCount 조회 테스트
-     * - API에서 특정 키워드로 검색 시 존재하는 전체 음식 개수를 반환
-     * - DB 저장은 하지 않고 API의 totalCount 값만 확인
-     */
-    @Test
-    void testTotalCount() {
-        String keyword = "거봉";
-        int count = foodApiService.getTotalCount(keyword);
-        log.info("✅ [{}] totalCount: {}", keyword, count);
-    }
-
-    /**
-     * Import 기능 테스트
-     * - 키워드 리스트 기반으로 여러 페이지 데이터를 수집하고 DB에 저장
-     * - 중복 제거 및 저장 건수, 요청 횟수 등 요약 출력
-     * - 대량 데이터 저장 테스트 가능
+     * ✅ 운영 스타일 로그 테스트
+     * - 키워드 리스트 기반으로 페이지별 데이터 수집 및 저장
+     * - API URL, 페이지별 데이터 건수, DB 저장 결과 출력
      */
     @Test
     void testImportByKeyword() {
-        List<String> keywords = List.of("거봉", "장어", "숙주"); // 여러 개 가능
-        String summary = foodApiService.importByKeywords(keywords);
-        log.info(summary);
+        List<String> keywords = List.of("말차", "거봉");
+
+        for (String keyword : keywords) {
+            printMainDivider();
+            log.info("🚀 [{}] 데이터 수집 시작...", keyword);
+
+            int totalFetched = 0;
+            int totalSaved = 0;
+
+            for (int page = 1; page <= 10; page++) { // 테스트용 → 최대 10페이지
+                printSubDivider();
+                log.info("✅ [{}] - {}페이지 데이터 수집 시작...", keyword, page);
+
+                String url = buildFakeApiUrl(keyword, page);
+                log.info("🌐 API 요청 URL: {}", url);
+
+                List<FoodDto> pageData = foodApiService.fetchPage(keyword, page);
+                if (pageData.isEmpty()) {
+                    log.info("✅ '{}' 검색 종료: {}페이지에는 데이터 없음", keyword, page);
+                    break;
+                }
+
+                totalFetched += pageData.size();
+                log.info("📦 [{}] {}페이지 데이터 수집 완료 → {}건", keyword, page, pageData.size());
+
+                FoodSaveResult result = foodApiService.saveFoods(pageData);
+                totalSaved += result.getSaved();
+                log.info("📦 [{}] DB 저장 결과 → 성공: {}, 중복: {}, 실패: {}",
+                        keyword, result.getSaved(), result.getDuplicated(), result.getFailed());
+
+                try {
+                    Thread.sleep(200); // 요청 간격 유지 (API 부하 방지)
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    log.error("테스트 중단됨");
+                    break;
+                }
+            }
+
+            log.info("📊 [{}] 데이터 수집 종료 → 총 {}건 (저장: {}건)", keyword, totalFetched, totalSaved);
+            printMainDivider();
+        }
+    }
+
+    // ----------------- 헬퍼 메서드 -----------------
+    private void printMainDivider() {
+        log.info("======================================================================================");
+    }
+
+    private void printSubDivider() {
+        log.info("────────────────────────────────────────────────────────────────────");
+    }
+
+    private String buildFakeApiUrl(String keyword, int page) {
+        return String.format("https://apis.data.go.kr/...FOOD_NM_KR=%s&pageNo=%d", keyword, page);
     }
 }

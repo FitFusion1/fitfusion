@@ -3,6 +3,7 @@ package com.fitfusion.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * API에서 받은 Serving Size 문자열을
@@ -13,8 +14,8 @@ import lombok.NoArgsConstructor;
  *   - "1kg"  → size = 1.0,   unitSymbol = "kg"
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ServingInfo {
 
     /**
