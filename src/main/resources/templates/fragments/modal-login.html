@@ -4,6 +4,9 @@
 <div th:fragment="modal-login" class="login-modal-overlay" style="display:none;">
     <div class="login-modal">
         <button class="login-modal-close" aria-label="Close">&times;</button>
+        <div class="login-logo">
+            <img th:src="@{/images/fitfusion_logo_full.png}" alt="FitFusion Logo" class="logo-image">
+        </div>
         <h2>로그인</h2>
         <form th:action="@{/user/login}" method="post"
               class="login-modal-form" id="modal-login-form">

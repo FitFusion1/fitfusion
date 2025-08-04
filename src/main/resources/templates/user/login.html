@@ -12,6 +12,9 @@
 
 <div class="login-container" layout:fragment="content">
     <div class="login-card">
+        <div class="login-logo">
+            <img th:src="@{/images/fitfusion_logo_full.png}" alt="FitFusion Logo" class="logo-image">
+        </div>
         <h2>로그인</h2>
         <form th:action="@{/user/login}" method="post" class="login-form">
             <label>아이디

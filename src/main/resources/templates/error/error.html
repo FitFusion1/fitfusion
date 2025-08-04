@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title th:text="${errorCode} + ' - ' + ${errorTitle}">Error - FitFusion</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/error.css}">
+</head>
+
+<div class="error-container">
+    <div class="error-card">
+        <div class="error-logo">
+            <img th:src="@{/images/fitfusion_logo_full.png}" alt="FitFusion Logo" class="logo-image">
+        </div>
+
+        <div class="error-content">
+            <div class="error-code" th:text="${errorCode}">404</div>
+            <h1 class="error-title" th:text="${errorTitle}">페이지를 찾을 수 없습니다</h1>
+            <p class="error-message" th:text="${errorMessage}">요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.</p>
+
+            <div class="error-actions">
+                <a th:href="@{/}" class="error-button primary">홈으로 돌아가기</a>
+            </div>
+
+            <div class="error-help">
+                <p>도움이 필요하시면 <a th:href="'mailto:' + 'support@fitfusion.com'" class="support-link">고객지원팀</a>에 문의해주세요.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/error.js}"></script>
+</html>
