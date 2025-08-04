@@ -13,61 +13,68 @@
 </head>
 
 <div layout:fragment="content">
-<div class="ExerciseGoal-container">
-    <h1 class="ExerciseGoal-title">운동 목표 관리</h1>
-    <div class="ExerciseGoal-description">
-        나의 목표를 설정하고 관리해보세요. 한 번에 하나의 목표만 적용됩니다.
-    </div>
+    <div class="ExerciseGoal-container">
+        <h1 class="ExerciseGoal-title">운동 목표 관리</h1>
+        <div class="ExerciseGoal-description">
+            나의 목표를 설정하고 관리해보세요. 한 번에 하나의 목표만 적용됩니다.
+        </div>
 
-    <div class="ExerciseGoal-goalList">
-        <!-- 선택된 목표 -->
-        <div class="ExerciseGoal-goalCard"
-             th:each="exerciseGoal : ${exerciseGoals}"
-             th:classappend="${selectedGoal != null and exerciseGoal.goalId == selectedGoal.goalId} ? 'ExerciseGoal-selected' : ''"
-             th:onclick="|location.href='@{/exercisegoal/goaldetail/{goalId}(goalId=${exerciseGoal.goalId})}'|">
-            <div class="ExerciseGoal-goalInfo">
-                <h3>
-                    <span th:text="${exerciseGoal.goalType}">체중 감량 (5kg)</span>
-                    <span class="ExerciseGoal-progressText"
-                      th:text="'목표까지' + (${exerciseGoal.startWeight-exerciseGoal.targetWeight}) +' kg 남았습니다'">남은 정보</span>
-                </h3>
-                <p th:text="'기간: ' + ${#dates.format(exerciseGoal.startDate, 'yyyy.MM.dd')} + '~' + ${#dates.format(exerciseGoal.endDate, 'yyyy.MM.dd')}">기간: 2025.07.01 ~ 2025.08.31</p>
-            </div>
-            <div class="ExerciseGoal-goalActions">
-                <form th:action="@{/exercisegoal/select}" method="post"
-                      th:if="${selectedGoal == null or exerciseGoal.goalId != selectedGoal.goalId}">
-                    <input type="hidden" name="goalId" th:value="${exerciseGoal.goalId}">
-                    <button class="ExerciseGoal-selectButton" type="submit">이 목표 선택</button>
-                </form>
-                <form th:action="@{/exercisegoal/unselect}" method="post"
-                      th:if="${selectedGoal != null and exerciseGoal.goalId == selectedGoal.goalId}">
-                <button class="ExerciseGoal-selectButton ExerciseGoal-active" type="submit">이 목표 선택됨</button>
-                </form>
+        <div class="ExerciseGoal-goalList">
+            <!-- 선택된 목표 -->
+            <div class="ExerciseGoal-goalCard"
+                 th:each="exerciseGoal : ${exerciseGoals}"
+                 th:classappend="${selectedGoal != null and exerciseGoal.goalId == selectedGoal.goalId} ? 'ExerciseGoal-selected' : ''"
+                 th:onclick="|location.href='@{/exercisegoal/goaldetail/{goalId}(goalId=${exerciseGoal.goalId})}'|">
+                <div class="ExerciseGoal-goalInfo">
+                    <h3>
+                        <span th:text="${exerciseGoal.goalType}">체중 감량 (5kg)</span>
+                        <span class="ExerciseGoal-progressText"
+                              th:text="'목표까지' + (${exerciseGoal.startWeight-exerciseGoal.targetWeight}) +' kg 남았습니다'">남은 정보</span>
+                    </h3>
+                    <p th:text="'기간: ' + ${#dates.format(exerciseGoal.startDate, 'yyyy.MM.dd')} + '~' + ${#dates.format(exerciseGoal.endDate, 'yyyy.MM.dd')}">
+                        기간: 2025.07.01 ~ 2025.08.31</p>
+                </div>
+                <div class="ExerciseGoal-goalActions">
+                    <form th:action="@{/exercisegoal/select}" method="post"
+                          th:if="${selectedGoal == null or exerciseGoal.goalId != selectedGoal.goalId}">
+                        <input type="hidden" name="goalId" th:value="${exerciseGoal.goalId}">
+                        <button class="ExerciseGoal-selectButton" type="submit">이 목표 선택</button>
+                    </form>
+                    <form th:action="@{/exercisegoal/unselect}" method="post"
+                          th:if="${selectedGoal != null and exerciseGoal.goalId == selectedGoal.goalId}">
+                        <button class="ExerciseGoal-selectButton ExerciseGoal-active" type="submit">이 목표 선택됨</button>
+                    </form>
 
-                <button type="button"
-                        class="ExerciseGoal-selectButton"
-                        th:onclick="|event.stopPropagation(); location.href='@{/exercisegoal/goalupdate/{goalId}(goalId=${exerciseGoal.goalId})}'|">수정</button>
+                    <button type="button"
+                            class="ExerciseGoal-selectButton"
+                            th:onclick="|event.stopPropagation(); location.href='@{/exercisegoal/goalupdate/{goalId}(goalId=${exerciseGoal.goalId})}'|">
+                        수정
+                    </button>
 
-                <form th:action="@{/exercisegoal/goaldelete/{goalId}(goalId=${exerciseGoal.goalId})}" method="post">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="hidden" name="goalId" th:value="${exerciseGoal.goalId}">
-                    <button class="ExerciseGoal-selectButton" type="submit">삭제</button>
-                </form>
+                    <form th:action="@{/exercisegoal/goaldelete/{goalId}(goalId=${exerciseGoal.goalId})}" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="goalId" th:value="${exerciseGoal.goalId}">
+                        <button class="ExerciseGoal-selectButton" type="submit">삭제</button>
+                    </form>
 
+                </div>
             </div>
         </div>
-</div>
-<div class="exercisegoal-button-group">
-    <button class="exercisegoal-add-button" th:onclick="|location.href='@{/exercisegoal/step1}'|">+ 새 목표 추가</button>
-    <form th:action="@{/exercisegoal/checkgoal}" method="post">
-        <button class="exercisegoal-add-button" type="submit" >+ 새 루틴 추가</button>
-    </form>
-</div>
-</div>
+        <div class="exercisegoal-button-group">
+            <button class="exercisegoal-add-button" th:onclick="|location.href='@{/exercisegoal/step1}'|">+ 새 목표 추가
+            </button>
+            <form th:action="@{/exercisegoal/checkgoal}" method="post">
+                <button class="exercisegoal-add-button" type="submit">+ 새 루틴 추가</button>
+            </form>
+        </div>
+    </div>
 </div>
 <th:block layout:fragment="script">
     <script th:if="${goalAlert != null}" th:inline="javascript">
         alert([[${goalAlert}]]);
+    </script>
+    <script>
+
     </script>
 </th:block>
 </html>

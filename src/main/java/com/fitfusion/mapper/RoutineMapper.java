@@ -2,6 +2,7 @@ package com.fitfusion.mapper;
 
 import com.fitfusion.dto.ExerciseItemDto;
 import com.fitfusion.dto.RoutineDetailDto;
+import com.fitfusion.dto.RoutineDto;
 import com.fitfusion.dto.RoutineListDto;
 import com.fitfusion.vo.Routine;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Mapper
 public interface RoutineMapper {
+
     void insertRoutine(Routine routine);
 
     int getNextRoutineId();
@@ -24,7 +26,9 @@ public interface RoutineMapper {
 
     Routine getRoutineDetailByUserAndRoutineId(int userId, int routineId);
 
-    RoutineDetailDto getRoutineInfo(int routineId);
+    RoutineDetailDto getRoutineInfo(int routineId, int userId);
 
-    List<ExerciseItemDto> selectRoutineExercises(int routineId);
+    List<ExerciseItemDto> selectRoutineExercises(int routineId, int userId);
+
+    List<RoutineDto> selectLatestRoutinesByUser(int userId);
 }

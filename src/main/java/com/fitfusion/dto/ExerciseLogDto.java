@@ -13,9 +13,11 @@ public class ExerciseLogDto {
     private int routineExerciseId;
     private int routineId;
     private int userId;
+    private int sessionId;
     private int logId;
     private int weight;
     private Date logDate;
+    private String formattedDate;
     private String isChecked;
     private String exerciseName;
 //    @NotNull(message = "세트 수는 필수 입력 값입니다.")

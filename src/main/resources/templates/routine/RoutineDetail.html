@@ -42,7 +42,7 @@
             <input type="hidden" name="routineId" th:value="${routine.routineId}"/>
             <button type="button"
                     class="RoutineDetail-btn RoutineDetail-primary"
-                    th:onclick="|location.href='@{/routine/execute/{routineId}(routineId=${routine.routineId})}'|">
+                    th:onclick="|location.href='@{/exerciseLog/execute/{routineId}(routineId=${routine.routineId})}'|">
                 수행하기</button>
 
             <input type="hidden" name="routineId" th:value="${routine.routineId}">
@@ -54,6 +54,7 @@
             <input type="hidden" name="routineId" th:value="${routine.routineId}">
             <button class="RoutineDetail-btn RoutineDetail-secondary">삭제하기</button>
         </form>
+        <button class="RoutineDetail-btn RoutineDetail-secondary" onclick=location.href="/routine/list">루틴목록으로 돌아가기</button>
     </div>
 </div>
 </div>

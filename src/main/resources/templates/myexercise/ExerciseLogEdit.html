@@ -6,81 +6,76 @@
       layout:decorate="~{/layout/base}" th:with="menu='posts'">
 
 <head>
-  <title layout:fragment="title">운동 기록 수정</title>
-  <th:block layout:fragment="css">
-    <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
-  </th:block>
+    <title layout:fragment="title">운동 기록 수정</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
+    </th:block>
 </head>
 
 <div layout:fragment="content">
-  <div class="ExerciseLogEdit-container">
-    <h1 class="ExerciseLogEdit-title">운동 기록 수정</h1>
+    <div class="ExerciseLogEdit-container">
+        <h1 class="ExerciseLogEdit-title">운동 기록 수정</h1>
 
-    <form action="/exercise-log/update" method="post">
-      <div class="ExerciseLogEdit-logInfo">
-        <label class="ExerciseLogEdit-label">
-          운동 날짜
-          <input type="date" name="logDate" class="ExerciseLogEdit-input" value="2025-07-06" />
-        </label>
-        <label class="ExerciseLogEdit-label ExerciseLogEdit-routineLabel">
-          루틴 이름
-          <input type="text" name="routineName" class="ExerciseLogEdit-routineInput" value="상체 강화 루틴" />
-        </label>
-      </div>
+        <!-- 기록 수정 폼 -->
+        <form th:action="@{/exerciseLog/updateLog}" method="post" th:object="${routineLog}">
+            <input type="hidden" name="_method" value="put">
+            <input type="hidden" th:field="*{routineId}"/>
+            <input type="hidden" th:field="*{sessionId}"/>
+            <div class="ExerciseLogEdit-logInfo">
+                <label class="ExerciseLogEdit-label">
+                    운동 날짜
+                    <input type="date" class="ExerciseLogEdit-input" th:field="*{logDate}"/>
+                </label>
+                <label class="ExerciseLogEdit-label ExerciseLogEdit-routineLabel">
+                    루틴 이름
+                    <input type="text" class="ExerciseLogEdit-routineInput" th:field="*{routineName}" readonly />
+                </label>
+            </div>
 
-      <table class="ExerciseLogEdit-table">
-        <thead>
-        <tr>
-          <th>운동명</th>
-          <th>세트</th>
-          <th>반복</th>
-          <th>중량 (kg)</th>
-          <th>삭제</th>
-        </tr>
-        </thead>
-        <tbody id="exerciseTableBody">
-        <tr>
-          <td><input type="text" name="exercises[0].name" class="ExerciseLogEdit-input" value="벤치프레스" /></td>
-          <td><input type="number" name="exercises[0].sets" class="ExerciseLogEdit-input" value="3" /></td>
-          <td><input type="number" name="exercises[0].reps" class="ExerciseLogEdit-input" value="10" /></td>
-          <td><input type="text" name="exercises[0].weight" class="ExerciseLogEdit-input" value="60" /></td>
-          <td><button type="button" class="ExerciseLogEdit-deleteBtn" onclick="removeRow(this)">삭제</button></td>
-        </tr>
-        </tbody>
-      </table>
+            <!-- 운동 리스트 테이블 -->
+            <table class="ExerciseLogEdit-table">
+                <thead>
+                <tr>
+                    <th>운동명</th>
+                    <th>세트</th>
+                    <th>반복</th>
+                    <th>중량 (kg)</th>
+                    <th>운동 시간 (분)</th>
+                </tr>
+                </thead>
+                <tbody th:each="exercise, status : *{exerciseLogs}">
+                <tr>
+                    <input type="hidden" th:field="*{exerciseLogs[__${status.index}__].logId}"/>
+                    <input type="hidden" th:field="*{exerciseLogs[__${status.index}__].exerciseId}"/>
+                    <input type="hidden" th:field="*{exerciseLogs[__${status.index}__].routineExerciseId}"/>
 
-      <button type="button" class="ExerciseLogEdit-addBtn" onclick="addExerciseRow()">+ 운동 추가</button>
+                    <td class="ExerciseLogEdit-exerciseCell">
+                        <span th:text="${exercise.exerciseName}" class="ExerciseLogEdit-exerciseName"></span>
+                    </td>
+                    <td><input type="number" th:field="*{exerciseLogs[__${status.index}__].sets}"
+                               class="ExerciseLogEdit-input"/></td>
+                    <td><input type="number" th:field="*{exerciseLogs[__${status.index}__].reps}"
+                               class="ExerciseLogEdit-input"/></td>
+                    <td><input type="number" th:field="*{exerciseLogs[__${status.index}__].weight}"
+                               class="ExerciseLogEdit-input"/></td>
+                    <td><input type="number" th:field="*{exerciseLogs[__${status.index}__].durationMinutes}"
+                               class="ExerciseLogEdit-input"/></td>
+                </tr>
+                </tbody>
+            </table>
 
-      <div class="ExerciseLogEdit-buttonGroup">
-        <button type="submit" class="ExerciseLogEdit-button">기록 저장</button>
-        <button type="submit" class="ExerciseLogEdit-button ExerciseLogEdit-recordDelete">기록 삭제</button>
-        <a href="/myexercise/exerciselog" class="ExerciseLogEdit-button ExerciseLogEdit-cancel">취소</a>
-      </div>
-    </form>
-  </div>
-<th:block layout:fragment="script">
-  <script>
-    let exerciseCount = 1;
+            <!-- ✅ 버튼 그룹 -->
+            <div class="ExerciseLogEdit-button-container">
+                <button type="submit" class="ExerciseLogEdit-button save-btn">기록 저장</button>
 
-    function addExerciseRow() {
-      const tbody = document.getElementById('exerciseTableBody');
-      const row = document.createElement('tr');
-      row.innerHTML = `
-            <td><input type="text" name="exercises[${exerciseCount}].name" class="ExerciseLogEdit-input" /></td>
-            <td><input type="number" name="exercises[${exerciseCount}].sets" class="ExerciseLogEdit-input" /></td>
-            <td><input type="number" name="exercises[${exerciseCount}].reps" class="ExerciseLogEdit-input" /></td>
-            <td><input type="text" name="exercises[${exerciseCount}].weight" class="ExerciseLogEdit-input" /></td>
-            <td><button type="button" class="ExerciseLogEdit-deleteBtn" onclick="removeRow(this)">삭제</button></td>
-        `;
-      tbody.appendChild(row);
-      exerciseCount++;
-    }
+                <form th:action="@{/exerciseLog/deleteLog/{sessionId}(sessionId=${routineLog.sessionId})}" method="post" class="ExerciseLogEdit-deleteForm">
+                    <input type="hidden" name="_method" value="delete">
+                    <button type="submit" class="ExerciseLogEdit-button delete-btn">기록 삭제</button>
+                </form>
 
-    function removeRow(button) {
-      const row = button.closest('tr');
-      row.remove();
-    }
-  </script>
-</th:block>
+                <a href="/exerciseLog/list" class="ExerciseLogEdit-button cancel-btn">취소</a>
+            </div>
+        </form>
+    </div>
 </div>
 </html>
