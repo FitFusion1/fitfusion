@@ -20,15 +20,15 @@
 
     <select id="findSelectedGoalByUserId" resultMap="ExerciseGoalMap">
         select
-            sg.user_id,
-            g.goal_id,
-            g.progress_id,
-            g.goal_name,
-            g.goal_desc,
-            g.start_weight,
-            g.target_weight,
-            g.start_date,
-            g.end_date
+            sg.user_id
+          , g.goal_id
+          , g.progress_id
+          , g.goal_name
+          , g.goal_desc
+          , g.start_weight
+          , g.target_weight
+          , g.start_date
+          , g.end_date
         from
             fitfusion_user_selected_goal sg,
             fitfusion_user_goals g

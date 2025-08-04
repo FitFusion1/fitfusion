@@ -1,14 +1,15 @@
 package com.fitfusion.web.controller;
 
-import com.fitfusion.dto.ExerciseItemDto;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitfusion.dto.RoutineDetailDto;
-import com.fitfusion.dto.RoutineListDto;
+import com.fitfusion.dto.TargetRoutineDto;
+import com.fitfusion.enums.BodyPart;
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.*;
 import com.fitfusion.vo.Exercise;
 import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.vo.RecommendedExercise;
-import com.fitfusion.vo.Routine;
 import com.fitfusion.web.form.ExerciseConditionForm;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,10 @@ public class RoutineCreateController {
     private final ExerciseService exerciseService;
     private final AiRoutineGenerator aiRoutineGenerator;
     private final RoutineService routineService;
-
+    private final TargetPartRoutineGenerator targetPartRoutineGenerator;
+    private final TargetPartRoutineService targetPartRoutineService;
     private final ExerciseGoalService exerciseGoalService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/create/ai")
     public String aiRoutine(@AuthenticationPrincipal SecurityUser user, HttpSession session, RedirectAttributes redirectAttributes, Model model) {
@@ -41,7 +44,7 @@ public class RoutineCreateController {
             ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
             List<Exercise> exercises = exerciseService.getAllExercises();
 
-            ExerciseGoal goal = exerciseGoalService.getSelectedGoalByUserId(user.getUser().getUserId());
+            ExerciseGoal goal = exerciseGoalService.getSelectedGoalEntityByUserId(user.getUser().getUserId());
             String goalType = (goal != null) ? goal.getGoalType() : null;
             Boolean conditionSet = (Boolean) session.getAttribute("conditionSet");
 
@@ -133,7 +136,7 @@ public class RoutineCreateController {
 
         ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
         List<Exercise> allExercises = exerciseService.getAllExercises();
-        String goalType = exerciseGoalService.getSelectedGoalByUserId(user.getUser().getUserId()).getGoalType();
+        String goalType = exerciseGoalService.getSelectedGoalEntityByUserId(user.getUser().getUserId()).getGoalType();
 
 
         List<RecommendedExercise> recommendedExercises = aiRoutineGenerator.generateRoutine(condition, allExercises, goalType);
@@ -144,6 +147,33 @@ public class RoutineCreateController {
     @PostMapping("/update/custom")
     public String updateCustomRoutine(@AuthenticationPrincipal SecurityUser user, @ModelAttribute RoutineDetailDto routine) {
         routineService.updateCustomRoutine(user.getUser().getUserId(), routine);
+        return "redirect:/routine/list";
+    }
+
+    @GetMapping("/create/target")
+    public String targetRecommend(Model model) throws Exception{
+
+        int userId = 3;
+        List<BodyPart> lackParts = targetPartRoutineService.findLackParts(userId);
+        List<Exercise> exercises = exerciseService.getAllExercises();
+
+        Map<BodyPart, List<RecommendedExercise>> routines =
+                targetPartRoutineGenerator.generate(lackParts, exercises);
+
+        model.addAttribute("routines", routines);
+        return "routine/TargetRoutineRecommendations";
+    }
+
+    @PostMapping("/save/target")
+    public String saveTargetRoutine(TargetRoutineDto targetRoutineDto, HttpSession session, RedirectAttributes redirect) throws Exception{
+        int userId = 3;
+
+        List<RecommendedExercise> exercises = objectMapper.readValue(
+                targetRoutineDto.getRoutineJson(),
+                new TypeReference<List<RecommendedExercise>>() {});
+
+        routineService.saveTargetRoutine(userId,targetRoutineDto.getBodyPart(), exercises);
+
         return "redirect:/routine/list";
     }
 

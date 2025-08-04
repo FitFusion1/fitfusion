@@ -2,7 +2,9 @@ package com.fitfusion.service;
 
 import com.fitfusion.dto.ExerciseItemDto;
 import com.fitfusion.dto.RoutineDetailDto;
+import com.fitfusion.dto.RoutineDto;
 import com.fitfusion.dto.RoutineListDto;
+import com.fitfusion.enums.BodyPart;
 import com.fitfusion.mapper.RoutineExerciseMapper;
 import com.fitfusion.mapper.RoutineMapper;
 import com.fitfusion.vo.RecommendedExercise;
@@ -22,6 +24,10 @@ public class RoutineService {
     private final RoutineMapper routineMapper;
     private final RoutineExerciseMapper routineExerciseMapper;
 
+
+    public List<RoutineDto> getRecentRoutine(int userId) {
+        return routineMapper.selectLatestRoutinesByUser(userId);
+    }
 
     @Transactional
     public int saveRecommendedRoutine(int userId, List<RecommendedExercise> exercises) {
@@ -135,5 +141,33 @@ public class RoutineService {
 
             routineExerciseMapper.insertRoutineExerCise(routineEx);
         }
+    }
+
+    public int saveTargetRoutine(int userId, String bodyPart, List<RecommendedExercise> exercises) {
+
+        int routineId = routineMapper.getNextRoutineId();
+
+        Routine routine = Routine.builder()
+                .routineId(routineId)
+                .userId(userId)
+                .name(BodyPart.valueOf(bodyPart).getBodyName() + " 맞춤 루틴")
+                .difficultyLevel("중간")
+                .description("부족 부위 보완 루틴")
+                .createdDate(new Date())
+                .updatedDate(new Date())
+                .build();
+        routineMapper.insertRoutine(routine);
+
+        for (RecommendedExercise re : exercises) {
+            RoutineExercise rel = RoutineExercise.builder()
+                    .routineId(routineId)
+                    .exerciseId(re.getExerciseId())
+                    .sets(re.getSets())
+                    .reps(re.getReps())
+                    .weight(re.getWeight())
+                    .build();
+            routineExerciseMapper.insertRoutineExerCise(rel);
+        }
+        return routineId;
     }
 }

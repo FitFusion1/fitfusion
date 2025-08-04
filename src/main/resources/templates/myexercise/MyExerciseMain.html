@@ -2,92 +2,264 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      layout:decorate="~{/layout/base}" th:with="menu='posts'">
+      layout:decorate="~{/layout/base}">
 
 <head>
     <title layout:fragment="title">나의 운동 대시보드</title>
+
+    <!-- 기존 Exercise.css -->
     <th:block layout:fragment="css">
         <link rel="stylesheet" th:href="@{/css/Exercise.css}"/>
     </th:block>
 </head>
 
 <div layout:fragment="content">
-<div class="MyExercise-container">
-    <h1 class="MyExercise-title">나의 운동</h1>
+    <div class="MyExercise-container">
+        <h1 class="MyExercise-title">나의 운동</h1>
 
-    <!-- 🎯 운동 목표 -->
-    <div class="MyExercise-section">
-        <div class="MyExercise-section-header">
-            <h2>🎯 운동 목표</h2>
-            <button onclick="location.href='/exercisegoal/goallist'">전체보기</button>
-        </div>
-        <div class="MyExercise-highlight"
-             th:if="${goal != null}"
-             th:onclick="|location.href='/exercisegoal/goaldetail/${goal.goalId}'|"
-             style="cursor:pointer;">
-            [[${goal.goalType}]] 목표를 세웠어요! 시작 체중은 [[${goal.startWeight}]]kg, 목표는 [[${goal.targetWeight}]]kg입니다.
-        </div>
-    </div>
-
-    <!-- 💪 최근 루틴 -->
-    <div class="MyExercise-section">
-        <div class="MyExercise-section-header">
-            <h2>💪 최근 루틴</h2>
-            <button th:onclick="|location.href='@{/routine/list}'|">전체보기</button>
-        </div>
-        <div class="MyExercise-card-container"
-             th:with="displayList=${#lists.size(routineList) > 4} ? ${routineList.subList(0, 4)} : ${routineList}">
-            <div class="MyExercise-card"
-                 th:each="routine : ${displayList}"
-                 th:onclick="|location.href='@{/routine/detail/{routineId}(routineId=${routine.routineId})}'|">
-                <strong th:text="${routine.routineName}">상체 강화 루틴</strong>
-                운동 유형: <span th:text="${routine.targetPart}">80</span>
-                <br>운동 개수: <span th:text="${routine.exerciseCount}">2</span>개
+        <!-- 1. 운동 목표 -->
+        <div class="MyExercise-section">
+            <div class="MyExercise-section-header">
+                <h2>🎯 운동 목표</h2>
+                <a class="MyExercise-btn" href="/exercisegoal/goallist">전체보기</a>
             </div>
+            <div id="goal-info" class="MyExercise-highlight">불러오는 중...</div>
         </div>
-    </div>
 
-    <!-- 📋 최근 수행 운동 요약 -->
-    <div class="MyExercise-section">
-        <div class="MyExercise-section-header">
-            <h2>📋 최근 수행 운동</h2>
-            <button th:onclick="|location.href='@{/exerciseLog/list}'|">전체보기</button>
-        </div>
-        <div class="MyExercise-card-container" th:with="displayList=${#lists.size(recentLogs) > 4} ? ${recentLogs.subList(0, 4)} : ${recentLogs}">
-            <div class="MyExercise-card" th:each="log : ${displayList}">
-                <strong th:text="${log.exerciseName}">스쿼트</strong>
-                총 <span th:text="${log.sets}"></span>세트 /
-                <span th:text="${log.reps}"></span>회
-                <div class="MyExercise-bar" style="width: 100%;"></div>
+        <!-- 2. 운동 통계 (즉시 렌더) -->
+        <div class="MyExercise-section">
+            <div class="MyExercise-section-header">
+                <h2>📊 운동 통계</h2>
+                <a class="MyExercise-btn" href="/goal">전체보기</a>
             </div>
+            <div id="status-card" class="MyExercise-highlight"></div>
         </div>
-    </div>
 
-    <!-- 📊 운동 통계 -->
-    <div class="MyExercise-section">
-        <div class="MyExercise-section-header">
-            <h2>📊 운동 통계</h2>
-            <button th:onclick="|location.href='@{/myexercise/exercisestatus}'|">전체보기</button>
-        </div>
-        <ul class="MyExercise-stat-list">
-            <li>주간 루틴 수행률: 60%</li>
-            <li>가장 많이 사용한 부위: 하체</li>
-            <li>총 운동 시간: 3시간 40분</li>
-        </ul>
-    </div>
 
-    <!-- 📉 부족한 운동 부위 -->
-    <div class="MyExercise-section">
-        <div class="MyExercise-section-header">
-            <h2>📉 부족한 운동 부위</h2>
-            <button onclick="location.href='/targetrecommendation'">전체보기</button>
+        <!-- 3. 최근 루틴 -->
+        <div class="MyExercise-section">
+            <div class="MyExercise-section-header">
+                <h2>💪 최근 루틴</h2>
+                <a class="MyExercise-btn" href="/routine/list">전체보기</a>
+            </div>
+            <div id="routine-container" class="MyExercise-card-container"></div>
         </div>
+
+        <!-- 4. 최근 수행 운동 -->
+        <div class="MyExercise-section">
+            <div class="MyExercise-section-header">
+                <h2>📋 최근 수행 운동</h2>
+                <a class="MyExercise-btn" href="/exerciseLog/list">전체보기</a>
+            </div>
+            <div id="log-container" class="MyExercise-card-container"></div>
+        </div>
+
+
+        <!-- 5~8. 통계(세로 무한스크롤) -->
+        <div id="stats-container"></div>
+        <div id="stats-scroll-trigger" style="height:70px;"></div>
+    </div>
+</div>
+
+<!-- ... 위쪽 HTML 동일 ... -->
+<th:block layout:fragment="script">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = 3;   // 실제 로그인 ID로 교체
+
+            /* 1) 목표 -------------------------------------------------- */
+            fetch(`/api/goals?userId=${userId}`)
+                .then(r => r.json())
+                .then(g => {
+                    const box = document.getElementById('goal-info');
+
+                    if (g && g.goalType) {
+                        // 필요하면 증·감량 kg 계산
+                        const diff = Math.abs(g.startWeight - g.targetWeight);
+
+                        box.innerHTML = `
+        <span class="ExerciseStatus-highlight">${g.goalType}</span> 목표를 세웠습니다!<br>
+        시작 몸무게 : <span class="ExerciseStatus-highlight">${g.startWeight}kg&nbsp;&nbsp;</span>
+        목표 체중 : <span class="ExerciseStatus-highlight">${g.targetWeight}kg</span>
+        <span class="Goal-gap">(${diff}kg ${g.startWeight > g.targetWeight ? '감량' : '증량'} 필요)</span>
+      `;
+
+                        box.style.cursor = 'pointer';
+                        box.addEventListener('click', () => {
+                            location.href = `/exercisegoal/goaldetail/${g.goalId}`
+                        });
+                    } else {
+                        box.textContent = '목표가 설정되지 않았습니다.';
+                    }
+                });
+
+            /* 2) 최근 루틴 -------------------------------------------- */
+            fetch(`/api/routines?userId=${userId}`)
+                .then(r => r.json())
+                .then(list => {
+                    const box = document.getElementById('routine-container');
+                    list.forEach(rt => {
+                        const c = document.createElement('div');
+                        c.className = 'MyExercise-card';
+                        c.innerHTML = `<strong>${rt.routineName}</strong><br>${rt.exerciseCount}개 운동`;
+                        box.appendChild(c);
+
+                        box.style.cursor = 'pointer';
+                        box.addEventListener('click', () =>{
+                            location.href = `/routine/detail/${rt.routineId}`
+                        });
+                    });
+                });
+
+            /* 3) 최근 수행 운동 ---------------------------------------- */
+            fetch(`/api/exercise-logs?userId=${userId}`)
+                .then(r => r.json())
+                .then(list => {
+                    const box = document.getElementById('log-container');
+                    list.forEach(l => {
+                        const c = document.createElement('div');
+                        c.className = 'MyExercise-card';
+                        c.innerHTML = `<strong>${l.exerciseName}</strong><br>${l.sets}세트 / ${l.reps}회`;
+                        box.appendChild(c);
+                    });
+                });
+
+            /* 4) 운동 통계(즉시) ------------------------------------ */
+            fetch(`/api/exercise-status?userId=${userId}`)
+                .then(r => r.json())
+                .then(d => statusCard(d));
+
+            function statusCard(s) {
+                const box = document.getElementById('status-card');
+                box.innerHTML = `
         <div class="MyExercise-highlight">
-            최근 등 운동이 부족합니다!<br><br>
-            <button class="MyExercise-btn" onclick="location.href='/recommendroutine'">추천 루틴 보기</button>
+        <h2 class="ExerciseStatus-subtitle">AI 추천 루틴</h2>
+        <p class="ExerciseStatus-stat-item ExerciseStatus-ai-recommend">
+            최근 <span class="ExerciseStatus-highlight">${s.mostUsedPart}</span>
+            운동이 많았습니다. <br>
+            오늘은 <span class="ExerciseStatus-highlight">${s.leastUsedPart + ' 중심 루틴'}</span>을 추천합니다! 🦵
+        </p>
+        <div class="ExerciseStatus-summary-item">
+            이번 달 총 운동시간:
+            <span class="ExerciseStatus-highlight">${s.monthlyTotalTime}</span>
         </div>
-    </div>
-</div>
-</div>
+        <div class="ExerciseStatus-summary-item">
+            평균 주간 성실도:
+            <span class="ExerciseStatus-highlight">${s.consistencyScore + '%'}</span>
+        </div>
+        <div class="ExerciseStatus-summary-item">
+            가장 많이 한 운동 부위:
+            <span class="ExerciseStatus-highlight">${s.mostUsedPart}</span>
+        </div>
+        <div class="ExerciseStatus-summary-item">
+            부족한 운동 부위:
+            <span class="ExerciseStatus-highlight"">${s.leastUsedPart}</span>
+        </div>
+        <a href="/routine/create/target" class="ExerciseStatus-recommend-btn">부족한 운동 추천받기</a>
+    </div>`;
+            }
+
+            /* ---------- 통계 카드 무한스크롤 ---------- */
+            const meta = [
+                {key: 'consistency', title: '📊 이번 주 성실도'},
+                {key: 'balance', title: '🧩 운동 부위 밸런스'},
+                {key: 'records', title: '🏋️ 퍼스널 레코드'},
+                {key: 'progress', title: '📈 운동 수행량 추이'}
+            ];
+            let step = 0;
+
+            /* ▣ 차트 helper ▣ ----------------------------------------- */
+            const drawDonut = (ctx, d) => new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['달성', '미달성'],
+                    datasets: [{data: d, backgroundColor: ['#4caf50', '#424242']}]
+                },
+                options: {responsive: true, maintainAspectRatio: false}
+            });
+
+            const drawPie = (ctx, l, d) => new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: l,
+                    datasets: [{
+                        data: d,
+                        backgroundColor: ['#4caf50', '#2196f3', '#ff9800', '#9c27b0']
+                    }]
+                },
+                options: {responsive: true, maintainAspectRatio: false}
+            });
+
+            const drawBar = (ctx, l, d) => new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: l,
+                    datasets: [{label: '운동 횟수', data: d, backgroundColor: '#00bcd4'}]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {y: {beginAtZero: true}}
+                }
+            });
+
+            /* sentinel 준비 */
+            const sentinel = document.getElementById('stats-scroll-trigger');
+            sentinel.style.height = '1px';
+
+            const loadCard = () => {
+                if (step >= meta.length) return;
+                fetch(`/api/exercise-status?userId=${userId}`)
+                    .then(r => r.json())
+                    .then(d => {
+                        const cur = meta[step];
+                        const wrap = document.getElementById('stats-container');
+                        const card = document.createElement('div');
+                        card.className = 'MyExercise-section';
+
+                        const head = `<div class="MyExercise-section-header"><h2>${cur.title}</h2></div>`;
+
+                        /* ✦ 각 카드 분기 ------------------------------------ */
+                        if (cur.key === 'consistency') {
+                            card.innerHTML = head + `<div class="chart-container">
+            <canvas id="c-${cur.key}"></canvas></div>`;
+                            setTimeout(() => drawDonut(
+                                document.getElementById(`c-${cur.key}`),
+                                [d.consistencyScore, 100 - d.consistencyScore]), 10);
+                        }
+                        if (cur.key === 'balance') {
+                            card.innerHTML = head + `<div class="chart-container">
+            <canvas id="c-${cur.key}"></canvas></div>`;
+                            setTimeout(() => drawPie(
+                                document.getElementById(`c-${cur.key}`),
+                                d.balanceLabels, d.balanceData), 10);
+                        }
+                        if (cur.key === 'records') {
+                            const li = d.personalRecords
+                                .map(v => `<li>${v.exerciseName}: ${v.maxWeight}kg (${v.recordDate})</li>`).join('');
+                            card.innerHTML = head + `<ul class="MyExercise-stat-list">${li}</ul>`;
+                        }
+                        if (cur.key === 'progress') {
+                            card.innerHTML = head + `<div class="wide-chart">
+            <canvas id="c-${cur.key}"></canvas></div>`;
+                            setTimeout(() => drawBar(
+                                document.getElementById(`c-${cur.key}`),
+                                d.dailyLabels, d.dailyData), 10);
+                        }
+
+                        /* 카드 + sentinel 삽입 */
+                        wrap.appendChild(card);
+                        wrap.appendChild(sentinel);
+                        step++;
+                    });
+            };
+
+            new IntersectionObserver(e => {
+                if (e[0].isIntersecting) loadCard();
+            }, {rootMargin: '0px 0px 0% 0px'}).observe(sentinel);
+        });
+    </script>
+</th:block>
 </html>

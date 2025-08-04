@@ -12,11 +12,9 @@ import com.fitfusion.validation.Step1Group;
 import com.fitfusion.validation.Step2Group;
 import com.fitfusion.validation.Step3Group;
 import com.fitfusion.validation.Step4Group;
-import com.fitfusion.vo.Exercise;
 import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.vo.SelectedGoal;
 import com.fitfusion.web.form.ExerciseGoalRegisterForm;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -217,7 +214,7 @@ public class ExerciseGoalController {
 
     @PostMapping("/checkgoal")
     public String checkGoalAndCreateRoutine(@AuthenticationPrincipal SecurityUser user){
-        ExerciseGoal goal = exerciseGoalService.getSelectedGoalByUserId(user.getUser().getUserId());
+        ExerciseGoal goal = exerciseGoalService.getSelectedGoalEntityByUserId(user.getUser().getUserId());
         String goalType = (goal != null) ? goal.getGoalType() : null;
 
         // 근육 증가일 경우만 /condition/save로 이동

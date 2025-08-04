@@ -21,7 +21,7 @@ import java.util.Map;
 public class ExerciseLogService {
 
     private final ExerciseLogMapper exerciseLogMapper;
-    private final RoutineMapper routineMapper;
+
 
 
     public RoutineLogDto getRoutineLogDetailByUserIdAndRoutineId(int userId, int routineId, int sessionId) {

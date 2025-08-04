@@ -584,6 +584,8 @@ body.ExerciseLog {
     width: 320px;
 }
 
+
+
 canvas#balanceChart {
     width: 100% !important;
     height: auto !important;
@@ -625,6 +627,15 @@ canvas#balanceChart {
     background-color: #0097a7;
 }
 
+/* 최근 수행 운동 래퍼 ─ #log-container */
+#log-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;          /* 카드 간격 */
+    overflow: visible;  /* 스크롤바 숨김 */
+    padding-right: 2px; /* 초록 테두리가 안 잘리도록 살짝 여유 */
+}
+
 body.MyExercise {
     background-color: #121212;
     font-family: 'Segoe UI', sans-serif;
@@ -644,6 +655,18 @@ body.MyExercise {
     font-size: 2.2rem;
     color: #00ff95;
     margin-bottom: 40px;
+}
+.chart-container {
+    width: 300px;
+    height: 300px;
+    margin: 20px auto;
+}
+
+.wide-chart {
+    width: 90%;
+    max-width: 600px;
+    height: 300px;
+    margin: 20px auto;
 }
 
 .MyExercise-section {
@@ -718,6 +741,8 @@ body.MyExercise {
     color: #00ff95;
     display: block;
     margin-bottom: 6px;
+    overflow: hidden;
+
 }
 
 .MyExercise-bar {

@@ -26,5 +26,4 @@ public interface ExerciseLogMapper {
 
     void updateExerciseLog(ExerciseLogDto exerciseLog);
 
-    void updateRoutineName(RoutineLogDto routineLog);
 }

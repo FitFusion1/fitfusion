@@ -1,14 +1,11 @@
 package com.fitfusion.service;
 
+import com.fitfusion.dto.ExerciseGoalDto;
 import com.fitfusion.enums.GoalType;
-import com.fitfusion.mapper.SelectedGoalMapper;
 import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.mapper.ExerciseGoalMapper;
-import com.fitfusion.vo.SelectedGoal;
 import com.fitfusion.web.form.ExerciseGoalRegisterForm;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,8 +53,12 @@ public class ExerciseGoalService {
         exerciseGoalMapper.deleteGoal(goalId);
     }
 
-    public ExerciseGoal getSelectedGoalByUserId(int userId) {
+    public ExerciseGoal getSelectedGoalEntityByUserId(int userId) {
         return exerciseGoalMapper.findSelectedGoalByUserId(userId);
+    }
+    public ExerciseGoalDto getSelectedGoalDtoByUserId(int userId) {
+        ExerciseGoal goal = exerciseGoalMapper.findSelectedGoalByUserId(userId);
+        return new ExerciseGoalDto(goal);
     }
 
 }

@@ -1,13 +1,10 @@
 package com.fitfusion.web.controller;
 
 import com.fitfusion.dto.*;
+import com.fitfusion.enums.BodyPart;
 import com.fitfusion.security.SecurityUser;
-import com.fitfusion.service.ExerciseLogService;
-import com.fitfusion.service.ExerciseService;
-import com.fitfusion.service.RoutineService;
-import com.fitfusion.vo.Exercise;
-import com.fitfusion.vo.ExerciseLog;
-import com.fitfusion.vo.Routine;
+import com.fitfusion.service.*;
+import com.fitfusion.vo.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +15,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/routine")
@@ -29,6 +28,8 @@ public class RoutineController {
     private final RoutineService routineService;
     private final ExerciseLogService exerciseLogservice;
     private final ExerciseService exerciseService;
+    private final TargetPartRoutineGenerator targetPartRoutineGenerator;
+    private final TargetPartRoutineService targetPartRoutineService;
 
 
     @GetMapping("/list")
@@ -68,9 +69,5 @@ public class RoutineController {
         return "routine/RoutineDetail";
     }
 
-    @GetMapping("/targetRecommend")
-    public String targetRecommend(Model model) {
-        return "routine/TargetRoutineRecommendations";
-    }
 
 }

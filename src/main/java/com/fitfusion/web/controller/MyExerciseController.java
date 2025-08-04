@@ -1,10 +1,8 @@
 package com.fitfusion.web.controller;
 
 import com.fitfusion.dto.ExerciseLogDto;
-import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,13 +25,7 @@ public class MyExerciseController {
     int userId = 3;
 
     @GetMapping("")
-    public String MyExercisePage(@AuthenticationPrincipal SecurityUser user, Model model) {
-        List<ExerciseLogDto> recentLogs = exerciseLogService.getExerciseLogsByUserId(user.getUser().getUserId());
-
-        model.addAttribute("goal", goalService.getSelectedGoalByUserId(user.getUser().getUserId()));
-        model.addAttribute("routineList", routineService.getRoutineByUserId(user.getUser().getUserId()));
-        model.addAttribute("recentLogs", recentLogs);
-
+    public String MyExercisePage() {
         return "myexercise/MyExerciseMain";
     }
 
