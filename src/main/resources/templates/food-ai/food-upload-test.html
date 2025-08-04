@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>음식 이미지 업로드</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; }
+        h2, h3 { color: #333; }
+        #result-area { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 5px 0; }
+    </style>
+</head>
+<body>
+
+<h2>음식 이미지 업로드</h2>
+
+<form id="upload-form" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*" required>
+    <button type="submit">분석하기</button>
+</form>
+
+<div id="result-area"></div>
+
+<script>
+    $('#upload-form').on('submit', function (e) {
+        e.preventDefault();  // 기본 제출 막기
+
+        const formData = new FormData(this);
+        $('#result-area').html('<p>🥣 분석 중입니다...</p>');
+
+        $.ajax({
+            url: 'http://localhost:8000/detect/',  // FastAPI 서버 주소
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                let resultHtml = '<h3>분석 결과</h3>';
+                resultHtml += '<ul>';
+                for (let food in data.detected_counts) {
+                    const count = data.detected_counts[food];
+                    const cal = data.estimated_calories[food];
+                    resultHtml += `<li><strong>${food}</strong> : ${count}개 (${cal} kcal)</li>`;
+                }
+                resultHtml += '</ul>';
+                resultHtml += `<p><strong>총 칼로리:</strong> ${data.total_calories} kcal</p>`;
+                $('#result-area').html(resultHtml);
+            },
+            error: function (xhr) {
+                $('#result-area').html(`<p style="color:red;">분석에 실패했습니다: ${xhr.responseText}</p>`);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

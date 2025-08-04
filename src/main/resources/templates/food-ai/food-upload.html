@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='admin'">
+<head>
+    <meta charset="UTF-8" />
+    <title>AI 음식 분석</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/foodai.css}">
+    </th:block>
+</head>
+
+<section layout:fragment="content" class="main">
+    <main class="main-content">
+        <div class="food-ai-container">
+            <div class="section-header">
+                <h1><i class="bi bi-camera"></i> AI 음식 분석</h1>
+                <p>음식 사진을 업로드하면 AI가 자동으로 칼로리를 분석해드립니다</p>
+            </div>
+
+            <div class="upload-section">
+                <div class="upload-card">
+                    <form id="upload-form" enctype="multipart/form-data">
+                        <div class="upload-area" id="uploadArea">
+                            <h3>음식 사진 업로드</h3>
+                            <input type="file" name="image" accept="image/*" required id="fileInput" class="file-input">
+                            <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                                <i class="bi bi-camera"></i> 사진 선택
+                            </button>
+                            <div id="preview-area"></div>
+                        </div>
+                        <div class="btn-wrap" style="margin-top: 10px;">
+                            <button type="submit" class="analyze-btn">
+                                <i class="bi bi-search"></i> 분석하기
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="result-area" class="result-area"></div>
+        </div>
+    </main>
+</section>
+
+<th:block layout:fragment="script">
+    <script>
+        // 선택한 이미지 미리보기
+        $('#fileInput').on('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#preview-area').html(`<img src="${e.target.result}" alt="업로드된 이미지" class="preview-image-enhanced">`);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 분석 요청 처리
+        $('#upload-form').on('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            $('#result-area').html('<div class="loading-message"><p>🥣 분석 중입니다...</p></div>');
+
+            $.ajax({
+                url: 'http://localhost:8000/detect/',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    let resultHtml = '<div class="analysis-results">';
+                    resultHtml += '<h3>분석 결과 (100g당 칼로리)</h3>';
+
+                    const detectedCounts = data.detected_counts;
+                    const estimatedCalories = data.estimated_calories;
+                    const totalCalories = data.total_calories;
+
+                    if (Object.keys(detectedCounts).length === 0) {
+                        resultHtml += '<div class="no-food-detected">감지된 음식이 없습니다.</div>';
+                    } else {
+                        resultHtml += '<ul class="food-items-list">';
+                        for (let food in detectedCounts) {
+                            const count = detectedCounts[food];
+                            const cal = estimatedCalories[food];
+                            resultHtml += `<li>
+                                <div>
+                                    <strong>${food}</strong>
+                                    <span>${count}개</span>
+                                </div>
+                                <span class="calories">${cal !== undefined ? cal : '---'} kcal</span>
+                            </li>`;
+                        }
+                        resultHtml += '</ul>';
+                    }
+
+                    resultHtml += `<div class="total-calories-summary">
+                        <strong>총 칼로리</strong>
+                        <span class="total-value">${totalCalories} kcal</span>
+                    </div>`;
+                    resultHtml += '</div>';
+
+                    $('#result-area').html(resultHtml);
+                },
+                error: function (xhr) {
+                    $('#result-area').html(`<div class="error-message"><p>분석에 실패했습니다: ${xhr.responseText}</p></div>`);
+                }
+            });
+        });
+    </script>
+</th:block>
+
+</html>
