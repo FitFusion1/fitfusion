@@ -15,4 +15,8 @@ public interface ConditionMapper {
     String getConditionLevelByUserId(int userId);
 
     int getConditionIdByUserId(int userId);
+
+    void deleteAvoidPartsByUserId(int userId);
+
+    void deleteTargetPartsByUserId(int userId);
 }

@@ -85,7 +85,7 @@ public class TargetPartRoutineGenerator {
 
         Request request = new Request.Builder()
                 .url("https://api.openai.com/v1/chat/completions")
-                .header("Authorization", "Bearer " + apiKey) // ← 공백 주의!
+                .header("Authorization", "Bearer " + apiKey)
                 .post(RequestBody.create(payload.toString(), mediaType))
                 .build();
 

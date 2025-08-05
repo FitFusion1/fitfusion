@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/exercisegoal")
@@ -125,22 +123,7 @@ public class ExerciseGoalController {
     }
 
     @GetMapping("/goallist")
-    public String goalList(@AuthenticationPrincipal SecurityUser user, Model model) {
-
-        List<ExerciseGoal> exerciseGoals = exerciseGoalMapper.getAllUserGoalsByUserId(user.getUser().getUserId());
-        SelectedGoal selectedGoal = selectedGoalService.getSelectedGoal(user.getUser().getUserId());
-
-        if (selectedGoal != null) {
-            exerciseGoals.sort((g1, g2) -> {
-                if (g1.getGoalId() == selectedGoal.getGoalId()) return -1;
-                if (g2.getGoalId() == selectedGoal.getGoalId()) return 1;
-                return 0;
-            });
-        }
-
-        model.addAttribute("exerciseGoals", exerciseGoals);
-        model.addAttribute("selectedGoal", selectedGoal);
-
+    public String goalList() {
         return "exerciseGoal/ExerciseGoalList";
     }
 
@@ -227,7 +210,7 @@ public class ExerciseGoalController {
         if (conditionId > 0) {
             exerciseConditionService.deleteTargetPartsByConditionId(conditionId);
             exerciseConditionService.deleteAvoidPartsByConditionId(conditionId);
-            exerciseConditionService.deleteContitionByUserId(user.getUser().getUserId());
+            exerciseConditionService.deleteConditionByUserId(user.getUser().getUserId());
         }
 
         return "redirect:/routine/create/ai";

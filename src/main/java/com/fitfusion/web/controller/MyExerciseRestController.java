@@ -25,7 +25,7 @@ public class MyExerciseRestController {
     private final ExerciseLogService exerciseLogService;
     private final ExerciseGoalService goalService;
 
-    @GetMapping("/api/goals")
+    @GetMapping("/api/goal")
     public ResponseEntity<ExerciseGoalDto> getGoal(@RequestParam int userId) {
         return ResponseEntity.ok(goalService.getSelectedGoalDtoByUserId(userId));
     }

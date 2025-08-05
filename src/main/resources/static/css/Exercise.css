@@ -161,6 +161,76 @@ input[type="radio"][hidden] {
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.05);
 }
 
+/* 버튼을 감싸는 컨테이너를 flex 로 나란히 */
+.ExerciseCondition-nav {
+    display: flex;
+    justify-content: center;  /* 가운데 정렬 */
+    gap: 1rem;               /* 버튼 사이 간격 */
+    margin-top: 2rem;        /* 위쪽 여백 (필요에 따라 조절) */
+}
+
+/* 공통 버튼 스타일 */
+.ExerciseCondition-nav button,
+.ExerciseCondition-nav a {
+    flex: 1;                /* 버튼을 같은 비율로 늘리고 */
+    min-width: 120px;       /* 너무 작아지지 않도록 */
+    padding: 0.8rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* 루틴 추천 받기: 강조 색 */
+.ExerciseCondition-nav button {
+    background-color: #00c4cc; /* 기존 primary 색 */
+    color: white;
+}
+
+/* 돌아가기 링크들: secondary 색 */
+.ExerciseCondition-nav a {
+    background-color: #333;    /* 어두운 회색 */
+    color: white;
+}
+
+/* hover */
+.ExerciseCondition-nav button:hover {
+    background-color: #00aeb4;
+}
+.ExerciseCondition-nav a:hover {
+    background-color: #555;
+}
+
+/* 버튼 스타일링 */
+.ExerciseCondition-nav-btn {
+    display: inline-block;
+    padding: 0.8rem 1.2rem;
+    background-color: #00c6c0; /* 버튼 색상 */
+    color: #fff;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.ExerciseCondition-nav-btn:hover {
+    background-color: #00b0ae; /* hover 색상 */
+}
+
+
+
+.ExerciseCondition-actions {
+    display: flex;
+    justify-content: center;  /* 가운데로 */
+    gap: 1rem;                /* 버튼 사이 간격 */
+    margin-top: 2rem;
+}
+
+
 .ExerciseCondition-container {
     max-width: 1080px; /* ✅ 더 넓게 */
     width: 100%;

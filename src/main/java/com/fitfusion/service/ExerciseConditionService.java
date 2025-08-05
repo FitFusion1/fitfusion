@@ -102,7 +102,9 @@ public class ExerciseConditionService {
         return conditionId;
     }
 
-    public void deleteContitionByUserId(int userId) {
+    public void deleteConditionByUserId(int userId) {
+        conditionMapper.deleteTargetPartsByUserId(userId);
+        conditionMapper.deleteAvoidPartsByUserId(userId);
         conditionMapper.deleteConditionByUserId(userId);
     }
 

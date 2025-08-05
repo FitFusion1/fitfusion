@@ -4,6 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.ConditionMapper">
 
+    <delete id="deleteAvoidPartsByUserId" parameterType="int">
+        delete from fitfusion_user_condition_avoid_parts
+        where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteTargetPartsByUserId">
+        delete from fitfusion_user_condition_target_parts
+        where user_id = #{userId}
+    </delete>
+
     <select id="getConditionIdByUserId" resultType="int">
         select nvl((
            select condition_id as conditionId

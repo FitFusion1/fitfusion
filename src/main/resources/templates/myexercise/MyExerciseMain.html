@@ -71,7 +71,7 @@
             const userId = 3;   // 실제 로그인 ID로 교체
 
             /* 1) 목표 -------------------------------------------------- */
-            fetch(`/api/goals?userId=${userId}`)
+            fetch(`/api/goal?userId=${userId}`)
                 .then(r => r.json())
                 .then(g => {
                     const box = document.getElementById('goal-info');
