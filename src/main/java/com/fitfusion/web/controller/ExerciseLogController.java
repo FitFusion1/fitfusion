@@ -59,51 +59,6 @@ public class ExerciseLogController {
         return "myexercise/ExerciseLog";
     }
 
-    @GetMapping("/execute/{routineId}")
-    public String routineExecute(@AuthenticationPrincipal SecurityUser user, @PathVariable("routineId") int routineId, Model model) {
-
-        RoutineDetailDto routine = routineService.getRoutineDetail(routineId, user.getUser().getUserId());
-
-        RoutineLogDto routineLogDto = new RoutineLogDto();
-        List<ExerciseLogDto> exerciseLogs = new ArrayList<>();
-
-        for (ExerciseItemDto ex : routine.getExercises()) {
-            ExerciseLogDto logDto = new ExerciseLogDto();
-            logDto.setExerciseId(ex.getExerciseId());
-            logDto.setRoutineId(routineId);
-            logDto.setUserId(user.getUser().getUserId());
-            logDto.setRoutineExerciseId(ex.getRoutineExerciseId());
-            logDto.setRecommendedSets(ex.getSets());
-            logDto.setRecommendedReps(ex.getReps());
-            exerciseLogs.add(logDto);
-        }
-        routineLogDto.setExerciseLogs(exerciseLogs);
-
-        model.addAttribute("routine", routine);
-        model.addAttribute("routineLogDto", routineLogDto);
-
-        return "/routine/RoutineExcute";
-    }
-
-
-    @PostMapping("/execute/{routineId}")
-    public String saveExecute(@AuthenticationPrincipal SecurityUser user,
-                              @PathVariable("routineId") int routineId,
-                              @ModelAttribute("routineLogDto") RoutineLogDto routineDto,
-                              BindingResult bindingResult,
-                              Model model) {
-
-
-        if (bindingResult.hasErrors()) {
-            RoutineDetailDto routine = routineService.getRoutineDetail(routineId, user.getUser().getUserId());
-            model.addAttribute("routine", routine);
-            model.addAttribute("routineLogDto", routineDto);
-            return "/routine/RoutineExcute";
-        }
-        exerciseLogService.saveRoutineLog(user.getUser().getUserId(), routineDto);
-
-        return "redirect:/exerciseLog/list";
-    }
 
     @DeleteMapping("/deleteLog/{sessionId}")
     public String deleteExecute(@AuthenticationPrincipal SecurityUser user, @PathVariable("sessionId") int sessionId){
