@@ -7,12 +7,15 @@
   <head>
     <title>헬스장 상세정보</title>
     <link rel="stylesheet" th:href="@{/css/gym-detail.css}">
+
+    <meta name="login-user-id" th:content="${loginUserId}">
   </head>
 
   <body>
   <main layout:fragment="content" class="container py-5">
 
     <div class="wrapper">
+
 
       <!-- 상단 이미지 + 찜 버튼 -->
       <div class="gym-header">
@@ -25,9 +28,9 @@
         </div>
       </div>
 
-      <!-- 지도 페이지로 돌아가기 버튼 -->
+      <!-- 지도 페이지로 -->
       <div class="back-button-container">
-        <a th:href="@{/map}" class="back-button">← 지도 페이지로</a>
+        <a th:href="@{/map}" class="black-btn">← 지도 페이지로</a>
       </div>
 
       <!-- 상세 정보 박스 -->
@@ -77,8 +80,8 @@
         </div>
 
         <!--  리뷰 카드 목록 -->
-        <ul>
-          <li th:each="review : ${detailData.gymReviews}">
+         <ul class="review-list">
+          <li th:each="review : ${fiveReviews}">
             <div class="review-card" id="${review.reviewId}">
               <div class="review-header">
                 <div>
@@ -124,19 +127,66 @@
 
             </div>
           </li>
-        </ul>
+         </ul>
+
+        <!-- 더보기 버튼 -->
+        <div id="load-more-container" class="text-center mb-3">
+          <button id="load-more-btn" class="black-btn">더보기</button>
+        </div>
         <hr>
 
+        <input type="hidden" id="loginUserId" th:value="${loginUserId}" />
         <input type="hidden" id="latitude" th:value="${detailData.getLatitude()}" />
         <input type="hidden" id="longitude" th:value="${detailData.getLongitude()}" />
+        <input type="hidden" id="gym-name" th:value="${detailData.getName()}"/>
 
-        <!-- 지도 영역 -->
+
+        <!-- 지도 제목 -->
         <h3>📍 위치</h3>
-        <div id="map"></div>
+
+        <!-- 길찾기 버튼 -->
+        <div>
+          <button id="nav-btn" class="black-btn">길찾기</button>
+        </div>
+
+        <!-- 지도 + 버튼 wrapper -->
+        <div id="map-wrapper" style="position: relative; margin-top: 20px;">
+          <div id="map" style="width: 100%; height: 300px; border-radius: 10px; position: relative;"></div>
+
+          <!-- 현재 위치 버튼 -->
+          <div id="current-location-btn" title="현재 위치로 이동">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="6" stroke="#333" stroke-width="2" fill="none"/>
+              <circle cx="12" cy="12" r="2" fill="#333"/>
+              <line x1="12" y1="2" x2="12" y2="6" stroke="#333" stroke-width="2"/>
+              <line x1="12" y1="18" x2="12" y2="22" stroke="#333" stroke-width="2"/>
+              <line x1="2" y1="12" x2="6" y2="12" stroke="#333" stroke-width="2"/>
+              <line x1="18" y1="12" x2="22" y2="12" stroke="#333" stroke-width="2"/>
+            </svg>
+          </div>
+
+          <!-- 거리뷰 버튼 -->
+          <div id="roadview-btn" title="거리뷰 보기">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="3" stroke="#333" stroke-width="2" fill="#333"/>
+              <path d="M6 22c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#333" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+
+
+          <!-- 주소 복사 -->
+          <p><strong>주소:</strong>
+            <span id="gym-address" th:text="${detailData.getAddress()}"></span>
+            <button id="copy-address-btn" class="black-btn">주소복사</button>
+          </p>
+
+        <!-- 거리뷰 영역 -->
+        <div id="roadview-wrapper" style="display: none; margin-top: 16px;">
+          <div id="roadview" style="width:100%; height:300px; border-radius:8px;"></div>
+        </div>
       </div>
-
     </div>
-
+    </div>
   </main>
 
   <!--  추가된 스크립트 영역만 아래에 유지 -->

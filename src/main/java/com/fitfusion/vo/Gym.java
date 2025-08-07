@@ -21,5 +21,6 @@ public class Gym {
     private Date createdDate;
     private Date updatedDate;
     private Double averageRating;
+    private String profileUrl;
 
 }

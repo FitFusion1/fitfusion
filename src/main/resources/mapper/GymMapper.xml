@@ -9,9 +9,9 @@
     -->
     <insert id="insert" parameterType="GymDataDto">
         insert into FITFUSION_GYMS
-        (GYM_ID, NAME, ADDRESS, PHONE, LATITUDE, LONGITUDE, KAKAO_PLACE_ID, AVERAGE_RATING)
+        (GYM_ID, NAME, ADDRESS, PHONE, LATITUDE, LONGITUDE, KAKAO_PLACE_ID, AVERAGE_RATING, PROFILE_URL, DISTANCE)
         values
-            (FITFUSION_GYM_SEQ.NEXTVAL, #{name}, #{address}, #{phone}, #{latitude}, #{longitude}, #{kakaoPlaceId}, #{averageRating})
+            (FITFUSION_GYM_SEQ.NEXTVAL, #{name}, #{address}, #{phone}, #{latitude}, #{longitude}, #{kakaoPlaceId}, #{averageRating}, #{profileUrl}, #{distance})
     </insert>
 
     <!--
@@ -27,6 +27,7 @@
              ,   PHONE
              ,   KAKAO_PLACE_ID  AS kakaoPlaceId
              ,   AVERAGE_RATING  AS averageRating
+             ,   PROFILE_URL     AS profileUrl
         from FITFUSION_GYMS
         where KAKAO_PLACE_ID = #{kakaoPlaceId}
     </select>
@@ -42,6 +43,8 @@
         <result property="latitude" column="LATITUDE"></result>
         <result property="longitude" column="LONGITUDE"></result>
         <result property="averageRating" column="AVERAGE_RATING"></result>
+        <result property="profileUrl" column="PROFILE_URL"></result>
+        <result property="distance" column="DISTANCE"></result>
 
         <collection property="gymReviews" ofType="GymReviewDto">
             <result property="reviewId" column="REVIEW_ID"></result>
@@ -71,6 +74,8 @@
          ,   G.LATITUDE
          ,   G.LONGITUDE
          ,   G.AVERAGE_RATING
+         ,   G.PROFILE_URL
+         ,   G.distance
          ,   R.REVIEW_ID
          ,   R.RATING
          ,   R.CONTENT

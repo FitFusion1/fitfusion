@@ -11,8 +11,8 @@ console.log("loginUserId : " + loginUserId);
 window.onload = function () {
     const mapContainer = document.getElementById('map');
 
-    function initMap(lat, lon) {
-        const position = new kakao.maps.LatLng(lat, lon);
+    function initMap(lat, lng) {
+        const position = new kakao.maps.LatLng(lat, lng);
 
         if (!map) {
             map = new kakao.maps.Map(mapContainer, {
@@ -28,30 +28,62 @@ window.onload = function () {
         currentPositionMarker = new kakao.maps.Marker({
             map: map,
             position: position,
+            draggable: true,
             image: new kakao.maps.MarkerImage(
-                "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png",
+                "https://cdn-icons-png.flaticon.com/512/2776/2776067.png",
                 new kakao.maps.Size(40, 42),
                 { offset: new kakao.maps.Point(13, 42) }
             )
         });
 
+        kakao.maps.event.addListener(currentPositionMarker, 'dragend', function () {
+            const position = currentPositionMarker.getPosition();
+            const newlat = position.getLat();
+            const newlng= position.getLng();
+
+            userLat = newlat;
+            userLon = newlng;
+
+
+            searchGyms("헬스장");
+
+        });
+
         userLat = lat;
-        userLon = lon;
+        userLon = lng;
+
 
         searchGyms("헬스장");
     }
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-            pos => initMap(pos.coords.latitude, pos.coords.longitude),
+            // 성공 시 실행되는 콜백
+            pos => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                console.log("정확도 (미터):", pos.coords.accuracy);
+                if (pos.coords.accuracy > 300) {
+                    alert("현재 위치가 부정확합니다. 현재 위치를 검색해주세요")
+                }
+                initMap(lat, lng);  // 지도 초기화 함수에 좌표 전달
+            },
+            // 실패 시 실행되는 콜백
             err => {
                 alert("위치 정보를 가져오지 못했습니다. 직접 위치를 입력해주세요.");
                 console.error("위치 오류:", err);
+            },
+            // 위치 옵션 설정
+            {
+                enableHighAccuracy: true,  // 가능한 한 정확한 위치 사용 (GPS 등)
+                timeout: 10000,            // 10초 이상 걸리면 오류 발생
+                maximumAge: 0              // 이전에 캐시된 위치는 사용하지 않음
             }
         );
     } else {
         alert("브라우저가 위치 정보를 지원하지 않습니다.");
     }
+
 
     document.getElementById("set-location-btn").addEventListener("click", function () {
         const keyword = document.getElementById("location-input").value.trim();
@@ -69,6 +101,8 @@ window.onload = function () {
             }
         });
     });
+
+
 
     function searchGyms(query) {
         gymMarkers.forEach(m => m.setMap(null));
@@ -89,6 +123,10 @@ window.onload = function () {
                     const x = place.x;
                     const y = place.y;
                     const kakaoPlaceId = name + "_" + x + "_" + y;
+                    const profileUrl = place.place_url;
+                    const distance = place.distance;
+                    console.log("distance : " + distance);
+                    console.log("profileUrl : " + profileUrl);
 
                     // ✅ 커스텀 div 마커 생성
                     const marker = document.createElement('div');
@@ -103,7 +141,9 @@ window.onload = function () {
                             phone: place.phone || '',
                             latitude: parseFloat(y),
                             longitude: parseFloat(x),
-                            kakaoPlaceId: kakaoPlaceId
+                            kakaoPlaceId: kakaoPlaceId,
+                            profileUrl: profileUrl,
+                            distance: distance
                         };
 
                         fetch('/api/gyms', {
@@ -159,12 +199,21 @@ window.onload = function () {
                                 if (loginUserId != null && loginUserId !== "") {
                                     const compareBtn = document.createElement('a');
                                     compareBtn.innerText = '비교하기';
-                                    compareBtn.style.marginTop = '5px';
-                                    compareBtn.style.padding = '4px 8px';
-                                    compareBtn.style.border = '1px solid #333';
-                                    compareBtn.style.borderRadius = '4px';
-                                    compareBtn.style.background = '#f0f0f0';
+
+                                    // ✅ 스타일 수정
+                                    compareBtn.style.display = 'inline-block';
+                                    compareBtn.style.marginTop = '8px';                 // ← 간격 추가!
+                                    compareBtn.style.padding = '8px 12px';
+                                    compareBtn.style.border = 'none';
+                                    compareBtn.style.borderRadius = '8px';
+                                    compareBtn.style.background = '#333';               // ← 어두운 배경
+                                    compareBtn.style.color = '#fff';                    // ← 흰색 글씨
+                                    compareBtn.style.fontSize = '13px';
+                                    compareBtn.style.fontWeight = 'bold';
                                     compareBtn.style.cursor = 'pointer';
+                                    compareBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
+                                    compareBtn.style.textAlign = 'center';
+                                    compareBtn.style.textDecoration = 'none';
 
                                     compareBtn.addEventListener('click', function (e) {
                                         e.preventDefault();
@@ -180,6 +229,7 @@ window.onload = function () {
                                     content.appendChild(document.createElement('br'));
                                     content.appendChild(compareBtn);
                                 }
+
 
                                 const overlay = new kakao.maps.CustomOverlay({
                                     map: map,
@@ -222,3 +272,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+
+const crrntLocationBtn = document.getElementById("current-location-btn");
+
+
+crrntLocationBtn.addEventListener("click", function () {
+
+    const moveMap = new kakao.maps.LatLng(userLat, userLon);
+
+    map.setCenter(moveMap);
+});
+
+
