@@ -53,4 +53,23 @@
             FITFUSION_GYM_REVIEWS
         where REVIEW_ID = #{reviewId}
     </delete>
+
+    <!--
+        void selectReviewsPaged(int gymId, int offset, int size);
+    -->
+    <select id="selectReviewsPaged" resultType="PagedGymReviewDto">
+        select
+            R.REVIEW_ID       AS reviewId
+        ,   R.RATING
+        ,   R.CONTENT
+        ,   R.CREATED_DATE     AS createdDate
+        ,   U.NAME            AS username
+        ,   U.USER_ID         AS userId
+        from FITFUSION_GYM_REVIEWS R
+        LEFT JOIN fitfusion_users U ON R.user_id = U.user_id
+        where R.GYM_ID = #{gymId}
+        ORDER BY R.CREATED_DATE DESC
+        OFFSET #{offset} ROWS
+        FETCH NEXT #{size} ROWS ONLY
+    </select>
 </mapper>

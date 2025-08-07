@@ -18,6 +18,8 @@ public class KakaoGymSearchService {
 
     public List<KakaoplaceDto> searchGym(String keyword, Double latitude, Double longitude) {
 
+        KakaoplaceDto kakaoplaceDto = new KakaoplaceDto();
+
         String data = kakaoLocalService.searchPlace(keyword, latitude, longitude);
 
         KakaoSearchResponseDto responseDto;
@@ -28,6 +30,7 @@ public class KakaoGymSearchService {
             throw new RuntimeException("json 매핑 실패했습니다.", e);
         }
 
+        System.out.println("KakaoplaceDto.getAddressName :" + kakaoplaceDto.getAddressName());
         return responseDto.getDocuments();
     }
 

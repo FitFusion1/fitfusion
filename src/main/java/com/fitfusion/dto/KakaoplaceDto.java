@@ -15,6 +15,12 @@ public class KakaoplaceDto {
     @JsonProperty("address_name")
     private String addressName;
 
+    @JsonProperty("place_url")
+    private String profileUrl;
+
+    @JsonProperty("distance")
+    private String distance;
+
     @JsonProperty("road_address_name")
     private String roadAddressName;
     private String phone;

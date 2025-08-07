@@ -1,9 +1,6 @@
 package com.fitfusion.web.controller;
 
-import com.fitfusion.dto.DetailDataDto;
-import com.fitfusion.dto.GymDataDto;
-import com.fitfusion.dto.GymReviewDto;
-import com.fitfusion.dto.KakaoplaceDto;
+import com.fitfusion.dto.*;
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.GymReviewService;
 import com.fitfusion.service.KakaoGymSearchService;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +37,7 @@ public class MapController {
     @GetMapping("/api/kakao/gyms")
     public List<KakaoplaceDto> UserNearByGyms(@RequestParam("lat") Double latitude, @RequestParam("lon") Double longitude) {
         String keyword = "헬스장";
+
         return kakaoGymSearchService.searchGym(keyword, latitude, longitude);
     }
 
@@ -52,6 +51,7 @@ public class MapController {
     public GymDataDto saveGym(@RequestBody GymDataDto gymDataDto) {
 
         kakaoShowGymData.insertGym(gymDataDto);
+        System.out.println("gymDataDto.getDistance: " + gymDataDto.getDistance());
         System.out.println("gymDataDto: " + gymDataDto);
         System.out.println("kakaoPlaceId: " + gymDataDto.getKakaoPlaceId());
         return kakaoShowGymData.selectByKakaoPlaceId(gymDataDto.getKakaoPlaceId());
@@ -82,6 +82,13 @@ public class MapController {
         return gymReviewService.insertReview(gymReviewDto);
     }
 
+    /**
+     * 리뷰 수정하는 컨트롤러
+     * @param commentId 댓글고유 번호
+     * @param gymReviewDto 리뷰 dto
+     * @param securityUser 사용자 정보
+     * @return 수정 사항 반환
+     */
     @PutMapping("/gym/review/{commentId}")
     public ResponseEntity<GymReviewDto> updateReview(@PathVariable int commentId, @RequestBody GymReviewDto gymReviewDto, @AuthenticationPrincipal SecurityUser securityUser) {
 
@@ -97,6 +104,12 @@ public class MapController {
                 .ok(updateReview);
     }
 
+    /**
+     * 댓글 삭제하는 컨트롤러
+     * @param commentId 댓글 고유 식별 아이디
+     * @param securityUser 사용자 정보
+     * @return 삭제 정보 반환
+     */
     @DeleteMapping("/gym/review/{commentId}")
     public ResponseEntity<GymReviewDto> deleteReview(@PathVariable int commentId, @AuthenticationPrincipal SecurityUser securityUser) {
 
@@ -108,6 +121,12 @@ public class MapController {
                 .ok(deleteReview);
     }
 
+    /**
+     * 찜 삭제 컨트롤러
+     * @param gymId 찜한 헬스장 식별 아이디
+     * @param securityUser 사용자 정보
+     * @return 찜 취소 반환
+     */
     @DeleteMapping("/gym/unlike/{gymId}")
     public ResponseEntity<?> deleteLike(@PathVariable int gymId, @AuthenticationPrincipal SecurityUser securityUser) {
 
@@ -120,6 +139,12 @@ public class MapController {
                 .ok("찜 취소 완료");
     }
 
+    /**
+     * 찜 버튼 클릭시 중복 검사 후 찜 등록하는 컨트롤러
+     * @param gymId 찜한 헬스장 식별 아이디
+     * @param securityUser 사용자 정보
+     * @return 중복 검사 후 찜 등록
+     */
     @PostMapping("/gym/like/{gymId}")
     public ResponseEntity<?> gymLike(@PathVariable int gymId,@AuthenticationPrincipal SecurityUser securityUser) {
 
@@ -139,6 +164,19 @@ public class MapController {
 
         return ResponseEntity
                 .ok(gymLikes);
+    }
+
+    @GetMapping("gyms/{gymId}/reviews")
+    public List<PagedGymReviewDto> reviewMoreList(@PathVariable int gymId, @RequestParam("page") int page, @RequestParam("size") int size,Model model, @AuthenticationPrincipal SecurityUser securityUser) {
+
+        int offset = (page - 1) * size;
+        System.out.println( "offset: " + offset );
+
+        User user = securityUser.getUser();
+
+        model.addAttribute("loginUserId", user.getUserId());
+        return gymReviewService.getPagedReviews(gymId, offset, size);
+
     }
 
 }
