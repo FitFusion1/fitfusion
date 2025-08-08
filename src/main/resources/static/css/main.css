@@ -48,6 +48,7 @@ nav .logo {
     margin: 0 20px;
     padding: 0;
     gap: 30px;
+    align-items: center;
 }
 
 .nav-items ul {
@@ -355,9 +356,6 @@ footer {
 .profile-dropdown a, .profile-dropdown button {
     color: #ccc;
     text-decoration: none;
+    background-color: transparent;
+    border-style: none;
 }
-
-.profile-icon {
-    padding: 4px;
-}
-
