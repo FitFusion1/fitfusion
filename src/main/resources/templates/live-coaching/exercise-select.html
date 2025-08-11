@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+
+<head>
+    <title>코칭 운동 선택</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/exercise-select.css}">
+    </th:block>
+</head>
+
+<div class="exercise-select-container" layout:fragment="content">
+    <div class="section-header">
+        <h1>운동 선택</h1>
+        <p>AI 자세 분석 코치와 함께 운동하세요</p>
+    </div>
+
+    <div class="exercise-form-container">
+        <div class="exercise-form-card">
+            <div class="form-header">
+                <h2><i class="bi bi-dumbbell"></i> 운동 설정</h2>
+                <p>분석할 운동과 목표를 설정해주세요</p>
+            </div>
+
+            <form id="exerciseForm" class="exercise-form"
+                th:action="@{/live-coaching/exercise-feedback}" method="post"
+                th:object="${liveCoachingForm}">
+                <!-- 운동 선택 -->
+                <div class="form-group">
+                    <label for="exerciseId" class="form-label">
+                        <i class="bi bi-list-check"></i> 운동 종류
+                    </label>
+                    <select th:field="*{exerciseId}" class="form-select" required>
+                        <option value="">운동을 선택해주세요</option>
+                        <option th:each="exercise : ${exerciseList}" th:text="${exercise.name}"
+                                th:value="${exercise.id}" th:data-title="${exercise.title}"></option>
+                    </select>
+                </div>
+
+                <!-- 세트, 횟수, 타이며 -->
+                <div class="form-row" id="exerciseSetsReps">
+                    <div class="form-group">
+                        <label for="targetSets" class="form-label">
+                            <i class="bi bi-layers"></i> 세트 수
+                        </label>
+                        <input th:field="*{targetSets}" type="number" class="form-input"
+                               min="1" max="10" value="3" required>
+                        <small class="form-help">1-10 세트</small>
+                        <span class="error-message" th:if="${#fields.hasErrors('targetSets')}" th:errors="*{targetSets}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="targetReps" class="form-label">
+                            <i class="bi bi-repeat"></i> 반복 횟수
+                        </label>
+                        <input th:field="*{targetReps}" type="number" class="form-input"
+                               min="1" max="100" value="10" required>
+                        <small class="form-help">1-100회</small>
+                    </div>
+
+                    <div class="form-group" id="timer-input-field" style="display: none">
+                        <label for="targetTime" class="form-label">
+                            <i class="bi bi-clock"></i> 시간
+                        </label>
+                        <input th:field="*{targetTime}" type="number" class="form-input"
+                               min="15" max="180" value="30">
+                        <small class="form-help">15-180초</small>
+                    </div>
+                </div>
+
+                <!-- 운동 상세 -->
+                <div class="exercise-description" id="exerciseDescription" style="display: none;">
+                    <div class="description-card">
+                        <h4 id="exerciseTitle">운동 설명</h4>
+                        <p id="exerciseDesc">선택한 운동에 대한 설명이 여기에 표시됩니다.</p>
+                        <div class="exercise-tips">
+                            <h5><i class="bi bi-lightbulb"></i> 자세 팁</h5>
+                            <ul id="exerciseTips">
+                                <li>올바른 자세를 유지하세요</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 제출 -->
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">
+                        <i class="bi bi-play-circle"></i>
+                        운동 시작하기
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 운동 미리보기 -->
+        <div class="exercise-preview">
+            <div class="preview-card">
+                <h3><i class="bi bi-eye"></i> 운동 미리보기</h3>
+                <div class="preview-content">
+                    <div class="preview-image" id="previewImage">
+                        <i class="bi bi-image"></i>
+                        <p>운동을 선택하면 미리보기가 표시됩니다</p>
+                    </div>
+                    <div class="preview-info" id="previewInfo">
+                        <div class="info-item">
+                            <span class="info-label">목표 세트:</span>
+                            <span class="info-value" id="previewSets">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">목표 반복 횟수:</span>
+                            <span class="info-value" id="previewReps">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">예상 시간:</span>
+                            <span class="info-value" id="previewTime">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 빠른 시작 옵션 -->
+    <div class="quick-start-section">
+        <h3><i class="bi bi-lightning"></i> 빠른 시작</h3>
+        <div class="quick-start-grid">
+            <div class="quick-start-card" data-exercise-id="1" data-sets="3" data-reps="10">
+                <div class="quick-icon">
+                    <i class="bi bi-person"></i>
+                </div>
+                <h4>푸시업</h4>
+                <p>3세트 × 10회</p>
+            </div>
+            <div class="quick-start-card" data-exercise-id="2" data-sets="3" data-reps="15">
+                <div class="quick-icon">
+                    <i class="bi bi-arrow-down-circle"></i>
+                </div>
+                <h4>스쿼트</h4>
+                <p>3세트 × 15회</p>
+            </div>
+            <div class="quick-start-card" data-exercise-id="3" data-sets="3" data-reps="10">
+                <div class="quick-icon">
+                    <i class="bi bi-arrow-up-circle"></i>
+                </div>
+                <h4>덤벨 컬</h4>
+                <p>3세트 × 10회</p>
+            </div>
+            <div class="quick-start-card" data-exercise-id="4" data-sets="3" data-reps="1" data-timer="30">
+                <div class="quick-icon">
+                    <i class="bi bi-dash-lg"></i>
+                </div>
+                <h4>플랭크</h4>
+                <p>3세트 × 30초</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        const exerciseData = /*[(${exerciseListJson})]*/ {};
+    </script>
+    <script defer th:src="@{/js/exercise-select.js}"></script>
+</th:block>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+
+<head>
+    <title>AI 운동 코칭</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/exercise-feedback.css}">
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <div class="pose-detection-container">
+            <!-- Exercise Header -->
+            <div class="exercise-header">
+                <div class="exercise-info">
+                    <h1 id="exercise-name">운동: <span th:text="${liveCoachingForm.exerciseName}">푸시업</span></h1>
+                    <div class="exercise-targets">
+                        <div class="target-item">
+                            <i class="bi bi-layers"></i>
+                            <span>목표: <strong id="target-sets" th:text="${liveCoachingForm.targetSets}">3</strong>세트</span>
+                        </div>
+                        <div class="target-item" id="reps-target">
+                            <i class="bi bi-repeat"></i>
+                            <span>목표: <strong id="target-reps" th:text="${liveCoachingForm.targetReps}">10</strong>회</span>
+                        </div>
+                        <div class="target-item" id="timer-target" style="display: none;">
+                            <i class="bi bi-clock"></i>
+                            <span>목표: <strong id="target-time" th:text="${liveCoachingForm.targetTime}">30</strong>초</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-progress">
+                    <div class="progress-circle">
+                        <div class="progress-ring">
+                            <svg width="120" height="120">
+                                <circle class="progress-ring-circle-bg" cx="60" cy="60" r="54"></circle>
+                                <circle class="progress-ring-circle" cx="60" cy="60" r="54"></circle>
+                            </svg>
+                            <div class="progress-text">
+                                <span id="current-set">1</span>/<span id="total-sets" th:text="${liveCoachingForm.targetSets}">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="total-time-display">
+                    <div class="total-time-card">
+                        <i class="bi bi-stopwatch"></i>
+                        <div class="total-time-content">
+                            <span class="total-time-label">총 운동 시간</span>
+                            <span class="total-time-value" id="total-time-elapsed">00:00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stop-exercise-section">
+                    <button id="stop-exercise-btn" class="btn btn-danger stop-exercise-btn">
+                        <i class="bi bi-stop-circle"></i>
+                        <span>중단</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Rest Timer Section -->
+            <div class="rest-timer-section" id="rest-timer-section" style="display: none;">
+                <div class="rest-timer-card">
+                    <div class="rest-timer-header">
+                        <h3><i class="bi bi-pause-circle"></i> 휴식 시간</h3>
+                        <div class="rest-timer-controls">
+                            <button id="edit-rest-time" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-pencil"></i> 시간 편집
+                            </button>
+                            <button id="skip-rest" class="btn btn-outline-warning btn-sm">
+                                <i class="bi bi-skip-forward"></i> 건너뛰기
+                            </button>
+                        </div>
+                    </div>
+                    <div class="rest-timer-display">
+                        <div class="rest-timer-circle">
+                            <div class="rest-timer-ring">
+                                <svg width="100" height="100">
+                                    <circle class="rest-timer-ring-bg" cx="50" cy="50" r="45"></circle>
+                                    <circle class="rest-timer-ring-progress" cx="50" cy="50" r="45"></circle>
+                                </svg>
+                                <div class="rest-timer-text">
+                                    <span id="rest-time-display">40</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rest-timer-info">
+                            <p>다음 세트까지 휴식하세요</p>
+                            <div class="rest-timer-buttons">
+                                <button id="start-rest" class="btn btn-primary">
+                                    <i class="bi bi-play-circle"></i> 휴식 시작
+                                </button>
+                                <button id="pause-rest" class="btn btn-secondary" style="display: none;">
+                                    <i class="bi bi-pause-circle"></i> 일시정지
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Exercise Section -->
+            <div class="demo-section" id="demos">
+                <div class="demo-column">
+                    <div class="demo-card webcam-card">
+                        <h3><i class="bi bi-camera-video"></i> 실시간 AI 코칭</h3>
+                        <p>웹캠 앞에서 운동 자세를 취하면 AI가 실시간으로 자세를 분석하고 피드백을 제공합니다</p>
+
+                        <div class="webcam-section">
+                            <button id="webcamButton" class="webcam-btn">
+                                <i class="bi bi-camera-video-fill"></i>
+                                <span>웹캠 시작</span>
+                            </button>
+
+                            <div class="webcam-flex-row">
+                                <div class="webcam-left-section">
+                                    <div class="video-container">
+                                        <video id="webcam" autoplay playsinline muted></video>
+                                        <canvas class="output_canvas" id="output_canvas"></canvas>
+                                    </div>
+
+                                    <!-- AI Feedback Section -->
+                                    <div class="feedback-section">
+                                        <h4><i class="bi bi-chat-dots"></i> AI 피드백</h4>
+                                        <div id="feedback" class="feedback-content empty">
+                                            웹캠을 시작하면 AI 피드백이 여기에 표시됩니다.
+                                        </div>
+                                    </div>
+
+                                    <!-- Accuracy Display -->
+                                    <div class="progress-section">
+                                        <h4><i class="bi bi-graph-up"></i> 정확도</h4>
+                                        <div class="accuracy-display">
+                                            <span class="accuracy-value" id="accuracy-percentage">0%</span>
+                                            <span class="accuracy-label">정확도</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="feedback-rep-container">
+
+                                    <!-- Set Progress Section -->
+                                    <div class="progress-section">
+                                        <h4><i class="bi bi-layers"></i> 세트 진행</h4>
+                                        <div id="set-display" class="set-display">1</div>
+                                        <div class="progress-details">
+                                            <div class="progress-item">
+                                                <span class="progress-label">현재 세트:</span>
+                                                <span class="progress-value" id="current-set-display">1</span>/<span id="total-sets-display" th:text="${liveCoachingForm.targetSets}">3</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Current Rep Progress Section -->
+                                    <div class="progress-section">
+                                        <h4><i class="bi bi-arrow-repeat"></i> 현재 반복</h4>
+                                        <div id="current-rep-display" class="current-rep-display">0</div>
+                                        <div class="progress-details">
+                                            <div class="progress-item">
+                                                <span class="progress-label">현재 반복:</span>
+                                                <span class="progress-value" id="current-rep-value">0</span>/<span
+                                                    id="target-reps-current"
+                                                    th:text="${liveCoachingForm.targetReps}">10</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Rep Counters Section -->
+                                    <div class="rep-section" id="rep-section">
+                                        <h4><i class="bi bi-123"></i> 반복 횟수</h4>
+                                        <div class="rep-counters">
+                                            <div class="rep-counter good">
+                                                <span class="rep-counter-value" id="good-reps">0</span>
+                                                <span class="rep-counter-label">좋은 자세</span>
+                                            </div>
+                                            <div class="rep-counter bad">
+                                                <span class="rep-counter-value" id="bad-reps">0</span>
+                                                <span class="rep-counter-label">나쁜 자세</span>
+                                            </div>
+                                            <div class="rep-counter total">
+                                                <span class="rep-counter-value" id="total-reps">0</span>
+                                                <span class="rep-counter-label">총 횟수</span>
+                                            </div>
+                                        </div>
+                                        <div class="progress-details">
+                                            <div class="progress-item">
+                                                <span class="progress-label">목표 달성:</span>
+                                                <span class="progress-value" id="reps-progress">0</span>/<span
+                                                    id="target-reps-display" th:text="${liveCoachingForm.targetReps}*${liveCoachingForm.targetSets}">10</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Timer Counters Section -->
+                                    <div class="rep-section" id="timer-section" style="display: none;">
+                                        <h4><i class="bi bi-clock"></i> 시간 측정</h4>
+                                        <div class="timer-counters">
+                                            <div class="timer-counter good">
+                                                <span class="timer-counter-value" id="good-time">0</span>
+                                                <span class="timer-counter-label">좋은 자세</span>
+                                            </div>
+                                            <div class="timer-counter bad">
+                                                <span class="timer-counter-value" id="bad-time">0</span>
+                                                <span class="timer-counter-label">나쁜 자세</span>
+                                            </div>
+                                            <div class="timer-counter total">
+                                                <span class="timer-counter-value" id="total-time">0</span>
+                                                <span class="timer-counter-label">총 시간</span>
+                                            </div>
+                                        </div>
+                                        <div class="progress-details">
+                                            <div class="progress-item">
+                                                <span class="progress-label">목표 달성:</span>
+                                                <span class="progress-value" id="time-progress">0</span>/<span id="target-time-display" th:text="${liveCoachingForm.targetTime}">30</span>초
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercise Instructions -->
+            <div class="instructions-section">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="instruction-card">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-lightbulb"></i>
+                            </div>
+                            <h4>자세 확인</h4>
+                            <p>운동 중 올바른 자세를 유지하고 있는지 실시간으로 확인하세요</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="instruction-card">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <h4>개선점 파악</h4>
+                            <p>AI가 분석한 자세 데이터를 통해 개선할 점을 파악하세요</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="instruction-card">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <h4>부상 예방</h4>
+                            <p>잘못된 자세로 인한 부상을 미리 방지할 수 있습니다</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="instruction-card">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <h4>진행 기록</h4>
+                            <p>세션 완료 후 자동으로 저장되어 진행 상황을 추적할 수 있습니다</p>
+                            <a href="/live-coaching/history" class="btn btn-outline-primary btn-sm mt-2">
+                                <i class="bi bi-clock-history"></i> 기록 보기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercise Tips -->
+            <div class="exercise-tips-section" id="exercise-tips" style="display: none;">
+                <h3><i class="bi bi-info-circle"></i> 운동 팁</h3>
+                <div class="tips-content" id="tips-content">
+                    <!-- Tips will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rest Timer Edit Modal -->
+    <div class="rest-time-edit-modal" id="rest-time-edit-modal">
+        <div class="rest-time-edit-content">
+            <h4><i class="bi bi-clock"></i> 휴식 시간 설정</h4>
+            <div class="rest-time-input-group">
+                <label for="rest-time-input">휴식 시간 (초)</label>
+                <input type="number" id="rest-time-input" min="10" max="300" value="40" placeholder="40">
+            </div>
+            <div class="rest-time-edit-buttons">
+                <button class="btn btn-secondary" id="cancel-rest-edit">취소</button>
+                <button class="btn btn-primary" id="save-rest-time">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        const currentExerciseId = /*[(${liveCoachingForm.exerciseId})]*/ 1;
+        const currentExerciseTitle = /*[[${liveCoachingForm.exerciseTitle}]]*/ '';
+        const targetSets = /*[(${liveCoachingForm.targetSets})]*/ 3;
+        const targetReps = /*[(${liveCoachingForm.targetReps})]*/ 10;
+        const targetTime = /*[(${liveCoachingForm.targetTime})]*/ 30;
+    </script>
+    <script th:defer th:src="@{/js/exercise-feedback.js}" type="module"></script>
+</th:block>
+</html>

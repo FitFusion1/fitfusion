@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='live-coaching-history'">
+
+<head>
+    <title>AI 코칭 운동 기록</title>
+    <link rel="stylesheet" th:href="@{/css/live-coaching-history.css}" layout:fragment="css">
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <div class="history-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>
+                    <i class="bi bi-graph-up-arrow"></i>
+                    AI 코칭 운동 기록
+                </h1>
+                <p>AI와 함께한 운동 세션들을 확인하고 발전 과정을 추적해보세요</p>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="stats-section" th:if="${stats.totalWorkouts > 0}">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon workouts">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <div class="stat-title">총 운동 횟수</div>
+                        </div>
+                        <div class="stat-value" th:text="${stats.totalWorkouts}">0</div>
+                        <div class="stat-description">완료된 세션</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon accuracy">
+                                <i class="bi bi-target"></i>
+                            </div>
+                            <div class="stat-title">평균 정확도</div>
+                        </div>
+                        <div class="stat-value" th:text="${stats.formattedAverageAccuracy}">0%</div>
+                        <div class="stat-description">전체 운동 평균</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon time">
+                                <i class="bi bi-clock"></i>
+                            </div>
+                            <div class="stat-title">총 운동 시간</div>
+                        </div>
+                        <div class="stat-value" th:text="${stats.formattedTotalDuration}">0분</div>
+                        <div class="stat-description">누적 운동 시간</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon completion">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                            <div class="stat-title">완료율</div>
+                        </div>
+                        <div class="stat-value" th:text="${stats.formattedCompletionRate}">0%</div>
+                        <div class="stat-description">목표 달성률</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div class="history-section">
+                <h2>
+                    <i class="bi bi-clock-history"></i>
+                    운동 기록
+                </h2>
+
+                <!-- Empty State -->
+                <div class="empty-state" th:if="${#lists.isEmpty(historyList)}">
+                    <div class="empty-state-icon">
+                        <i class="bi bi-journal-x"></i>
+                    </div>
+                    <h3>아직 운동 기록이 없습니다</h3>
+                    <p>AI 코칭과 함께 첫 번째 운동을 시작해보세요!</p>
+                    <a th:href="@{/live-coaching}" class="btn">
+                        <i class="bi bi-play-circle"></i>
+                        운동 시작하기
+                    </a>
+                </div>
+
+                <!-- History Cards -->
+                <div class="history-grid" th:if="${!#lists.isEmpty(historyList)}">
+                    <div class="history-card" th:each="history : ${historyList}">
+                        <!-- Card Header -->
+                        <div class="card-header">
+                            <div class="card-header-top">
+                                <div class="exercise-info">
+                                    <div class="exercise-name" th:text="${history.exerciseName}">푸시업</div>
+                                    <div class="exercise-date">
+                                        <i class="bi bi-calendar3"></i>
+                                        <span th:text="${#dates.format(history.performedDate, 'yyyy-MM-dd HH:mm')}">2024-01-01 10:00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Basic Stats -->
+                            <div class="card-stats">
+                                <div class="stat-item" th:if="${!history.timedExercise}">
+                                    <span class="stat-item-value" th:text="${history.performedSets} + '/' + ${history.targetSets}">3/3</span>
+                                    <span class="stat-item-label">완수/목표 세트</span>
+                                </div>
+                                <div class="stat-item" th:if="${!history.timedExercise}">
+                                    <span class="stat-item-value" th:text="${history.goodReps} + '/' + ${history.targetReps * history.targetSets}">8/10</span>
+                                    <span class="stat-item-label">완수/목표 반복 횟수</span>
+                                </div>
+                                <div class="stat-item" th:if="${history.timedExercise}">
+                                    <span class="stat-item-value" th:text="${history.goodTime} + '/' + ${history.targetTime * history.targetSets}">25/30</span>
+                                    <span class="stat-item-label">초 (완료/목표)</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-item-value" th:text="${history.formattedAccuracy}">85%</span>
+                                    <span class="stat-item-label">정확도</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-item-value" th:text="${history.formattedDuration}">5:30</span>
+                                    <span class="stat-item-label">소요시간</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-item-value status-badge"
+                                          th:classappend="${history.completionStatus == '완료'} ? 'completed' : 'incomplete'"
+                                          th:text="${history.completionStatus}">완료</span>
+                                    <span class="stat-item-label">상태</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Expandable Content -->
+                        <div class="card-expanded-content" th:id="'expanded-' + ${history.id}">
+                            <div class="expanded-stats">
+                                <div class="expanded-stat-item" th:if="${!history.timedExercise}">
+                                    <div class="expanded-stat-value good" th:text="${history.goodReps}">8</div>
+                                    <div class="expanded-stat-label">좋은 자세</div>
+                                </div>
+                                <div class="expanded-stat-item" th:if="${!history.timedExercise}">
+                                    <div class="expanded-stat-value warning" th:text="${history.performedReps - history.goodReps}">2</div>
+                                    <div class="expanded-stat-label">개선 필요</div>
+                                </div>
+                                <div class="expanded-stat-item" th:if="${!history.timedExercise}">
+                                    <div class="expanded-stat-value info" th:text="${history.performedReps}">10</div>
+                                    <div class="expanded-stat-label">총 반복</div>
+                                </div>
+                                <div class="expanded-stat-item" th:if="${history.timedExercise}">
+                                    <div class="expanded-stat-value good" th:text="${history.goodTime} + '초'">25초</div>
+                                    <div class="expanded-stat-label">좋은 자세 시간</div>
+                                </div>
+                                <div class="expanded-stat-item" th:if="${history.timedExercise}">
+                                    <div class="expanded-stat-value warning" th:text="${history.performedTime - history.goodTime} + '초'">5초</div>
+                                    <div class="expanded-stat-label">개선 필요 시간</div>
+                                </div>
+                                <div class="expanded-stat-item" th:if="${history.timedExercise}">
+                                    <div class="expanded-stat-value info" th:text="${history.performedTime} + '초'">30초</div>
+                                    <div class="expanded-stat-label">총 운동 시간</div>
+                                </div>
+                            </div>
+
+                            <div class="performance-summary">
+                                <h4>
+                                    <i class="bi bi-award"></i>
+                                    성과 평가:
+                                    <span class="status-badge"
+                                          th:classappend="${history.performanceRating == '우수'} ? 'excellent' : (${history.performanceRating == '양호'} ? 'good' : 'needs-improvement')"
+                                          th:text="${history.performanceRating}">우수</span>
+                                </h4>
+                                <p th:if="${history.performanceRating == '우수'}">
+                                    훌륭한 결과입니다! 정확한 자세로 운동을 완료하셨네요.
+                                </p>
+                                <p th:if="${history.performanceRating == '양호'}">
+                                    좋은 성과입니다! 조금만 더 집중하면 완벽한 운동이 될 것 같아요.
+                                </p>
+                                <p th:if="${history.performanceRating == '개선 필요'}">
+                                    다음에는 자세에 더 집중해보세요. AI 피드백을 참고하시면 도움이 될 거예요.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card Actions -->
+                        <div class="card-actions">
+                            <button class="expand-btn" th:onclick="'toggleExpand(' + ${history.id} + ')'">
+                                <span class="expand-text">더 보기</span>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <a th:href="@{/live-coaching/history/{id}(id=${history.id})}" class="detail-btn">
+                                <i class="bi bi-eye"></i>
+                                상세보기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script>
+        function toggleExpand(id) {
+            const expandedContent = document.getElementById('expanded-' + id);
+            const expandBtn = event.target.closest('.expand-btn');
+            const expandText = expandBtn.querySelector('.expand-text');
+            const expandIcon = expandBtn.querySelector('i');
+
+            if (expandedContent.classList.contains('show')) {
+                expandedContent.classList.remove('show');
+                expandBtn.classList.remove('expanded');
+                expandText.textContent = '더 보기';
+            } else {
+                expandedContent.classList.add('show');
+                expandBtn.classList.add('expanded');
+                expandText.textContent = '접기';
+            }
+        }
+
+        // Add smooth scrolling to detail buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.history-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+        });
+    </script>
+</th:block>
+</html>
