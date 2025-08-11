@@ -34,7 +34,7 @@
                 sets = #{sets}
               , reps = #{reps}
               , weight = #{weight}
-              , log_date = #{logDate}
+              , log_date = sysdate
               , duration_minutes = #{durationMinutes}
             where
                 log_id = #{logId}

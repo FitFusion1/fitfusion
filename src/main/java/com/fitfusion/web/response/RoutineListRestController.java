@@ -1,4 +1,4 @@
-    package com.fitfusion.web.controller;
+    package com.fitfusion.web.response;
 
 import com.fitfusion.dto.RoutineListDto;
 import com.fitfusion.dto.RoutineListResponseDto;

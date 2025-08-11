@@ -1,4 +1,4 @@
-package com.fitfusion.web.controller;
+package com.fitfusion.web.rest;
 
 import com.fitfusion.dto.RecommendationResponseDto;
 import com.fitfusion.dto.SaveRecommendRoutineRequestDto;
@@ -8,14 +8,11 @@ import com.fitfusion.vo.Exercise;
 import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.vo.RecommendedExercise;
 import com.fitfusion.web.form.ExerciseConditionForm;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URI;
 import java.util.List;

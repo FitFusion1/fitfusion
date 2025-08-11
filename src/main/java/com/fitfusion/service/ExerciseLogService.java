@@ -130,10 +130,11 @@ public class ExerciseLogService {
     }
 
 
-    public void updateLog(RoutineLogDto routineLog, int userId) {
+    public void updateLog(RoutineLogDto routineLog, int userId, int sessionId) {
         for (ExerciseLogDto exerciseLog : routineLog.getExerciseLogs()) {
             exerciseLog.setLogDate(routineLog.getLogDate());
             exerciseLog.setUserId(userId);
+            exerciseLog.setSessionId(sessionId);
             exerciseLogMapper.updateExerciseLog(exerciseLog);
         }
     }

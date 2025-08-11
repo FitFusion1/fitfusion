@@ -1,4 +1,4 @@
-package com.fitfusion.web.controller;
+package com.fitfusion.web.rest;
 
 import com.fitfusion.dto.ExerciseGoalDto;
 import com.fitfusion.dto.ExerciseLogDto;

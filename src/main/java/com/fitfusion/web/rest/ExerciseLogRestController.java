@@ -1,4 +1,4 @@
-package com.fitfusion.web.controller;
+package com.fitfusion.web.rest;
 
 import com.fitfusion.dto.ExerciseLogResponseDto;
 import com.fitfusion.dto.RoutineLogDto;

@@ -27,7 +27,7 @@ public interface ExerciseLogMapper {
 
     List<ExerciseLogDto> getRoutineLogDetail(@Param("userId") int userId, @Param("routineId") int routineId, @Param("sessionId") int sessionId);
 
-    void updateExerciseLog(@Param("exerciseLog") ExerciseLogDto exerciseLog);
+    void updateExerciseLog(ExerciseLogDto exerciseLog);
 
     long countDistinctSessionByUserId(@Param("userId") int userId);
 }

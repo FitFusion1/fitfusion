@@ -18,16 +18,14 @@ import java.util.List;
 @RequestMapping("/exerciseLog")
 public class ExerciseLogController {
 
-    private final RoutineService routineService;
     private final ExerciseLogService exerciseLogService;
-    private final ExerciseService exerciseService;
 
 
     @PutMapping("/updateLog")
     public String updateLog(@AuthenticationPrincipal SecurityUser user,
                             @ModelAttribute RoutineLogDto routineLog,
                             @RequestParam("sessionId") int sessionId) {
-        exerciseLogService.updateLog(routineLog, user.getUser().getUserId());
+        exerciseLogService.updateLog(routineLog, user.getUser().getUserId(), sessionId);
         System.out.println("UpdateLog Request Data: " + routineLog);
         return "redirect:/exerciseLog/list";
     }

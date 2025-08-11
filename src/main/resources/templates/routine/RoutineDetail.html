@@ -22,6 +22,10 @@
             🧩 세트: <span th:text="${routine.defaultSet}"></span> 세트
         </p>
     </div>
+    <div>
+        <h3>루틴 설명</h3>
+        <div class="RoutineDetail-card" th:text="${routine.description}"></div>
+    </div>
 
     <div class="RoutineDetail-card" th:each="ex : ${routine.exercises}">
         <h3 class="RoutineDetail-name" th:text="${ex.name}">운동명</h3>
