@@ -42,10 +42,10 @@
       </div>
     </div>
     <div class="admin-stat-card">
-      <div class="admin-stat-icon"><i class="fas fa-shopping-bag"></i></div>
+      <div class="admin-stat-icon"><i class="fas fa-dumbbell"></i></div>
       <div class="admin-stat-content">
-        <h3 th:text="예정">8</h3>
-        <p>제품 수</p>
+        <h3 th:text="${countExercises}">8</h3>
+        <p>운동 종류</p>
       </div>
     </div>
     <div class="admin-stat-card">
@@ -96,13 +96,13 @@
 
       <div class="stat-card">
         <div class="stat-icon">
-          <i class="fas fa-shopping-bag"></i>
+          <i class="fas fa-dumbbell"></i>
         </div>
         <div class="stat-content">
-          <h3>음식 제품 관리</h3>
-          <p>헬스 관련 제품 목록 관리</p>
+          <h3>운동 관리</h3>
+          <p>운동 목록 관리</p>
           <div class="action-buttons" style="margin-top: 15px;">
-            <a href="/admin/product" class="btn-primary">
+            <a href="/admin/exercise" class="btn-primary">
               <i class="fas fa-edit"></i> 관리하기
             </a>
           </div>
@@ -127,7 +127,7 @@
   </div>
 
   <!-- 최근 활동 -->
-  <div class="admin-section">
+  <!--<div class="admin-section">
     <h2 class="admin-section-title">
       <i class="fas fa-clock"></i> 최근 활동
     </h2>
@@ -163,7 +163,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
 </section>
 
 </html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='admin'">
+<head>
+    <meta charset="UTF-8">
+    <title>운동 수정</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/admin.css}">
+    </th:block>
+</head>
+<body>
+<section layout:fragment="content" class="main">
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1><i class="fas fa-plus"></i> 운동 수정</h1>
+            <p class="admin-subtitle">/admin/exercises/add</p>
+        </div>
+        <div class="admin-header-right">
+            <a th:href="@{/admin/exercise}" class="admin-btn admin-btn-secondary">
+                <i class="fas fa-arrow-left"></i> 목록으로
+            </a>
+        </div>
+    </div>
+
+    <form th:action="@{'/admin/exercise/modify/' + ${exercise.exerciseId}}" method="post" class="admin-form">
+        <input type="hidden" name="exerciseId" th:value="${exercise.exerciseId}">
+        <div class="admin-form-group">
+            <label class="admin-form-label">운동명</label>
+            <input type="text" name="exerciseName" class="admin-form-input" th:value="${exercise.exerciseName}" required>
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-form-label">설명</label>
+            <textarea name="description" class="admin-form-textarea" th:text="${exercise.description}" required></textarea>
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-form-label">카테고리</label>
+            <select id="category" name="category" required class="admin-form-select"
+                    th:value="${exercise.category}">
+                <option value="" disabled>카테고리를 선택하세요</option>
+                <option value="가슴">가슴</option>
+                <option value="등">등</option>
+                <option value="복근">복근</option>
+                <option value="어깨">어깨</option>
+                <option value="유산소">유산소</option>
+                <option value="팔">팔</option>
+                <option value="하체">하체</option>
+            </select>
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-form-label">주요 부위</label>
+            <input type="text" name="mainParts" class="admin-form-input" th:value="${exercise.mainParts}" required>
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-form-label">기구</label>
+            <input type="text" name="equipment" class="admin-form-input" th:value="${exercise.equipment}">
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-form-label">피로도</label>
+            <select name="fatigueLevel" class="admin-form-select" required>
+                <option value="">선택</option>
+                <option value="1" th:selected="${exercise.fatigueLevel} == 1">낮음(1)</option>
+                <option value="2" th:selected="${exercise.fatigueLevel} == 2">중(2)</option>
+                <option value="3" th:selected="${exercise.fatigueLevel} == 3">높음(3)</option>
+                <option value="4" th:selected="${exercise.fatigueLevel} == 4">매우 높음(4)</option>
+            </select>
+        </div>
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <i class="fas fa-check"></i> 저장
+            </button>
+        </div>
+    </form>
+</section>
+</body>
+</html>
