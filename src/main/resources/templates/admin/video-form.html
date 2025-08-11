@@ -59,8 +59,8 @@
                 <select id="exercise_id" name="exerciseId" required class="admin-form-select">
                     <option value="">운동 선택</option>
                     <option th:each="exercise : ${exercises}"
-                            th:value="${exercise.id}"
-                            th:text="${exercise.name}">
+                            th:value="${exercise.exerciseId}"
+                            th:text="${exercise.exerciseName}">
                     </option>
                 </select>
             </div>

@@ -90,7 +90,7 @@
     -->
     <select id="getAllUsers" resultType="User">
         SELECT
-            user_id,
+            user_id         userId,
             username,
             password,
             name,
@@ -98,12 +98,12 @@
             gender,
             height,
             weight,
-            birth_date,
-            created_date,
-            updated_date,
+            birth_date      birthDate,
+            created_date    createdDate,
+            updated_date    updatedDate,
             deleted,
-            deleted_date,
-            experience_level
+            deleted_date    deletedDate,
+            experience_level    experienceLevel
         FROM
             fitfusion_users
         ORDER BY user_id DESC
@@ -350,12 +350,12 @@
             u.deleted               "user.deleted",
             u.deleted_date          "user.deletedDate",
             u.experience_level      "user.experienceLevel",
-            e.exercise_id           "exercise.id",
-            e.name                  "exercise.name",
+            e.exercise_id           "exercise.exerciseId",
+            e.name                  "exercise.exerciseName",
             e.description           "exercise.description",
             e.category              "exercise.category",
-            e.main_parts            "exercise.equipment",
-            e.equipment             "exercise.mainParts",
+            e.main_parts            "exercise.mainParts",
+            e.equipment             "exercise.equipment",
             e.fatigue_level         "exercise.fatigueLevel"
         FROM
             fitfusion_videos v, fitfusion_users u, fitfusion_exercises e
@@ -365,21 +365,7 @@
           AND v.exercise_id = e.exercise_id
     </select>
 
-    <!--
-        List<Exercise> getAllExercises();
-    -->
-    <select id="getAllExercises" resultType="Exercise">
-        SELECT
-            exercise_id     id,
-            name,
-            description,
-            category,
-            main_parts      mainParts,
-            equipment,
-            fatigue_level   fatigueLevel
-        FROM
-            fitfusion_exercises
-    </select>
+
 
     <!--
         List<VideoCategory> getAllVideoCategories();
@@ -456,4 +442,93 @@
             exercise_id = #{exerciseId}
         WHERE video_id = #{videoId}
     </update>
+
+    <!--
+        void  insertExercise(Exercise exercise);
+    -->
+    <insert id="insertExercise" parameterType="Exercise">
+        INSERT INTO FITFUSION_EXERCISES (
+            EXERCISE_ID,
+            NAME,
+            DESCRIPTION,
+            EQUIPMENT,
+            MAIN_PARTS,
+            CATEGORY,
+            FATIGUE_LEVEL
+        ) VALUES (
+                     EXERCISE_SEQ.NEXTVAL,
+                     #{exerciseName},
+                     #{description},
+                     #{equipment},
+                     #{mainParts},
+                     #{category},
+                     #{fatigueLevel}
+                 )
+    </insert>
+
+    <!--
+        int countExercises();
+    -->
+    <select id="countExercises" resultType="int">
+        SELECT COUNT(*)
+        FROM FITFUSION_EXERCISES
+    </select>
+
+    <!--
+        List<Exercise> getAllExercises();
+    -->
+    <select id="getAllExercises" resultType="Exercise">
+        SELECT
+            exercise_id     as exerciseId,
+            name            as exerciseName,
+            description     as description,
+            category        as category,
+            main_parts      as mainParts,
+            equipment       as equipment,
+            fatigue_level   as fatigueLevel
+        FROM FITFUSION_EXERCISES
+        order by exercise_id desc
+    </select>
+
+    <!--
+        Exercise getExerciseById(int id);
+    -->
+    <select id="getExerciseById" resultType="Exercise">
+        select
+            exercise_id     as exerciseId,
+            name            as exerciseName,
+            description     as description,
+            category        as category,
+            main_parts      as mainParts,
+            equipment       as equipment,
+            fatigue_level   as fatigueLevel
+        from fitfusion_exercises
+        where exercise_id = #{id}
+    </select>
+
+    <!--
+        void deleteExerciseById(int no);
+    -->
+    <delete id="deleteExerciseById" parameterType="int">
+        DELETE FROM fitfusion_exercises
+        WHERE
+            exercise_id = #{no}
+    </delete>
+
+    <!--
+        void updateExercise(Exercise exercise);
+    -->
+    <update id="updateExercise" parameterType="Exercise">
+        UPDATE FITFUSION_EXERCISES
+        SET
+            NAME = #{exerciseName},
+            DESCRIPTION = #{description},
+            EQUIPMENT = #{equipment},
+            MAIN_PARTS = #{mainParts},
+            CATEGORY = #{category},
+            FATIGUE_LEVEL = #{fatigueLevel}
+        WHERE
+            EXERCISE_ID = #{exerciseId}
+    </update>
+
 </mapper>

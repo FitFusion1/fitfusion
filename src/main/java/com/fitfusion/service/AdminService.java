@@ -283,5 +283,28 @@ public class AdminService {
         return adminMapper.getAllVideoCategories();
     }
 
+    public List<Exercise> getExercises() {
+        return adminMapper.getAllExercises();
+    }
 
+    public int countExercises() {
+        return adminMapper.countExercises();
+    }
+
+    public void deleteExerciseById(int no) {
+        adminMapper.deleteExerciseById(no);
+    }
+
+    public void insertExercise(Exercise exercise) {
+        adminMapper.insertExercise(exercise);
+    }
+
+    public Exercise getExerciseById(int id) {
+        return adminMapper.getExerciseById(id);
+    }
+
+    public void modifyExercise(Exercise exercise) {
+
+        adminMapper.updateExercise(exercise);
+    }
 }

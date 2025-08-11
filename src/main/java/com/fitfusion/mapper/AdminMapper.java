@@ -166,4 +166,14 @@ public interface AdminMapper {
      * @param video
      */
     void updateVideo(Video video);
+
+    void  insertExercise(Exercise exercise);
+
+    int countExercises();
+
+    void deleteExerciseById(int no);
+
+    Exercise getExerciseById(int id);
+
+    void updateExercise(Exercise exercise);
 }
