@@ -101,21 +101,6 @@
             user_id = #{userId}
           and routine_id = #{routineId}
     </select>
-    <select id="selectRoutineByUserAndRoutineId" parameterType="map" resultType="Routine">
-        select
-               routine_id               as routineId
-             , user_id                  as userId
-             , name                     as name
-             , difficulty_level         as difficultyLevel
-             , created_date             as createdDate
-             , updated_date             as updatedDate
-             , description              as description
-        from
-            fitfusion_routine
-        where
-            user_id = #{userId}
-        and routine_id = #{routineId}
-    </select>
     
     <update id="updateRoutine" parameterType="Routine">
         update fitfusion_routine

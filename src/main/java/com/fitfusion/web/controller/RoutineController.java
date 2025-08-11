@@ -13,12 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/routine")
@@ -53,7 +50,7 @@ public class RoutineController {
         model.addAttribute("routine", routine);
         model.addAttribute("routineLogDto", routineLogDto);
 
-        return "/routine/RoutineExcute";
+        return "routine/RoutineExcute";
     }
 
 
@@ -69,7 +66,7 @@ public class RoutineController {
             RoutineDetailDto routine = routineService.getRoutineDetail(routineId, user.getUser().getUserId());
             model.addAttribute("routine", routine);
             model.addAttribute("routineLogDto", routineDto);
-            return "/routine/RoutineExcute";
+            return "routine/RoutineExcute";
         }
         exerciseLogService.saveRoutineLog(user.getUser().getUserId(), routineDto);
 

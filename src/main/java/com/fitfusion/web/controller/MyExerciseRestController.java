@@ -44,6 +44,6 @@ public class MyExerciseRestController {
 
     @GetMapping("/exercise-logs")
     public ResponseEntity<List<ExerciseLogDto>> getExerciseLogs(@RequestParam int userId) {
-        return ResponseEntity.ok(exerciseLogService.getExerciseLogsByUserId(userId));
+        return ResponseEntity.ok(exerciseLogService.getFourExerciseLogsByUserId(userId));
     }
 }

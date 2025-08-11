@@ -63,10 +63,6 @@ public class RoutineService {
         return routineMapper.getRoutineListByUserId(userId, offset, size);
     }
 
-    public List<RoutineListDto> getRoutineByUserAndRoutineId(int userId, int routineId) {
-        return routineMapper.selectRoutineByUserAndRoutineId(userId, routineId);
-    }
-
     public void deleteRoutineListByUserAndRoutine(int userId, int routineId) {
         routineMapper.deleteRoutineByUserAndRoutineId(userId, routineId);
     }

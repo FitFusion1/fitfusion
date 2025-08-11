@@ -1,23 +1,16 @@
 package com.fitfusion.web.controller;
 
-import com.fitfusion.dto.ExerciseItemDto;
-import com.fitfusion.dto.ExerciseLogDto;
-import com.fitfusion.dto.RoutineDetailDto;
 import com.fitfusion.dto.RoutineLogDto;
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseLogService;
 import com.fitfusion.service.ExerciseService;
 import com.fitfusion.service.RoutineService;
-import com.fitfusion.vo.Exercise;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -53,9 +46,7 @@ public class ExerciseLogController {
     }
 
     @GetMapping("/list")
-    public String ExerciseLogPage(@AuthenticationPrincipal SecurityUser user, Model model) {
-        List<RoutineLogDto> routineLogs = exerciseLogService.getRoutineLogsByUserId(user.getUser().getUserId());
-        model.addAttribute("routineLogs", routineLogs);
+    public String ExerciseLogPage() {
         return "myexercise/ExerciseLog";
     }
 

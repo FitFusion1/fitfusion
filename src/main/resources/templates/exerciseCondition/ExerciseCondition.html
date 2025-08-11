@@ -16,9 +16,9 @@
     <div layout:fragment="content">
         <div class="ExerciseCondition-container">
             <h1 class="ExerciseCondition-title">오늘 운동 조건을 선택해주세요</h1>
-            <form th:action="@{/condition/save}" method="post">
-                <div th:if="${errorMessage}" style="color: red; margin-bottom: 10px;">
-                    <p th:text="${errorMessage}"></p>
+            <form th:action="@{/condition/save}" th:object="${exerciseConditionForm}" method="post">
+                <div th:if="${#fields.hasErrors()}" style="color: red; margin-bottom: 10px;">
+                    <div th:each="e : ${#fields.globalErrors()}" th:text="${e}"></div>
                 </div>
                 <!-- 피하고 싶은 부위 -->
                 <div class="ExerciseCondition-form-group">
@@ -29,8 +29,11 @@
                             <span th:text="${part.bodyName}">부위명</span>
                         </label>
                     </div>
+                    <div th:if="${#fields.hasErrors('avoidParts')}" th:errors="*{avoidParts}"
+                         style="color: red; margin-bottom: 10px;">
                 </div>
 
+                </div>
                 <!-- 하고 싶은 부위 -->
                 <div class="ExerciseCondition-form-group">
                     <label class="ExerciseCondition-label">2. 오늘 운동하고 싶은 부위를 선택해주세요</label>
@@ -40,8 +43,9 @@
                             <span th:text="${part.bodyName}">부위명</span>
                         </label>
                     </div>
+                    <div th:if="${#fields.hasErrors('targetParts')}" th:errors="*{targetParts}"
+                         style="color: red; margin-bottom: 10px;">
                 </div>
-
                 <!-- 컨디션 상태 -->
                 <div class="ExerciseCondition-form-group">
                     <label class="ExerciseCondition-label">3. 오늘 컨디션은 어떤가요?</label>
@@ -51,6 +55,8 @@
                             <span th:text="${level.emoji + ' ' + level.level}">컨디션</span>
                         </label>
                     </div>
+                    <div th:if="${#fields.hasErrors('conditionLevel')}" th:errors="*{conditionLevel}"
+                         style="color: red; margin-bottom: 10px;">
                 </div>
 
                 <div class="ExerciseCondition-nav">

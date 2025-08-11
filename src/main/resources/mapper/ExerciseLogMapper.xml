@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.ExerciseLogMapper">
 
+    <select id="countDistinctSessionByUserId" parameterType="int" resultType="long">
+        select count(distinct session_id)
+        from fitfusion_exercise_logs
+        where user_id = #{userId}
+    </select>
+
     <select id="selectLatestRoutinesByUser" parameterType="int" resultType="RoutineDto">
         SELECT
             r.routine_id AS routineId,
@@ -76,7 +82,7 @@
     </select>
 
 
-    <select id="findRoutineLogsDetail" resultType="ExerciseLogDto">
+    <select id="findExerciseLogsDetail" resultType="ExerciseLogDto">
         SELECT
             e.name                  AS exerciseName,
             l.session_id            AS sessionId,
@@ -104,7 +110,42 @@
           AND re.routine_id = r.routine_id
         ORDER BY
             l.log_date DESC
+        offset #{offset} rows
+        fetch next #{size} rows only
     </select>
+
+    <select id="findAllExerciseLogsDetail" parameterType="int" resultType="ExerciseLogDto">
+        SELECT
+            e.name                AS exerciseName,
+            l.session_id          AS sessionId,
+            l.log_id              AS logId,
+            l.log_date            AS logDate,
+            l.reps                AS reps,
+            l.sets                AS sets,
+            l.weight              AS weight,
+            l.exercise_id         AS exerciseId,
+            l.is_checked          AS isChecked,
+            l.duration_minutes    AS durationMinutes,
+            l.user_id             AS userId,
+            l.routine_exercise_id AS routineExerciseId,
+            r.name                AS routineName,
+            re.routine_id         AS routineId
+        FROM
+            fitfusion_exercise_logs l,
+            fitfusion_exercises e,
+            fitfusion_routine_exercise re,
+            fitfusion_routine r
+        WHERE
+            l.exercise_id          = e.exercise_id
+          AND l.routine_exercise_id = re.routine_exercise_id
+          AND re.routine_id      = r.routine_id
+          AND l.user_id          = #{userId}
+        ORDER BY
+            l.log_date    DESC,
+            l.session_id  DESC,
+            l.log_id      ASC
+    </select>
+
 
     <select id="findExerciseLog" resultType="ExerciseLogDto">
         select
@@ -128,12 +169,13 @@
         FETCH FIRST 4 ROWS ONLY
     </select>
 
-    <insert id="insertExerciseLog" parameterType="ExerciseLog">
+    <insert id="insertExerciseLog">
         insert into fitfusion_exercise_logs (
             log_id
           , log_date
           , sets
           , reps
+          , weight
           , duration_minutes
           , is_checked
           , user_id
@@ -143,14 +185,15 @@
           ) values (
             seq_exercise_log.nextval
           , sysdate
-          , #{sets}
-          , #{reps}
-          , #{durationMinutes}
-          , #{isChecked}
-          , #{userId}
-          , #{exerciseId}
-          , #{routineExerciseId}
-          , #{sessionId}
+          , #{log.sets}
+          , #{log.reps}
+          , #{log.weight}
+          , #{log.durationMinutes}
+          , #{log.isChecked}
+          , #{log.userId}
+          , #{log.exerciseId}
+          , #{log.routineExerciseId}
+          , #{log.sessionId}
         )
     </insert>
 

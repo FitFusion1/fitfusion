@@ -36,16 +36,10 @@ public class ExerciseGoalController {
 
     private final ExerciseGoalService exerciseGoalService;
     private final SelectedGoalService selectedGoalService;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private ExerciseGoalMapper exerciseGoalMapper;
-    @Autowired
-    private ExerciseConditionService exerciseConditionService;
-    @Autowired
-    private TargetPartsMapper targetPartsMapper;
-    @Autowired
-    private AvoidPartsMapper avoidPartsMapper;
+    private final ExerciseConditionService exerciseConditionService;
+    private final ExerciseConditionService conditionService;
+    private final ModelMapper modelMapper;
+
 
     @GetMapping("/step1")
     public String step1(Model model) {
@@ -75,8 +69,7 @@ public class ExerciseGoalController {
 
     @PostMapping("/step2")
     public String step2(@Validated(Step2Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
-                        BindingResult bindingResult,
-                        Model model) {
+                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalTwo";
         }
@@ -220,8 +213,8 @@ public class ExerciseGoalController {
     public String goalDetail(@AuthenticationPrincipal SecurityUser user, @PathVariable("goalId") int goalId, Model model) {
         model.addAttribute("goal", exerciseGoalService.getUserGoalByUserId(user.getUser().getUserId(), goalId));
         model.addAttribute("condition", exerciseConditionService.getConditionLevelByUserId(user.getUser().getUserId()));
-        model.addAttribute("targetParts", targetPartsMapper.getTargetPartsByUserId(user.getUser().getUserId()));
-        model.addAttribute("avoidParts", avoidPartsMapper.getAvoidPartsByUserId(user.getUser().getUserId()));
+        model.addAttribute("targetParts", conditionService.getTargetPartsByUserId(user.getUser().getUserId()));
+        model.addAttribute("avoidParts", conditionService.getAvoidPartsByUserId(user.getUser().getUserId()));
         return "exerciseGoal/GoalDetail";
     }
 }
