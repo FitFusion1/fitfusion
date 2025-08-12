@@ -26,6 +26,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/condition")
+@PreAuthorize("isAuthenticated()")
 public class ConditionController {
 
 
@@ -80,9 +81,10 @@ public class ConditionController {
         session.setAttribute("condition", conditionLevel);
         session.setAttribute("conditionSet", true);
 
+
         redirectAttributes.addFlashAttribute("alertMessage", "컨디션 설정이 저장되었습니다.");
 
-        return "redirect:/routine/create/ai";
+        return "redirect:/routine/create/ai?conditionSet=true";
     }
 
     private void modelAtt(Model model) {

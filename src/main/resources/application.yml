@@ -32,6 +32,6 @@ yolo:
 kakao:
   rest-api-key: 47eef7648a4fcca43d3b58f2460230f5
   redirect-uri: http://localhost:8080/oauth/kakao/callback
-#logging:
-#  level:
-#    org.springframework.security: trace
+logging:
+  level:
+    com.fitfusion.mapper: trace

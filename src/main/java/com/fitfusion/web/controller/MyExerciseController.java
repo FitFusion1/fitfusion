@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -17,11 +18,12 @@ import java.util.Map;
 @Controller
 @RequestMapping("/myexercise")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 public class MyExerciseController {
 
     private final ExerciseStatusService exerciseStatusService;
 
-    @GetMapping("")
+    @GetMapping
     public String MyExercisePage() {
         return "myexercise/MyExerciseMain";
     }
