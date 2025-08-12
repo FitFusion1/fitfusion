@@ -1,5 +1,6 @@
 package com.fitfusion.mapper;
 
+import com.fitfusion.dto.ExerciseGoalDto;
 import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.web.form.ExerciseGoalRegisterForm;
 import org.apache.ibatis.annotations.Mapper;

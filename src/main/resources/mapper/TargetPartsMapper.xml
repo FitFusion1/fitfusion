@@ -20,7 +20,7 @@
         where user_id = #{userId}
     </delete>
 
-    <insert id="insertTargetPart" parameterType="AvoidPart">
+    <insert id="insertTargetPart" parameterType="TargetPart">
         insert into fitfusion_user_condition_target_parts (user_id, condition_id, body_part_name)
         values (#{userId}, #{conditionId} , #{bodyName})
     </insert>

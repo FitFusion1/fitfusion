@@ -15,17 +15,13 @@ public class ExerciseLogDto {
     private int userId;
     private int sessionId;
     private int logId;
-    private int weight;
     private Date logDate;
     private String formattedDate;
     private String isChecked;
     private String exerciseName;
-//    @NotNull(message = "세트 수는 필수 입력 값입니다.")
-//    @Min(value = 1, message = "세트 수는 1 이상이어야 합니다.")
     private Integer sets;
-//    @NotNull(message = "반복 수는 필수 입력 값입니다.")
-//    @Min(value = 1, message = "반복 수는 1 이상이어야 합니다.")
     private Integer reps;
+    private Integer weight;
     private Integer durationMinutes;
     private Integer recommendedSets;
     private Integer recommendedReps;

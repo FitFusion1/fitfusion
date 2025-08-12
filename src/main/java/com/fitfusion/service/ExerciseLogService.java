@@ -3,17 +3,12 @@ package com.fitfusion.service;
 import com.fitfusion.dto.ExerciseLogDto;
 import com.fitfusion.dto.RoutineLogDto;
 import com.fitfusion.mapper.ExerciseLogMapper;
-import com.fitfusion.mapper.RoutineMapper;
 import com.fitfusion.vo.ExerciseLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional
@@ -23,6 +18,10 @@ public class ExerciseLogService {
     private final ExerciseLogMapper exerciseLogMapper;
 
 
+
+    public Long countLogDistinctSessionByUserId(int userId) {
+        return exerciseLogMapper.countDistinctSessionByUserId(userId);
+    }
 
     public RoutineLogDto getRoutineLogDetailByUserIdAndRoutineId(int userId, int routineId, int sessionId) {
         RoutineLogDto routineLogDto = exerciseLogMapper.getRoutineInfo(routineId);
@@ -69,6 +68,7 @@ public class ExerciseLogService {
 
            Integer sets = dto.getSets();
            Integer reps = dto.getReps();
+           Integer weight = dto.getWeight();
            Integer duration = dto.getDurationMinutes();
            String isChecked = (dto.getIsChecked() != null && dto.getIsChecked().equals("Y")) ? "Y" : "N";
 
@@ -89,46 +89,52 @@ public class ExerciseLogService {
            }
 
            log.setDurationMinutes(duration != null ? duration : 0);
+           log.setWeight(weight != null ? weight : 0);
+
 
            saveExerciseLog(log);
         }
     }
     
-    public List<ExerciseLogDto> getExerciseLogsByUserId(int userId) {
+    public List<ExerciseLogDto> getFourExerciseLogsByUserId(int userId) {
         return exerciseLogMapper.findExerciseLog(userId);
     }
 
 
-    public List<RoutineLogDto> getRoutineLogsByUserId(int userId) {
-        List<ExerciseLogDto> exerciseLogs = exerciseLogMapper.findRoutineLogsDetail(userId);
+    public List<RoutineLogDto> getExerciseLogsByUserId(int userId, int page, int size) {
+        List<ExerciseLogDto> exerciseLogs = exerciseLogMapper.findAllExerciseLogsDetail(userId);
         Map<String, RoutineLogDto> routineLogs = new LinkedHashMap<>();
 
         for (ExerciseLogDto log : exerciseLogs) {
             String key = log.getRoutineId() + "-" + log.getSessionId();
-            int routineId = log.getRoutineId();
-            RoutineLogDto routineLogDto = routineLogs.get(key);
-
-            if (routineLogDto == null) {
-                routineLogDto = new RoutineLogDto();
+            routineLogs.computeIfAbsent(key, k -> {
+                RoutineLogDto routineLogDto = new RoutineLogDto();
                 routineLogDto.setLogId(log.getLogId());
-                routineLogDto.setRoutineId(routineId);
+                routineLogDto.setRoutineId(log.getRoutineId());
                 routineLogDto.setRoutineName(log.getRoutineName());
                 routineLogDto.setLogDate(log.getLogDate());
                 routineLogDto.setSessionId(log.getSessionId());
                 routineLogDto.setExerciseLogs(new ArrayList<>());
-                routineLogs.put(key, routineLogDto);
-            }
-            routineLogDto.getExerciseLogs().add(log);
+                return routineLogDto;
+            }).getExerciseLogs().add(log);
         }
 
-        return new ArrayList<>(routineLogs.values());
+        List<RoutineLogDto> routines = new ArrayList<>(routineLogs.values());
+
+        int from = (page - 1) * size;
+        if (from >= routines.size()) {
+            return Collections.emptyList();
+        }
+        int to = Math.min(from + size, routines.size());
+        return routines.subList(from, to);
     }
 
 
-    public void updateLog(RoutineLogDto routineLog, int userId) {
+    public void updateLog(RoutineLogDto routineLog, int userId, int sessionId) {
         for (ExerciseLogDto exerciseLog : routineLog.getExerciseLogs()) {
             exerciseLog.setLogDate(routineLog.getLogDate());
             exerciseLog.setUserId(userId);
+            exerciseLog.setSessionId(sessionId);
             exerciseLogMapper.updateExerciseLog(exerciseLog);
         }
     }

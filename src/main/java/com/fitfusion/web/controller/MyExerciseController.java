@@ -1,8 +1,11 @@
 package com.fitfusion.web.controller;
 
 import com.fitfusion.dto.ExerciseLogDto;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,13 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MyExerciseController {
 
-    private final ExerciseService exerciseService;
-    private final ExerciseGoalService goalService;
-    private final RoutineService routineService;
-    private final ExerciseLogService logService;
-    private final ExerciseLogService exerciseLogService;
     private final ExerciseStatusService exerciseStatusService;
-    int userId = 3;
 
     @GetMapping("")
     public String MyExercisePage() {
@@ -31,9 +28,9 @@ public class MyExerciseController {
 
 
     @GetMapping("/exercisestatus")
-    public String ExerciseStatusPage(Model model) {
+    public String ExerciseStatusPage(Model model, @AuthenticationPrincipal SecurityUser user) {
 
-        Map<String, Object> status = exerciseStatusService.getExerciseStatus(userId);
+        Map<String, Object> status = exerciseStatusService.getExerciseStatus(user.getUser().getUserId());
         model.addAttribute("exerciseStatus", status);
 
         return "myexercise/ExerciseStatus";

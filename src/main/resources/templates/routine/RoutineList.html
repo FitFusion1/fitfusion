@@ -22,65 +22,106 @@
                 th:onclick="|location.href='/routine/create/ai'|">+ AI 루틴 생성하기
         </button>
 
-        <div class="RoutineList-grid">
-            <div class="RoutineList-card" th:each="routine : ${routines}"
-                 th:onclick="|location.href='@{/routine/detail/{routineId}(routineId=${routine.routineId})}'|">
-                <div class="RoutineList-cardTitle" th:text="${routine.routineName}">루틴 이름</div>
-                <span class="RoutineList-tag" th:text="${routine.targetPart}">카테고리</span>
-                <span class="RoutineList-tag" th:text="${routine.difficulty}">난이도</span>
-                <span class="RoutineList-tag" th:text="${routine.totalTime}">예상 평균 운동시간</span>
-                <div class="RoutineList-meta" th:text="${routine.summary}">운동 요약</div>
-                <div class="RoutineList-buttonGroup">
+        <div id="routine-list" class="RoutineList-grid"></div>
 
-                        <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
-                        <button type="button"
-                                class="RoutineList-button RoutineList-start"
-                                th:onclick="|location.href='@{/exerciseLog/execute/{routineId}(routineId=${routine.routineId})}'|">
-                            수행</button>
+        <div id="scroll"></div>
 
-                        <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
-                        <button type="button"
-                                class="RoutineList-button RoutineList-edit"
-                                th:onclick="|location.href='@{/routine/update/{routineId}(routineId=${routine.routineId})}'|">
-                            수정</button>
-
-                    <form th:action="@{/routine/delete/{routineId}(routineId=${routine.routineId})}" method="post">
-                        <input type="hidden" name="_method" value="DELETE"/>
-                        <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
-                        <button class="RoutineList-button RoutineList-delete">삭제</button>
-                    </form>
-                </div>
-            </div>
-
-        </div>
     </div>
 </div>
 <th:block layout:fragment="script">
     <script>
-        // 이벤트 버블링 방지
-        document.addEventListener('DOMContentLoaded', function () {
-            const buttons = document.querySelectorAll('.RoutineList-button');
-            buttons.forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.stopPropagation(); // 카드 클릭 이벤트 중단
+        const API = '/api/routines'
+        const list = document.getElementById('routine-list');
+        const scroll = document.getElementById('scroll');
+
+        const csrf = () => {
+            const m = document.querySelector('meta[name="_csrf"]');
+            return m ? {'X-CSRF-TOKEN': m.content} : {};
+        };
+
+        let page = 1;
+        const size = 6;
+        let totalPages = Infinity;
+
+        async function loadPage() {
+            if (page > totalPages) return;
+            try {
+                const res = await fetch(`${API}?page=${page}&size=${size}`, {
+                   credentials: 'include',
+                   headers: csrf()
                 });
+                if (!res.ok) throw new Error('로드 실패');
+                const {data: routines, meta} = await res.json();
+                totalPages = meta.totalPage;
+                routines.forEach(routine => appendCard(routine));
+                page++;
+            } catch (err) {
+                console.error(err);
+                alert('루틴 목록을 불러오는 중 오류가 발생했습니다.');
+            }
+        }
+
+        function appendCard(routine) {
+            const card = document.createElement('div');
+            card.className = 'RoutineList-card';
+            card.innerHTML = `
+                <div class="RoutineList-cardTitle">${routine.routineName}</div>
+                <span class="RoutineList-tag">${routine.targetPart}</span>
+                <span class="RoutineList-tag">${routine.difficulty}</span>
+                <span class="RoutineList-tag">${routine.totalTime}</span>
+                <div class="RoutineList-meta">${routine.summary}</div>
+                <div class="RoutineList-buttonGroup">
+                    <button data-routine-id="${routine.routineId}" type="button" class="RoutineList-button RoutineList-start">수행</button>
+                    <button data-routine-id="${routine.routineId}" type="button" class="RoutineList-button RoutineList-edit">수정</button>
+                    <button data-routine-id="${routine.routineId}" type="button" class="RoutineList-button RoutineList-delete">삭제</button>
+                </div>
+            `;
+            card.addEventListener('click', e => {
+                if (e.target.closest('.RoutineList-buttonGroup')) return;
+                location.href = `/routine/detail/${routine.routineId}`;
             });
-            const forms = document.querySelectorAll('.RoutineList-buttonGroup form');
-            forms.forEach(form => {
-                form.addEventListener('click', function (event){
-                   event.stopPropagation();
-                })
-            });
-            const cards = document.querySelectorAll('.RoutineList-card');
-            cards.forEach(card =>{
-                card.addEventListener('click', function (event){
-                    const detailUrl = card.getAttribute('data-detail-url');
-                    if (detailUrl) {
-                        location.href = detailUrl;
-                    }
-                });
-            });
+            list.appendChild(card);
+        }
+
+
+        list.addEventListener('click', async e => {
+            const routineId = e.target.dataset.routineId
+            try {
+                if (e.target.classList.contains('RoutineList-start')) {
+                    location.href = `/routine/execute/${routineId}`
+                }
+                if (e.target.classList.contains('RoutineList-edit')) {
+                    location.href = `/routine/update/${routineId}`
+                }
+                if (e.target.classList.contains('RoutineList-delete')) {
+                    if (!confirm('정말 삭제할까요?')) return;
+                    const d = await fetch(`${API}/${routineId}`, {
+                        method: 'DELETE',
+                        credentials: 'include',
+                        headers: csrf()
+                    });
+                    if (!d.ok) throw new Error('삭제 실패');
+                    list.innerHTML = '';
+                    page = 1;
+                    totalPages = Infinity;
+                    loadPage();
+                }
+            } catch (err) {
+                console.error(err);
+                alert('작업 중 오류가 발생했습니다.')
+            }
         });
+
+        const io = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) loadPage();
+        }, {
+            root: null,
+            rootMargin: '0px 0px -200px 0px',
+            threshold: 0
+        });
+
+        loadPage();
+        io.observe(scroll);
     </script>
 </th:block>
 </html>

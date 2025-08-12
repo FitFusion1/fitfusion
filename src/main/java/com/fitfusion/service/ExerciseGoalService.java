@@ -1,6 +1,7 @@
 package com.fitfusion.service;
 
 import com.fitfusion.dto.ExerciseGoalDto;
+import com.fitfusion.dto.SelectGoalResponseDto;
 import com.fitfusion.enums.GoalType;
 import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.mapper.ExerciseGoalMapper;
@@ -8,6 +9,8 @@ import com.fitfusion.web.form.ExerciseGoalRegisterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +20,17 @@ public class ExerciseGoalService {
 
     private final ExerciseGoalMapper exerciseGoalMapper;
     private final SelectedGoalService selectedGoalService;
+    private final ExerciseConditionService exerciseConditionService;
 
+
+    public List<ExerciseGoalDto> getAllGoalByUserId(int userId) {
+
+        List<ExerciseGoal> goals = exerciseGoalMapper.getAllUserGoalsByUserId(userId);
+
+        return goals.stream()
+                    .map(ExerciseGoalDto::new)
+                    .toList();
+    }
 
     public void insertUserGoalWithSelection(ExerciseGoalRegisterForm formData) {
         exerciseGoalMapper.insertUserGoal(formData);
@@ -58,6 +71,7 @@ public class ExerciseGoalService {
     }
     public ExerciseGoalDto getSelectedGoalDtoByUserId(int userId) {
         ExerciseGoal goal = exerciseGoalMapper.findSelectedGoalByUserId(userId);
+
         return new ExerciseGoalDto(goal);
     }
 
