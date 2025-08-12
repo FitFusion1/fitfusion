@@ -92,7 +92,7 @@ nav .logo {
     display: inline-block;
 }
 
-.main img {
+.hero-image {
     width: 100%;
     object-fit: contain;
     border-radius: 10px;
