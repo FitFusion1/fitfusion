@@ -4,12 +4,14 @@ import com.fitfusion.dto.ExerciseGoalDto;
 import com.fitfusion.dto.ExerciseLogDto;
 import com.fitfusion.dto.ExerciseStatusDto;
 import com.fitfusion.dto.RoutineDto;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseGoalService;
 import com.fitfusion.service.ExerciseLogService;
 import com.fitfusion.service.ExerciseStatusService;
 import com.fitfusion.service.RoutineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,22 +30,22 @@ public class MyExerciseRestController {
     private final ExerciseGoalService goalService;
 
     @GetMapping("/goal")
-    public ResponseEntity<ExerciseGoalDto> getGoal(@RequestParam int userId) {
-        return ResponseEntity.ok(goalService.getSelectedGoalDtoByUserId(userId));
+    public ResponseEntity<ExerciseGoalDto> getGoal(@AuthenticationPrincipal SecurityUser user) {
+        return ResponseEntity.ok(goalService.getSelectedGoalDtoByUserId(user.getUser().getUserId()));
     }
 
     @GetMapping("/exercise-status")
-    public ResponseEntity<ExerciseStatusDto> getExerciseStatus(@RequestParam int userId) {
-        return ResponseEntity.ok(exerciseStatusService.getExerciseStatusDto(userId));
+    public ResponseEntity<ExerciseStatusDto> getExerciseStatus(@AuthenticationPrincipal SecurityUser user) {
+        return ResponseEntity.ok(exerciseStatusService.getExerciseStatusDto(user.getUser().getUserId()));
     }
 
     @GetMapping("/routines")
-    public ResponseEntity<List<RoutineDto>> getRoutines(@RequestParam int userId) {
-        return ResponseEntity.ok(routineService.getRecentRoutine(userId));
+    public ResponseEntity<List<RoutineDto>> getRoutines(@AuthenticationPrincipal SecurityUser user) {
+        return ResponseEntity.ok(routineService.getRecentRoutine(user.getUser().getUserId()));
     }
 
     @GetMapping("/exercise-logs")
-    public ResponseEntity<List<ExerciseLogDto>> getExerciseLogs(@RequestParam int userId) {
-        return ResponseEntity.ok(exerciseLogService.getFourExerciseLogsByUserId(userId));
+    public ResponseEntity<List<ExerciseLogDto>> getExerciseLogs(@AuthenticationPrincipal SecurityUser user) {
+        return ResponseEntity.ok(exerciseLogService.getFourExerciseLogsByUserId(user.getUser().getUserId()));
     }
 }
