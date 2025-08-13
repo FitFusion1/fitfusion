@@ -13,29 +13,14 @@ public class CoachingHistoryService {
 
     private final CoachingLogMapper coachingLogMapper;
 
-    /**
-     * Get coaching workout history for a specific user
-     * @param userId the user ID
-     * @return list of coaching history DTOs ordered by date (newest first)
-     */
     public List<CoachingHistoryDto> getCoachingHistoryByUserId(int userId) {
         return coachingLogMapper.getCoachingHistoryByUserId(userId);
     }
 
-    /**
-     * Get detailed coaching workout information by log ID
-     * @param id the coaching log ID
-     * @return coaching history DTO with complete details
-     */
     public CoachingHistoryDto getCoachingHistoryById(int id) {
         return coachingLogMapper.getCoachingHistoryById(id);
     }
 
-    /**
-     * Get coaching workout statistics for a user
-     * @param userId the user ID
-     * @return coaching statistics summary
-     */
     public CoachingStatsSummary getCoachingStats(int userId) {
         List<CoachingHistoryDto> history = getCoachingHistoryByUserId(userId);
 
@@ -65,9 +50,6 @@ public class CoachingHistoryService {
                 .build();
     }
 
-    /**
-     * Inner class for coaching statistics summary
-     */
     @Getter
     @Setter
     @NoArgsConstructor

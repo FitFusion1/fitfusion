@@ -29,8 +29,8 @@ let feedbackEvents = [];
 let workoutPaused = false;
 let workoutDiscontinued = false;
 
-// 덤벨 컬 변수
-let elbowLockTime = null;
+// 덤벨 컬 변수 / 자세 확인 시간 변수
+let poseLockTime = null;
 let initialLeftElbow = null;
 let initialRightElbow = null;
 
@@ -39,7 +39,7 @@ let restTime = 40; // Default rest time in seconds
 let currentRestTime = 40;
 let isRestActive = false;
 let isRestPaused = false;
-let totalRestTime = 0; // Total rest time used in workout
+let totalRestTime = 0;
 let restTimerInterval = null;
 
 // DOM elements
@@ -390,7 +390,6 @@ function checkVisibility(landmark) {
 // Exercise-specific pose checking functions
 function checkPushupPose(points) {
     if (workoutPaused) return;
-    // Destructure the landmark points from the input object
     const {
         leftShoulder, rightShoulder,
         leftElbow, rightElbow,
@@ -399,11 +398,8 @@ function checkPushupPose(points) {
         leftAnkle, rightAnkle
     } = points;
 
-    // 1. Determine the user's direction based on which side is more visible.
-    // This is crucial for handling side-on views where one side is obscured.
     let shoulder, elbow, wrist, hip, ankle;
 
-    // Check if the left side is more visible than the right.
     if (leftShoulder?.visibility > rightShoulder?.visibility && leftHip?.visibility > rightHip?.visibility) {
         shoulder = leftShoulder;
         elbow = leftElbow;
@@ -411,7 +407,6 @@ function checkPushupPose(points) {
         hip = leftHip;
         ankle = leftAnkle;
     }
-    // Check if the right side is more visible than the left.
     else if (rightShoulder?.visibility > leftShoulder?.visibility && rightHip?.visibility > leftHip?.visibility) {
         shoulder = rightShoulder;
         elbow = rightElbow;
@@ -419,36 +414,34 @@ function checkPushupPose(points) {
         hip = rightHip;
         ankle = rightAnkle;
     }
-    // If a clear direction cannot be determined, provide feedback and exit.
     else {
         updateFeedback("푸시업은 측면 자세에서 측정됩니다. 옆으로 서주세요.", "warning");
         isInGoodPose = false;
         return;
     }
 
-    // 2. Validate that all necessary landmarks ON THE VISIBLE SIDE are clear.
-    // This check happens *after* determining direction to avoid premature failure.
     if (!shoulder || !elbow || !wrist || !hip || !ankle ||
         !checkVisibility(shoulder) || !checkVisibility(elbow) || !checkVisibility(wrist) || !checkVisibility(hip) || !checkVisibility(ankle)) {
         updateFeedback("몸 전체가 선명하게 보이도록 웹캠 위치를 조정해주세요.", "warning");
         isInGoodPose = false;
+        poseLockTime = null;
         return;
     }
 
-    // 3. Calculate key metrics for the pose analysis.
     const armAngle = calculateAngle(shoulder, elbow, wrist);
     const hipState = calculateHipPosition(shoulder, hip, ankle);
     const pushupBodyAngle = calculatePushupBodyAngle(shoulder, ankle);
 
-    // 4. Implement the state machine for accurate rep counting.
-    // State: 'ready' - Waiting for the user to assume the starting position.
     if (exerciseState === 'ready') {
-        if (pushupBodyAngle < 27 && hipState === 'straight' && armAngle > 145) {
-            exerciseState = 'down';
-            updateFeedback("준비 완료! 내려가세요.", "good");
-        } else {
-            updateFeedback("팔과 허리를 곧게 펴고 시작 자세를 취하세요.", "warning");
-        }
+        checkPoseStability(
+            pushupBodyAngle < 27 && hipState === 'straight' && armAngle > 145,
+            2000,
+            () => {
+                exerciseState = 'down';
+                updateFeedback("준비 완료! 내려가세요.", "good");
+            },
+            "팔과 허리를 곧게 펴고 시작 자세를 취하세요."
+        );
         return;
     }
 
@@ -486,7 +479,7 @@ function checkPushupPose(points) {
         } else {
             updateFeedback("내려가는 중...", "good");
         }
-        handleGoodPose(); // As long as hips are straight, the pose is good.
+        handleGoodPose();
     }
     // State: 'up' - User is moving from the bottom back to the top.
     else if (exerciseState === 'up') {
@@ -519,11 +512,8 @@ function checkSquatPose(points) {
         leftToe, rightToe
     } = points;
 
-    // 1. Determine the user's direction based on which side is more visible.
-    // This is crucial for handling side-on views where one side is obscured.
     let shoulder, elbow, wrist, hip, knee, ankle, toe;
 
-    // Check if the left side is more visible than the right.
     if (leftShoulder?.visibility > rightShoulder?.visibility && leftHip?.visibility > rightHip?.visibility) {
         shoulder = leftShoulder;
         elbow = leftElbow;
@@ -533,7 +523,6 @@ function checkSquatPose(points) {
         ankle = leftAnkle;
         toe = leftToe;
     }
-    // Check if the right side is more visible than the left.
     else if (rightShoulder?.visibility > leftShoulder?.visibility && rightHip?.visibility > leftHip?.visibility) {
         shoulder = rightShoulder;
         elbow = rightElbow;
@@ -543,46 +532,46 @@ function checkSquatPose(points) {
         ankle = rightAnkle;
         toe = rightToe;
     }
-    // If a clear direction cannot be determined, provide feedback and exit.
     else {
         updateFeedback("스쿼트는 측면 자세에서 측정됩니다. 옆으로 서주세요.", "warning");
         isInGoodPose = false;
         return;
     }
 
-    // 2. Validate that all necessary landmarks ON THE VISIBLE SIDE are clear.
-    // This check happens *after* determining direction to avoid premature failure.
     if (!shoulder || !elbow || !wrist || !hip || !ankle || !toe ||
         !checkVisibility(shoulder) || !checkVisibility(elbow) || !checkVisibility(wrist) || !checkVisibility(hip) || !checkVisibility(ankle)) {
         updateFeedback("몸 전체가 선명하게 보이도록 웹캠 위치를 조정해주세요.", "warning");
         isInGoodPose = false;
+        poseLockTime = null;
         return;
     }
 
-    // Check knee angle for squat depth
     const kneeAngle = calculateAngle(hip, knee, ankle);
     const bodyAngle = calculateAngle(shoulder, hip, knee);
-    const kneeAnkleDiff = Math.abs(knee.x - ankle.x);
-    const kneeAnkleTolerance = 0.06;
+    const kneeToeDiff = Math.abs(knee.x - toe.x);
+    const kneeToeTolerance = 0.1;
 
     if (exerciseState === 'ready') {
-        if (kneeAngle > 150 && bodyAngle > 150) {
-            exerciseState = 'down';
-            updateFeedback("좋은 자세입니다! 천천히 앉으면서 스쿼트를 시작하세요.", "good");
-        } else {
-            updateFeedback("서서 측면을 바라보며 시작 자세를 취하세요.", "warning");
-        }
+        checkPoseStability(
+            kneeAngle > 150 && bodyAngle > 150,
+            3000,
+            () => {
+                exerciseState = 'down';
+                updateFeedback("좋은 자세입니다! 천천히 앉으면서 스쿼트를 시작하세요.", "good");
+            },
+            "서서 측면을 바라보며 시작 자세를 취하세요."
+        );
         return;
     }
 
-    if (kneeAnkleDiff > kneeAnkleTolerance) {
+    if (kneeToeDiff > kneeToeTolerance) {
         updateFeedback("무릎이 발끝을 넘어갔습니다! 엉덩이를 뒤로 빼세요.", "warning");
         handleBadPose("KNEE_FORWARD", "무릎이 발끝을 넘어갔습니다.");
         return;
     }
 
     if (exerciseState === 'down') {
-        if (kneeAngle < 100 && bodyAngle < 100) {
+        if (kneeAngle < 110 && bodyAngle < 110) {
             exerciseState = 'up';
             updateFeedback("좋습니다! 이제 올라오세요.", "info")
         } else {
@@ -618,11 +607,8 @@ function checkPlankPose(points) {
         leftAnkle, rightAnkle
     } = points;
 
-    // 1. Determine the user's direction based on which side is more visible.
-    // This is crucial for handling side-on views where one side is obscured.
     let shoulder, elbow, wrist, hip, ankle;
 
-    // Check if the left side is more visible than the right.
     if (leftShoulder?.visibility > rightShoulder?.visibility && leftHip?.visibility > rightHip?.visibility) {
         shoulder = leftShoulder;
         elbow = leftElbow;
@@ -630,7 +616,6 @@ function checkPlankPose(points) {
         hip = leftHip;
         ankle = leftAnkle;
     }
-    // Check if the right side is more visible than the left.
     else if (rightShoulder?.visibility > leftShoulder?.visibility && rightHip?.visibility > leftHip?.visibility) {
         shoulder = rightShoulder;
         elbow = rightElbow;
@@ -638,42 +623,40 @@ function checkPlankPose(points) {
         hip = rightHip;
         ankle = rightAnkle;
     }
-    // If a clear direction cannot be determined, provide feedback and exit.
     else {
         updateFeedback("플랭크는 측면 자세에서 측정됩니다. 옆으로 서주세요.", "warning");
         isInGoodPose = false;
         return;
     }
 
-    // 2. Validate that all necessary landmarks ON THE VISIBLE SIDE are clear.
-    // This check happens *after* determining direction to avoid premature failure.
     if (!shoulder || !elbow || !wrist || !hip || !ankle ||
         !checkVisibility(shoulder) || !checkVisibility(elbow) || !checkVisibility(wrist) || !checkVisibility(hip) || !checkVisibility(ankle)) {
         updateFeedback("몸 전체가 선명하게 보이도록 웹캠 위치를 조정해주세요.", "warning");
         isInGoodPose = false;
+        poseLockTime = null;
         return;
     }
 
-    // 3. Calculate key metrics for the pose analysis.
     const armAngle = calculateAngle(shoulder, elbow, wrist);
     const hipState = calculateHipPosition(shoulder, hip, ankle);
     const groundBodyAngle = calculatePushupBodyAngle(shoulder, ankle);
 
     if (exerciseState === 'ready') {
-        if (groundBodyAngle < 40 && hipState === 'straight' && armAngle < 110) {
-            exerciseState = 'holding';
-            updateFeedback("완벽한 플랭크 자세입니다! 이제 시작합니다.", "good");
-        } else {
-            updateFeedback("플랭크 자세를 취하세요.", "warning");
-        }
+        checkPoseStability(
+            groundBodyAngle < 40 && hipState === 'straight' && armAngle < 110,
+            1500,
+            () => {
+                exerciseState = 'holding';
+                updateFeedback("완벽한 플랭크 자세입니다! 이제 시작합니다.", "good");
+            },
+            "플랭크 자세를 취하세요."
+        );
         return;
     }
 
-    // Check if the user has stood up
     if (groundBodyAngle > 50) {
         updateFeedback("플랭크 자세가 아닙니다. 다시 플랭크 자세를 취하세요.", "warning");
         isInGoodPose = false;
-        // The user has stood up, reset the state
         exerciseState = 'ready';
         return;
     }
@@ -710,6 +693,7 @@ function checkDumbbellCurlPose(points) {
         !checkVisibility(leftWrist) || !checkVisibility(rightWrist) || !checkVisibility(leftHip) || !checkVisibility(rightHip)) {
         updateFeedback("자세를 인식할 수 없습니다. 덤벨을 들고 웹캠 앞에 서주세요.", "warning");
         isInGoodPose = false;
+        poseLockTime = null;
         return;
     }
 
@@ -722,59 +706,49 @@ function checkDumbbellCurlPose(points) {
     const avgShoulderY = (leftShoulder.y + rightShoulder.y) / 2;
 
     // --- Rep position thresholds ---
-    const curlUpAngleThreshold = 70;     // Fully bent
-    const curlDownAngleThreshold = 140;  // Fully extended
-    const wristHighThreshold = avgShoulderY + 0.03;  // Wrist near/above shoulder
-    const wristLowThreshold = avgShoulderY + 0.12;   // Wrist well below shoulder
+    const curlUpAngleThreshold = 70;
+    const curlDownAngleThreshold = 140;
+    const wristHighThreshold = avgShoulderY + 0.03;
+    const wristLowThreshold = avgShoulderY + 0.12;
 
-// Elbow drift check using body proportions
+    // --- Initial ready position ---
+    if (exerciseState === 'ready') {
+        checkPoseStability(
+            avgArmAngle > curlDownAngleThreshold,
+            5000,
+            () => {
+                initialLeftElbow = {x: leftElbow.x, y: leftElbow.y};
+                initialRightElbow = {x: rightElbow.x, y: rightElbow.y};
+                exerciseState = 'up';
+                updateFeedback("준비 완료. 덤벨을 들어올리세요.", "good");
+            },
+            "팔을 자연스럽게 내리고 시작하세요."
+        );
+        return;
+    }
+
     if (initialLeftElbow && initialRightElbow && leftShoulder && rightShoulder && leftHip && rightHip) {
-        // Reference distances for proportional scaling
         const shoulderWidth = Math.abs(rightShoulder.x - leftShoulder.x);
         const torsoHeight = Math.abs((leftShoulder.y + rightShoulder.y) / 2 - (leftHip.y + rightHip.y) / 2);
 
-        // Drift relative to initial positions
         const leftDriftX = Math.abs(leftElbow.x - initialLeftElbow.x);
         const rightDriftX = Math.abs(rightElbow.x - initialRightElbow.x);
         const leftDriftY = Math.abs(leftElbow.y - initialLeftElbow.y);
         const rightDriftY = Math.abs(rightElbow.y - initialRightElbow.y);
 
-        // Allowable drift (proportion of body size)
-        const maxXDrift = shoulderWidth * 0.16;  // 15% of shoulder width
-        const maxYDrift = torsoHeight * 0.13;    // 15% of torso height
+        const maxXDrift = shoulderWidth * 0.17;
+        const maxYDrift = torsoHeight * 0.20;
 
-        // Horizontal drift check
         if (leftDriftX > maxXDrift || rightDriftX > maxXDrift) {
             updateFeedback("팔꿈치가 옆으로 벌어졌습니다. 몸에 붙이세요.", "warning");
             handleBadPose("ELBOW_X_DRIFT", "팔꿈치가 옆으로 벌어졌습니다.");
             return;
         }
 
-        // Vertical drift check
         if (leftDriftY > maxYDrift || rightDriftY > maxYDrift) {
             updateFeedback("팔꿈치가 너무 올라갔거나 내려갔습니다. 고정하세요.", "warning");
             handleBadPose("ELBOW_Y_DRIFT", "팔꿈치가 위로 들렸습니다.");
             return;
-        }
-    }
-
-
-    // --- Initial ready position ---
-    if (exerciseState === 'ready') {
-        if (avgArmAngle > curlDownAngleThreshold) {
-            // User is in starting pose. Begin stability timer
-            if (!elbowLockTime) {
-                elbowLockTime = Date.now();
-                updateFeedback("잠시만 기다려주세요... 자세 확인 중", "info");
-            } else if (Date.now() - elbowLockTime > 5000) {  // Wait 1 second
-                initialLeftElbow = {x: leftElbow.x, y: leftElbow.y};
-                initialRightElbow = {x: rightElbow.x, y: rightElbow.y};
-                exerciseState = 'up';
-                updateFeedback("준비 완료. 덤벨을 들어올리세요.", "good");
-            }
-        } else {
-            elbowLockTime = null; // Reset timer if pose breaks
-            updateFeedback("팔을 자연스럽게 내리고 시작하세요.", "warning");
         }
     }
 
@@ -805,14 +779,6 @@ function checkDumbbellCurlPose(points) {
     }
 
     updateAccuracy();
-}
-
-function resetExerciseState(exercise) {
-    if (exercise === 'dumbbell-curl') {
-        initialLeftElbow = null;
-        initialRightElbow = null;
-        elbowLockTime = null;
-    }
 }
 
 function logFeedback(code, desc) {
@@ -854,6 +820,7 @@ function handleGoodPose() {
         if (elapsed >= 100) {
             globalExerciseTime += Math.floor(elapsed / 100); // keep consistent with timed
             lastPoseTime = now;
+            updateTimerDisplay();
         }
     }
 }
@@ -889,12 +856,37 @@ function handleBadPose(code, desc) {
             if (elapsed >= 100) {
                 globalExerciseTime += Math.floor(elapsed / 100);
                 lastPoseTime = now;
+                updateTimerDisplay();
             }
         }
     }
 }
 
 // Utility functions
+function checkPoseStability(isPoseGood, ms, onStable, failMessage) {
+    if (isPoseGood) {
+        if (!poseLockTime) {
+            poseLockTime = Date.now();
+            updateFeedback("잠시만 기다려주세요... 자세 확인 중", "info");
+        } else if (Date.now() - poseLockTime > ms) {
+            poseLockTime = null;
+            onStable();
+        }
+    } else {
+        poseLockTime = null;
+        resetExerciseState(currentExerciseTitle);
+        if (failMessage) updateFeedback(failMessage, "warning");
+    }
+}
+
+function resetExerciseState(exercise) {
+    if (exercise === 'dumbbell-curl') {
+        initialLeftElbow = null;
+        initialRightElbow = null;
+        poseLockTime = null;
+    }
+}
+
 function calculateAngle(a, b, c) {
     const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
     let angle = Math.abs(radians * 180.0 / Math.PI);
@@ -962,11 +954,12 @@ function checkSetCompletion() {
 
 function completeSet() {
     workoutPaused = true;
-    resetExerciseState(currentExerciseTitle);
+    poseLockTime = null;
+    resetExerciseState(currentExerciseTitle)
     if (currentSet < targetSets) {
         exerciseState = 'ready';
-        // Show rest timer before next set
         showRestTimer();
+        startRestTimer();
         updateFeedback("세트 완료! 휴식 시간을 가져보세요. 😌", "good");
     } else {
         // Final set completed
@@ -1007,8 +1000,8 @@ function updateCurrentRepDisplay() {
 }
 
 function updateTotalTimeElapsed() {
-    const minutes = Math.floor(globalExerciseTime / 10 / 60);
-    const seconds = Math.floor(globalExerciseTime / 10) % 60;
+    const minutes = Math.floor((globalExerciseTime / 10 + totalRestTime) / 60);
+    const seconds = Math.floor((globalExerciseTime / 10 + totalRestTime)  % 60);
     const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     totalTimeElapsedSpan.textContent = timeString;
 }
@@ -1025,7 +1018,7 @@ function updateAccuracy() {
     let accuracy = 0;
 
     if (isTimedExercise) {
-        accuracy = currentExerciseTime > 0 ? (goodTime / currentExerciseTime) * 100 : 0;
+        accuracy = globalExerciseTime > 0 ? (goodTime / globalExerciseTime) * 100 : 0;
     } else {
         accuracy = totalReps > 0 ? (goodReps / totalReps) * 100 : 0;
     }
@@ -1043,7 +1036,7 @@ function updateProgressCircle() {
 
 function calculateAccuracy() {
     if (isTimedExercise) {
-        return currentExerciseTime > 0 ? (goodTime / currentExerciseTime) * 100 : 0;
+        return globalExerciseTime > 0 ? (goodTime / globalExerciseTime) * 100 : 0;
     } else {
         return totalReps > 0 ? (goodReps / totalReps) * 100 : 0;
     }
@@ -1065,10 +1058,10 @@ function saveSessionDataWithRestTime(totalDuration) {
         performedReps: totalReps,
         goodReps: goodReps,
         targetTime: targetTime,
-        performedTime: Math.floor(currentExerciseTime / 10), // Convert to seconds
-        goodTime: Math.floor(goodTime / 10), // Convert to seconds
+        performedTime: Math.floor(globalExerciseTime / 10),
+        goodTime: Math.floor(goodTime / 10),
         accuracyPercent: calculateAccuracy(),
-        duration: totalDuration, // Total duration including rest time
+        duration: totalDuration,
         performedDate: Date.now()
     };
 
@@ -1139,12 +1132,10 @@ function startRestTimer() {
     if (isRestActive && !isRestPaused) return;
 
     if (isRestPaused) {
-        // Resume paused timer
         isRestPaused = false;
         pauseRestButton.style.display = 'none';
         startRestButton.style.display = 'inline-flex';
     } else {
-        // Start new timer
         isRestActive = true;
         isRestPaused = false;
         startRestButton.style.display = 'none';
@@ -1228,7 +1219,8 @@ function resetSetCounters() {
     goodTime = 0;
     badTime = 0;
     currentExerciseTime = 0;
-    resetExerciseState(currentExerciseTitle);
+    poseLockTime = null;
+    resetExerciseState(currentExerciseTitle)
     updateRepDisplay();
     updateTimerDisplay();
     updateAccuracy();

@@ -79,16 +79,13 @@ public class LiveCoachingController {
         CoachingHistoryDto historyDetail = coachingHistoryService.getCoachingHistoryById(id);
 
         if (historyDetail == null) {
-            // Redirect to history page if not found
             return "redirect:/live-coaching/history";
         }
 
-        // Verify this log belongs to the current user (security check)
         if (historyDetail.getUserId() != user.getUser().getUserId()) {
             return "redirect:/live-coaching/history";
         }
 
-        // Fetch feedback entries for this coaching session
         List<CoachingFeedback> feedbackList = coachingFeedbackMapper.selectFeedbackByCoachingLogId(id);
 
         model.addAttribute("historyDetail", historyDetail);
