@@ -34,7 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/pose/**").hasRole("USER")
                         .requestMatchers("/meal/**").authenticated()
-//                        .requestMatchers("/live-coaching/**").hasRole("USER")
+//                      .requestMatchers("/live-coaching/**").hasRole("USER")
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
