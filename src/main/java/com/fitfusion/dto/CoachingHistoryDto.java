@@ -32,7 +32,6 @@ public class CoachingHistoryDto {
     private int duration;
     private Date performedDate;
 
-    // Computed properties for display
     public String getFormattedDuration() {
         int minutes = duration / 60;
         int seconds = duration % 60;

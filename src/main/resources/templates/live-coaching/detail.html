@@ -185,15 +185,77 @@
                     AI 코칭 피드백
                 </h2>
 
-                <div th:if="${#lists.isEmpty(feedbackList)}" class="no-feedback">
-                    <div class="no-feedback-content">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <h3>완벽한 운동이었습니다!</h3>
-                        <p>이번 운동에서는 AI가 개선점을 발견하지 못했습니다. 정확한 자세로 운동을 수행하셨네요!</p>
+                <!-- Timed Exercise Timeline (for exercises like planks) -->
+                <div th:if="${historyDetail.timedExercise}" class="timed-exercise-timeline">
+                    <div class="timeline-header">
+                        <h4>자세 타임라인 분석</h4>
+                        <div class="timeline-legend">
+                            <div class="legend-item">
+                                <div class="legend-color good"></div>
+                                <span>좋은 자세</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color bad"></div>
+                                <span>개선 필요</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-container">
+                        <div class="timeline-bar">
+                            <!-- Good posture segments -->
+                            <div class="timeline-segment good" 
+                                 th:style="'width: ' + ${(historyDetail.goodTime / historyDetail.performedTime) * 100} + '%; left: 0%;'">
+                                <div class="segment-label" th:if="${historyDetail.goodTime > 0}">
+                                    <span th:text="${historyDetail.goodTime} + '초'">25초</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Bad posture segments -->
+                            <div class="timeline-segment bad" 
+                                 th:if="${historyDetail.performedTime > historyDetail.goodTime}"
+                                 th:style="'width: ' + ${((historyDetail.performedTime - historyDetail.goodTime) / historyDetail.performedTime) * 100} + '%; left: ' + ${(historyDetail.goodTime / historyDetail.performedTime) * 100} + '%;'">
+                                <div class="segment-label" th:if="${historyDetail.performedTime - historyDetail.goodTime > 0}">
+                                    <span th:text="${historyDetail.performedTime - historyDetail.goodTime} + '초'">5초</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Time markers every 15 seconds -->
+                        <div class="timeline-markers">
+                            <div th:each="marker : ${#numbers.sequence(0, historyDetail.performedTime, 15)}" 
+                                 th:if="${marker <= historyDetail.performedTime}"
+                                 class="time-marker"
+                                 th:style="'left: ' + ${(marker / historyDetail.performedTime) * 100} + '%;'">
+                                <span class="marker-time" th:text="${marker} + 's'">0s</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Total time indicator -->
+                        <div class="total-time-indicator">
+                            <span>총 운동 시간: <strong th:text="${historyDetail.performedTime} + '초'">30초</strong></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Summary stats below timeline -->
+                    <div class="timeline-summary">
+                        <div class="summary-stat">
+                            <div class="stat-value good" th:text="${historyDetail.goodTime} + '초'">25초</div>
+                            <div class="stat-label">좋은 자세 유지</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="stat-value bad" th:text="${historyDetail.performedTime - historyDetail.goodTime} + '초'">5초</div>
+                            <div class="stat-label">개선 필요 시간</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="stat-value info" th:text="${historyDetail.formattedAccuracy}">85%</div>
+                            <div class="stat-label">전체 정확도</div>
+                        </div>
                     </div>
                 </div>
 
-                <div th:if="${!#lists.isEmpty(feedbackList)}" class="feedback-list">
+                <!-- Regular feedback list for non-timed exercises -->
+                <div th:if="${!historyDetail.timedExercise and !#lists.isEmpty(feedbackList)}" class="feedback-list">
                     <div th:each="feedback : ${feedbackList}" class="feedback-item">
                         <div class="feedback-header">
                             <div class="feedback-meta">
@@ -211,6 +273,15 @@
                         <div class="feedback-description" th:text="${feedback.description}">
                             팔꿈치를 더 깊게 구부려주세요.
                         </div>
+                    </div>
+                </div>
+
+                <!-- No feedback message for non-timed exercises -->
+                <div th:if="${!historyDetail.timedExercise and #lists.isEmpty(feedbackList)}" class="no-feedback">
+                    <div class="no-feedback-content">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <h3>완벽한 운동이었습니다!</h3>
+                        <p>이번 운동에서는 AI가 개선점을 발견하지 못했습니다. 정확한 자세로 운동을 수행하셨네요!</p>
                     </div>
                 </div>
             </div>

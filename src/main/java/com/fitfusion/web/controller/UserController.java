@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/user")
-@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -34,11 +33,13 @@ public class UserController {
         return "user/login";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/mypage")
     public String myPage() {
         return "user/mypage";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/edit")
     public String editForm(Model model, @AuthenticationPrincipal SecurityUser user) {
         User foundUser = userService.getUserById(user.getUser().getUserId());
@@ -50,6 +51,7 @@ public class UserController {
         return "user/edit-user";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/edit")
     public String editUserDetails(@Valid @ModelAttribute("userEditForm") UserEditForm form,
                                   BindingResult errors,
