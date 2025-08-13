@@ -19,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,19 +38,33 @@ public class RoutineCreateController {
     @GetMapping("/create/ai")
     public String aiRoutine(@AuthenticationPrincipal SecurityUser user, HttpSession session, RedirectAttributes redirectAttributes, Model model) {
         try {
-            ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
-            List<Exercise> exercises = exerciseService.getAllExercises();
 
             ExerciseGoal goal = exerciseGoalService.getSelectedGoalEntityByUserId(user.getUser().getUserId());
             String goalType = (goal != null) ? goal.getGoalType() : null;
             Boolean conditionSet = (Boolean) session.getAttribute("conditionSet");
 
-            if ("근육 증가".equals(goalType) && (condition == null || conditionSet == null || !conditionSet)) {
+            if ("근육 증가".equals(goalType) && !Boolean.TRUE.equals(conditionSet)) {
                 redirectAttributes.addFlashAttribute("alertMessage", "근육 증가 목표는 사용자 맞춤 설정이 필요합니다. 루틴을 직접 선택해주세요.");
                 return "redirect:/condition/save";
             }
 
+            ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
 
+            if (condition == null) {
+                @SuppressWarnings("unchecked")
+                List<String> avoid = (List<String>) session.getAttribute("avoidParts");
+                @SuppressWarnings("unchecked")
+                List<String> target = (List<String>) session.getAttribute("targetParts");
+                String level = (String) session.getAttribute("condition");
+
+                ExerciseConditionForm tmp = new ExerciseConditionForm();
+                tmp.setAvoidParts(avoid != null ? avoid : Collections.emptyList());
+                tmp.setTargetParts(target != null ? target : Collections.emptyList());
+                tmp.setConditionLevel(level);
+                condition = tmp;
+            }
+
+            List<Exercise> exercises = exerciseService.getAllExercises();
             List<RecommendedExercise> recommended = aiRoutineGenerator.generateRoutine(condition, exercises, goalType);
 
             for (RecommendedExercise re : recommended) {

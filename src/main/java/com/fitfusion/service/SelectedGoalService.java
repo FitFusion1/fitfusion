@@ -6,8 +6,6 @@ import com.fitfusion.mapper.ExerciseGoalMapper;
 import com.fitfusion.mapper.SelectedGoalMapper;
 import com.fitfusion.vo.SelectedGoal;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,10 +52,4 @@ public class SelectedGoalService {
         selectMapper.deleteByUserId(userId);
     }
 
-    public void updateSelectedGoal(int userId, int goalId) {
-        SelectedGoal selectedGoal = new SelectedGoal();
-        selectedGoal.setUserId(userId);
-        selectedGoal.setGoalId(goalId);
-        selectMapper.updateSelectedGoal(selectedGoal);
-    }
 }

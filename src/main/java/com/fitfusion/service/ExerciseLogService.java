@@ -39,23 +39,6 @@ public class ExerciseLogService {
         exerciseLogMapper.insertExerciseLog(log);
     }
 
-    public int startRoutine(int routineId, int userId, List<ExerciseLogDto> exerciseLogs) {
-        int sessionId = exerciseLogMapper.getNextSessionId();
-        for (ExerciseLogDto logDto : exerciseLogs) {
-            ExerciseLog log = new ExerciseLog();
-            log.setUserId(userId);
-            log.setRoutineExerciseId(logDto.getRoutineExerciseId());
-            log.setExerciseId(logDto.getExerciseId());
-            log.setSessionId(sessionId);
-            log.setSets(0);
-            log.setReps(0);
-            log.setIsChecked("N");
-            log.setDurationMinutes(0);
-            saveExerciseLog(log);
-        }
-        return sessionId;
-    }
-
 
     public void saveRoutineLog(int userId, RoutineLogDto routineDto) {
         int sessionId = exerciseLogMapper.getNextSessionId();

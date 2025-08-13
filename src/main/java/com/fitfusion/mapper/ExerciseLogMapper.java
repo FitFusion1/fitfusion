@@ -17,8 +17,6 @@ public interface ExerciseLogMapper {
 
     List<ExerciseLogDto> findExerciseLog(@Param("userId") int userId);
 
-    List<ExerciseLogDto> findExerciseLogsDetail(@Param("userId") int userId, @Param("offset") int offset, @Param("size") int size);
-
     List<ExerciseLogDto> findAllExerciseLogsDetail(@Param("userId") int userId);
 
     int getNextSessionId();

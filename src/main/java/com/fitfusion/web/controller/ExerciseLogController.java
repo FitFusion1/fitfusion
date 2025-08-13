@@ -3,19 +3,18 @@ package com.fitfusion.web.controller;
 import com.fitfusion.dto.RoutineLogDto;
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseLogService;
-import com.fitfusion.service.ExerciseService;
-import com.fitfusion.service.RoutineService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/exerciseLog")
+@PreAuthorize("isAuthenticated()")
 public class ExerciseLogController {
 
     private final ExerciseLogService exerciseLogService;

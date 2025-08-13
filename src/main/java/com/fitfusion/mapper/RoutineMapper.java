@@ -23,8 +23,6 @@ public interface RoutineMapper {
 
     void updateRoutine(Routine routine);
 
-    Routine getRoutineDetailByUserAndRoutineId(@Param("userId") int userId, @Param("routineId") int routineId);
-
     RoutineDetailDto getRoutineInfo(@Param("routineId") int routineId, @Param("userId") int userId);
 
     List<ExerciseItemDto> selectRoutineExercises(@Param("routineId") int routineId, @Param("userId") int userId);

@@ -1,6 +1,5 @@
 package com.fitfusion.web.controller;
 
-import com.fitfusion.dto.ExerciseLogDto;
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.*;
 import lombok.RequiredArgsConstructor;
@@ -11,17 +10,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/myexercise")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 public class MyExerciseController {
 
     private final ExerciseStatusService exerciseStatusService;
 
-    @GetMapping("")
+    @GetMapping
     public String MyExercisePage() {
         return "myexercise/MyExerciseMain";
     }

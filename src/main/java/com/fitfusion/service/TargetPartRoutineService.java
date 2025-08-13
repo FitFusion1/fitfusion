@@ -2,10 +2,8 @@ package com.fitfusion.service;
 
 import com.fitfusion.enums.BodyPart;
 import com.fitfusion.mapper.TargetRoutineMapper;
-import com.fitfusion.vo.Routine;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
