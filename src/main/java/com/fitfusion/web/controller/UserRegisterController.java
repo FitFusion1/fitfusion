@@ -5,21 +5,27 @@ import com.fitfusion.service.UserService;
 import com.fitfusion.vo.User;
 import com.fitfusion.web.form.UserRegisterForm;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Date;
 
 @Controller
 @RequestMapping("/user")
-public class AuthController {
+@RequiredArgsConstructor
+public class UserRegisterController {
 
     @Autowired
-    private UserService userService;
+    private final UserService userService;
+
 
     @GetMapping("/register")
     public String registerForm(Model model) {
@@ -41,7 +47,7 @@ public class AuthController {
         } catch (UserRegisterException ex) {
             String field = ex.getField();
             String message = ex.getMessage();
-            errors.rejectValue(field, "11", message);
+            errors.rejectValue(field, "500", message);
 
             return "user/register";
         }
@@ -52,11 +58,6 @@ public class AuthController {
     @GetMapping("/complete")
     public String completeRegistration() {
         return "user/register-complete";
-    }
-
-    @GetMapping("/login")
-    public String loginForm() {
-        return "user/login";
     }
 
 }

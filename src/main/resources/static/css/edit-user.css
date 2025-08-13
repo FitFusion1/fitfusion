@@ -1,78 +1,644 @@
-body {
-    background: #f7f7f7;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'IBM Plex Sans KR', sans-serif;
 }
 
+body {
+    color: #000;
+    background: #f7f7f7;
+    line-height: 1.6;
+}
+
+/* Main Content */
 .edit-user-main {
-    max-width: 420px;
-    margin: 40px auto;
+    padding: 40px 0;
+    min-height: calc(100vh - 140px);
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.edit-user-container {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
-    padding: 40px 32px;
+    overflow: hidden;
+}
+
+/* Header Section */
+.page-header {
+    background: linear-gradient(135deg, #00d084 0%, #00b374 100%);
+    color: white;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 208, 132, 0.2);
+}
+
+.page-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.page-header h1 i {
+    font-size: 2rem;
+    color: #e8f5e8;
+}
+
+.page-header p {
+    font-size: 1.1rem;
+    color: #e8f5e8;
+    font-weight: 500;
+}
+
+/* Form Section */
+.form-section {
+    padding: 40px;
 }
 
 .edit-user-form {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 25px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
-label {
+.form-group label {
     font-weight: 600;
-    color: #222;
-    margin-bottom: 2px;
+    color: #333;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
+.form-group label::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: #00d084;
+    border-radius: 2px;
+}
+
+/* Input Styles */
 input[type="text"],
 input[type="email"],
-input[type="password"] {
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+input[type="password"],
+input[type="date"],
+select {
+    padding: 14px 16px;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
     font-size: 16px;
     background: #fafafa;
-    color: #222;
-    transition: border 0.2s;
+    color: #333;
+    transition: all 0.2s ease;
+    width: 100%;
 }
 
-input:focus {
-    border: 1.5px solid #00d084;
+input:focus,
+select:focus {
+    border-color: #00d084;
     outline: none;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 208, 132, 0.1);
+}
+
+/* Read-only and disabled fields */
+input[readonly],
+select:disabled {
+    background: #f5f5f5;
+    color: #666;
+    cursor: not-allowed;
+    border-color: #ddd;
+}
+
+/* Field notes for read-only fields */
+.field-note {
+    font-size: 0.85rem;
+    color: #888;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+/* Message Container */
+.message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 20px;
+}
+
+.error-message,
+.valid-message {
+    font-size: 0.85rem;
+    display: none;
+}
+
+.error-message.invalid {
+    display: block;
+    color: #d32f2f;
+}
+
+.valid-message.active {
+    display: block;
+    color: #00d084;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 30px;
+    border-top: 1px solid #e8e8e8;
+    flex-wrap: wrap;
+}
+
+.save-btn,
+.cancel-btn {
+    flex: 1;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .save-btn {
     background: #00d084;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 12px 0;
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
+    color: white;
 }
 
 .save-btn:hover {
-    background: #009e6d;
+    background: #00b374;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 208, 132, 0.3);
 }
 
-.cancel-link {
-    display: inline-block;
-    margin-top: 10px;
-    color: #888;
-    text-decoration: underline;
-    font-size: 15px;
+.cancel-btn {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+.cancel-btn:hover {
+    background: #e8e8e8;
+    color: #333;
+    transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .page-header {
+        padding: 25px 20px;
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .form-section {
+        padding: 25px 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .save-btn,
+    .password-change-btn,
+    .cancel-btn {
+        padding: 14px 20px;
+    }
+
+    .save-btn,
+    .cancel-btn {
+        padding: 14px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .page-header p {
+        font-size: 1rem;
+    }
+
+    .form-section {
+        padding: 20px 15px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    select {
+        padding: 12px 14px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    .password-change-area {
+        padding: 15px;
+    }
+    
+    .password-change-btn-inline {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Password confirmation validation */
+.password-match {
+    border-color: #00d084 !important;
+}
+
+.password-mismatch {
+    border-color: #d32f2f !important;
+}
+
+/* Success state for valid fields */
+.field-valid {
+    border-color: #00d084 !important;
+    background: #f8fff8 !important;
+}
+
+/* Error state for invalid fields */
+.field-error {
+    border-color: #d32f2f !important;
+    background: #fff8f8 !important;
+}
+
+/* Password Modal Form Validation */
+.password-change-form .field-valid {
+    border-color: #00d084 !important;
+    background: #f8fff8 !important;
+}
+
+.password-change-form .field-error {
+    border-color: #d32f2f !important;
+    background: #fff8f8 !important;
+}
+
+/* Password Modal Valid Message */
+.password-change-form .valid-message {
+    font-size: 0.85rem;
+    display: none;
+}
+
+.password-change-form .valid-message.active {
+    display: block;
+    color: #00d084;
+}
+
+/* Password Change Button */
+.password-change-btn {
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    flex: 1;
+    text-decoration: none;
+}
+
+.password-change-btn:hover {
+    background: #f57c00;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+/* Password Change Area (Inline) */
+.password-change-area {
+    background: #f8f9fa;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 20px;
     text-align: center;
 }
 
-@media (max-width: 600px) {
-    .edit-user-main {
-        padding: 18px 6px;
+.password-info {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    font-style: italic;
+}
+
+.password-change-btn-inline {
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.password-change-btn-inline:hover {
+    background: #f57c00;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+/* Password Modal */
+.password-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+}
+
+.password-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-modal-content {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideIn 0.3s ease;
+}
+
+.password-modal-header {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    padding: 25px 30px;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.password-modal-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.password-modal-header h3 i {
+    font-size: 1.3rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.password-change-form {
+    padding: 30px;
+}
+
+.password-modal-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.change-password-btn {
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    flex: 1;
+}
+
+.change-password-btn:hover {
+    background: #f57c00;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.cancel-password-btn {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    flex: 1;
+}
+
+.cancel-password-btn:hover {
+    background: #e8e8e8;
+    color: #333;
+    transform: translateY(-1px);
+}
+
+/* Modal Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments for modal */
+@media (max-width: 768px) {
+    .password-modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .password-modal-header {
+        padding: 20px 25px;
+    }
+    
+    .password-change-form {
+        padding: 25px 20px;
+    }
+    
+    .password-modal-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .change-password-btn,
+    .cancel-password-btn {
+        padding: 14px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .password-modal-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .password-change-form {
+        padding: 20px 15px;
+    }
+}
+
+/* Password Success Message */
+.password-success {
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.success-content i {
+    font-size: 4rem;
+    color: #00d084;
+    margin-bottom: 20px;
+}
+
+.success-content h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.success-content p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Error Toast */
+.error-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #d32f2f;
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 2000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    max-width: 350px;
+}
+
+.error-toast.show {
+    transform: translateX(0);
+}
+
+.error-toast i {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.error-toast span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Responsive adjustments for toast */
+@media (max-width: 768px) {
+    .error-toast {
+        right: 15px;
+        left: 15px;
+        max-width: none;
+        transform: translateY(-100px);
+    }
+    
+    .error-toast.show {
+        transform: translateY(0);
     }
 }

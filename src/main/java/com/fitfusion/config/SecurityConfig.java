@@ -32,7 +32,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/live-coaching/**").hasRole("USER")
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -58,7 +57,19 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new SavedRequestAwareAuthenticationSuccessHandler();
+        return (request, response, authentication) -> {
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+            if (isAdmin) {
+                response.sendRedirect("/admin");
+            } else {
+                SavedRequestAwareAuthenticationSuccessHandler defaultHandler =
+                        new SavedRequestAwareAuthenticationSuccessHandler();
+                defaultHandler.setDefaultTargetUrl("/");
+                defaultHandler.onAuthenticationSuccess(request, response, authentication);
+            }
+        };
     }
 
     @Bean

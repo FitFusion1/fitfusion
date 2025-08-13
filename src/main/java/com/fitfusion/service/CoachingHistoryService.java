@@ -61,7 +61,7 @@ public class CoachingHistoryService {
                 .totalWorkouts(totalWorkouts)
                 .completedWorkouts((int) completedWorkouts)
                 .averageAccuracy(avgAccuracy)
-                .totalDurationMinutes(totalDuration / 60)
+                .totalDurationSeconds(totalDuration)
                 .build();
     }
 
@@ -76,7 +76,7 @@ public class CoachingHistoryService {
         private int totalWorkouts;
         private int completedWorkouts;
         private double averageAccuracy;
-        private int totalDurationMinutes;
+        private int totalDurationSeconds;
 
         public static Builder builder() {
             return new Builder();
@@ -87,12 +87,15 @@ public class CoachingHistoryService {
         }
 
         public String getFormattedTotalDuration() {
-            int hours = totalDurationMinutes / 60;
-            int minutes = totalDurationMinutes % 60;
+            int hours = totalDurationSeconds / 360;
+            int minutes = totalDurationSeconds / 60;
+            int seconds = totalDurationSeconds % 60;
             if (hours > 0) {
-                return String.format("%d시간 %d분", hours, minutes);
+                return String.format("%d시간 %d분 %d초", hours, minutes, seconds);
+            } else if (minutes > 0) {
+                return String.format("%d분 %d초", minutes, seconds);
             } else {
-                return String.format("%d분", minutes);
+                return String.format("%d초", seconds);
             }
         }
 
@@ -108,7 +111,7 @@ public class CoachingHistoryService {
             private int totalWorkouts;
             private int completedWorkouts;
             private double averageAccuracy;
-            private int totalDurationMinutes;
+            private int totalDurationSeconds;
 
             public Builder totalWorkouts(int totalWorkouts) {
                 this.totalWorkouts = totalWorkouts;
@@ -125,14 +128,14 @@ public class CoachingHistoryService {
                 return this;
             }
 
-            public Builder totalDurationMinutes(int totalDurationMinutes) {
-                this.totalDurationMinutes = totalDurationMinutes;
+            public Builder totalDurationSeconds(int totalDurationSeconds) {
+                this.totalDurationSeconds = totalDurationSeconds;
                 return this;
             }
 
             public CoachingStatsSummary build() {
                 return new CoachingStatsSummary(totalWorkouts, completedWorkouts,
-                        averageAccuracy, totalDurationMinutes);
+                        averageAccuracy, totalDurationSeconds);
             }
         }
     }

@@ -161,8 +161,8 @@
     </select>
 
     <!--
-    User getUserByEmail(String email);
--->
+        User getUserByEmail(String email);
+    -->
     <select id="getUserByEmail" resultType="User">
         SELECT
             USER_ID
@@ -182,6 +182,54 @@
             EMAIL = #{email}
     </select>
 
+    <!--
+        User getUserById(int id);
+    -->
+    <select id="getUserById" resultType="User">
+        SELECT
+            USER_ID             userId
+            , USERNAME
+            , PASSWORD
+            , NAME
+            , EMAIL
+            , GENDER
+            , HEIGHT
+            , WEIGHT
+            , BIRTH_DATE        birthDate
+            , EXPERIENCE_LEVEL  experienceLevel
+        FROM
+            FITFUSION_USERS
+        WHERE
+            USER_ID = #{id}
+    </select>
 
+    <!--
+        User updateUser(User user);
+    -->
+    <update id="updateUser" parameterType="User">
+        UPDATE
+            FITFUSION_USERS
+        SET
+            EMAIL = #{email}
+            , HEIGHT = #{height}
+            , WEIGHT = #{weight}
+            , BIRTH_DATE = #{birthDate}
+            , UPDATED_DATE = SYSDATE
+            , EXPERIENCE_LEVEL = #{experienceLevel}
+        WHERE
+            USER_ID = #{userId}
+    </update>
+
+    <!--
+        void updateUserPassword(User user);
+    -->
+    <update id="updateUserPassword" parameterType="User">
+        UPDATE
+            FITFUSION_USERS
+        SET
+            PASSWORD = #{password}
+        WHERE
+            USER_ID = #{userId}
+    </update>
 
 </mapper>

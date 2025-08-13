@@ -949,7 +949,7 @@ function calculateHipPosition(shoulder, hip, ankle) {
 function checkSetCompletion() {
     if (isTimedExercise) {
         // For timed exercises, check if good time reaches target
-        if (goodTime >= targetTime) {
+        if (goodTime / 10 >= targetTime) {
             completeSet();
         }
     } else {

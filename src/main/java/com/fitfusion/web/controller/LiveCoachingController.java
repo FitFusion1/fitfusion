@@ -9,6 +9,7 @@ import com.fitfusion.web.form.LiveCoachingForm;
 import com.fitfusion.mapper.CoachingFeedbackMapper;
 import com.fitfusion.vo.CoachingFeedback;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,16 +23,17 @@ import java.util.List;
 @Controller
 @RequestMapping("/live-coaching")
 @PreAuthorize("isAuthenticated()")
+@RequiredArgsConstructor
 public class LiveCoachingController {
 
     @Autowired
-    private CoachingExerciseService coachingExerciseService;
+    private final CoachingExerciseService coachingExerciseService;
 
     @Autowired
-    private CoachingHistoryService coachingHistoryService;
+    private final CoachingHistoryService coachingHistoryService;
     
     @Autowired
-    private CoachingFeedbackMapper coachingFeedbackMapper;
+    private final CoachingFeedbackMapper coachingFeedbackMapper;
 
     @GetMapping
     public String selectExerciseForm(Model model) {
