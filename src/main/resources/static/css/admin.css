@@ -1,18 +1,24 @@
 .btn {
-    background-color: #00d084;
+    background: linear-gradient(135deg, #00d084, #00b374);
     color: #fff;
     padding: 10px 20px;
     border: none;
     font-weight: bold;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
     margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 
 .main img {
     width: 100%;
     object-fit: contain;
-    border-radius: 10px;
+    border-radius: 12px;
     margin: auto;
 }
 
@@ -25,6 +31,7 @@
     font-weight: 800;
     margin-bottom: 40px;
     text-align: center;
+    color: #121212;
 }
 
 .card-row {
@@ -32,12 +39,18 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    background: #fff;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
     color: #000;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
     margin: 20px 0;
     overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform .25s cubic-bezier(.175,.885,.32,1.275), box-shadow .25s ease;
+}
+.card-row:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
 }
 
 .card-row.reverse {
@@ -57,7 +70,9 @@
     object-fit: cover;
     display: block;
     clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+    transition: transform .3s ease;
 }
+.card-row:hover .card-image img { transform: scale(1.03); }
 
 .card-row.reverse .card-image img {
     clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
@@ -74,11 +89,12 @@
     font-size: 20px;
     font-weight: 800;
     margin-bottom: 5px;
+    color: #121212;
 }
 
 .card-text .desc {
     font-size: 15px;
-    color: #444;
+    color: #555;
 }
 
 footer {
@@ -93,10 +109,20 @@ footer {
 /* --- admin user page 추가 스타일 --- */
 .search-bar input[type="text"] {
     padding: 8px 12px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
     min-width: 220px;
     font-size: 15px;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all .25s ease;
+    color: #121212;
+}
+.search-bar input[type="text"]:focus{
+    outline: none;
+    border-color: #00d084;
+    box-shadow: 0 4px 16px rgba(0,208,132,0.15);
+    transform: translateY(-1px);
 }
 .search-bar .btn {
     margin-left: 10px;
@@ -105,21 +131,22 @@ footer {
 .admin-table {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
+    background: linear-gradient(135deg, #fff 0%, #fbfffd 100%);
     color: #000;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     overflow: hidden;
+    border: 1px solid #e0f7ef;
 }
 .admin-table th, .admin-table td {
     padding: 12px 8px;
     text-align: center;
 }
 .admin-table thead tr {
-    background: #f5f5f5;
+    background: #f2fff9;
 }
 .admin-table tbody tr:not(:last-child) {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eefaf4;
 }
 .admin-table .actions .btn {
     padding: 6px 14px;
@@ -147,7 +174,7 @@ footer {
 }
 
 .admin-header-left h1 i {
-    color: #3498db;
+    color: #00d084;
     margin-right: 10px;
 }
 
@@ -158,93 +185,99 @@ footer {
 }
 
 .btn-secondary {
-    background: #95a5a6;
-    color: white;
+    background: #e9ecef;
+    color: #2c3e50;
     border: none;
     padding: 10px 20px;
-    border-radius: 6px;
+    border-radius: 10px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-weight: 500;
-    transition: background 0.3s;
+    font-weight: 600;
+    transition: all 0.25s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
 .btn-secondary:hover {
-    background: #7f8c8d;
-    color: white;
+    background: #dde4e8;
+    color: #2c3e50;
     text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
 /* 통계 카드 */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
 }
 
 .stat-card {
-    background: white;
+    background: linear-gradient(135deg, #fff 0%, #eafff6 100%);
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    border: 1px solid #e9ecef;
+    border: 1px solid #e0f7ef;
     display: flex;
     align-items: center;
     gap: 16px;
     transition: transform 0.2s, box-shadow 0.2s;
+    justify-content: space-around;
 }
-
 .stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .stat-icon {
+    display: none;
     width: 60px;
     height: 60px;
     border-radius: 12px;
-    display: flex;
+    /* display: flex; */
     align-items: center;
     justify-content: center;
     font-size: 24px;
     color: white;
+    background: linear-gradient(135deg, #00d084, #00b374);
 }
 
-.stat-card:nth-child(1) .stat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.stat-card:nth-child(2) .stat-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-.stat-card:nth-child(3) .stat-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-.stat-card:nth-child(4) .stat-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.stat-card:nth-child(1) .stat-icon { background: linear-gradient(135deg, #00d084 0%, #00b374 100%); }
+.stat-card:nth-child(2) .stat-icon { background: linear-gradient(135deg, #00d084 0%, #00b374 100%); }
+.stat-card:nth-child(3) .stat-icon { background: linear-gradient(135deg, #00d084 0%, #00b374 100%); }
+.stat-card:nth-child(4) .stat-icon { background: linear-gradient(135deg, #00d084 0%, #00b374 100%); }
 
 .stat-content h3 {
+    justify-self: center;
     font-size: 32px;
-    font-weight: 700;
-    color: #2c3e50;
+    font-weight: 800;
+    color: #121212;
     margin: 0 0 4px 0;
 }
 
 .stat-content p {
-    color: #7f8c8d;
+    justify-self: center;
+    color: #4c5c56;
     margin: 0;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* 탭 인터페이스 */
 .admin-tabs {
-    background: white;
+    background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    border: 1px solid #e9ecef;
+    border: 1px solid #e0f7ef;
     overflow: hidden;
 }
 
 .tab-nav {
     display: flex;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
+    background: #f8fffb;
+    border-bottom: 1px solid #e0f7ef;
 }
 
 .tab-btn {
@@ -254,31 +287,28 @@ footer {
     border: none;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
-    color: #6c757d;
+    font-weight: 600;
+    color: #4d6b5d;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
 }
-
 .tab-btn:hover {
-    background: #e9ecef;
-    color: #495057;
+    background: #ecfff8;
+    color: #00b374;
 }
-
 .tab-btn.active {
     background: white;
-    color: #3498db;
-    border-bottom: 3px solid #3498db;
+    color: #00d084;
+    border-bottom: 3px solid #00d084;
 }
 
 .tab-content {
     display: none;
     padding: 30px;
 }
-
 .tab-content.active {
     display: block;
 }
@@ -301,37 +331,39 @@ footer {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #00d084 0%, #00b374 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 32px;
     color: white;
+    box-shadow: 0 2px 8px rgba(0,208,132,0.15);
 }
 
 .profile-info h2 {
     font-size: 24px;
-    font-weight: 600;
-    color: #2c3e50;
+    font-weight: 700;
+    color: #121212;
     margin: 0 0 8px 0;
 }
 
 .status-badge {
     padding: 4px 12px;
-    border-radius: 20px;
+    border-radius: 999px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
+    box-shadow: 0 1px 4px rgba(0,208,132,0.12);
 }
 
 .status-active {
-    background: #d4edda;
-    color: #155724;
+    background: #dbf8ee;
+    color: #116444;
 }
 
 .status-inactive {
-    background: #f8d7da;
-    color: #721c24;
+    background: #ffe6e6;
+    color: #9b2c2c;
 }
 
 .profile-details {
@@ -346,12 +378,12 @@ footer {
     gap: 16px;
     padding: 16px;
     background: #f8f9fa;
-    border-radius: 8px;
+    border-radius: 12px;
 }
 
 .detail-item i {
     width: 20px;
-    color: #3498db;
+    color: #00d084;
     font-size: 16px;
 }
 
@@ -363,14 +395,14 @@ footer {
     display: block;
     font-size: 12px;
     color: #6c757d;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 4px;
 }
 
 .detail-item span {
     font-size: 14px;
     color: #2c3e50;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* 타임라인 */
@@ -399,19 +431,20 @@ footer {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #3498db;
+    background: linear-gradient(135deg, #00d084, #00b374);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 14px;
     flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,208,132,0.15);
 }
 
 .timeline-content h4 {
     font-size: 16px;
-    font-weight: 600;
-    color: #2c3e50;
+    font-weight: 700;
+    color: #121212;
     margin: 0 0 4px 0;
 }
 
@@ -424,8 +457,9 @@ footer {
 /* 테이블 컨테이너 */
 .table-container {
     overflow-x: auto;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    border: 1px solid #e0f7ef;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .empty-state {
@@ -446,12 +480,6 @@ footer {
 }
 
 /* 관리자 액션 */
-.admin-actions {
-    margin-top: 30px;
-    padding-top: 30px;
-    border-top: 2px solid #f0f0f0;
-}
-
 .action-buttons {
     display: flex;
     gap: 12px;
@@ -459,22 +487,28 @@ footer {
     flex-wrap: wrap;
 }
 
+.admin-actions-btns, .admin-header-right {
+    display: flex;
+    justify-content: space-around;
+}
+
 .btn-primary {
-    background: #3498db;
+    background: linear-gradient(135deg, #00d084, #00b374);
     color: white;
     border: none;
     padding: 12px 24px;
-    border-radius: 6px;
+    border-radius: 10px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-weight: 500;
-    transition: background 0.3s;
+    font-weight: 700;
+    transition: all 0.25s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
 .btn-primary:hover {
-    background: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
     color: white;
     text-decoration: none;
 }
@@ -484,17 +518,19 @@ footer {
     color: white;
     border: none;
     padding: 12px 24px;
-    border-radius: 6px;
+    border-radius: 10px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-weight: 500;
-    transition: background 0.3s;
+    font-weight: 600;
+    transition: background 0.3s, transform .2s, box-shadow .2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
 .btn-warning:hover {
     background: #e67e22;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
 .btn-danger {
@@ -502,17 +538,19 @@ footer {
     color: white;
     border: none;
     padding: 12px 24px;
-    border-radius: 6px;
+    border-radius: 10px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-weight: 500;
-    transition: background 0.3s;
+    font-weight: 600;
+    transition: background 0.3s, transform .2s, box-shadow .2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
 .btn-danger:hover {
     background: #c0392b;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
 /* 반응형 디자인 */
@@ -532,7 +570,7 @@ footer {
     }
 
     .tab-btn {
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid #e0f7ef;
     }
 
     .action-buttons {
@@ -560,46 +598,49 @@ footer {
 }
 .admin-table-container {
     overflow-x: auto;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    border: 1px solid #e0f7ef;
     background: #fff;
     margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 .admin-table {
     width: 100%;
     border-collapse: collapse;
     background: #fff;
     color: #222;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     overflow: hidden;
     font-size: 15px;
+    border: 1px solid #e0f7ef;
 }
 .admin-table th, .admin-table td {
     padding: 12px 8px;
     text-align: center;
 }
 .admin-table thead tr {
-    background: #f5f5f5;
+    background: #f2fff9;
 }
 .admin-table tbody tr:not(:last-child) {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eefaf4;
 }
 .admin-badge {
     display: inline-block;
     padding: 4px 12px;
-    border-radius: 20px;
+    border-radius: 999px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0 2px;
+    box-shadow: 0 1px 4px rgba(0,208,132,0.12);
 }
 .admin-badge-active {
-    background: #d4edda;
-    color: #155724;
+    background: #dbf8ee;
+    color: #116444;
 }
 .admin-badge-blocked {
-    background: #f8d7da;
-    color: #721c24;
+    background: #ffe6e6;
+    color: #9b2c2c;
 }
 .admin-btn {
     display: inline-flex;
@@ -607,28 +648,30 @@ footer {
     gap: 6px;
     padding: 10px 18px;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.25s;
     text-decoration: none;
     margin-right: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 .admin-btn:last-child { margin-right: 0; }
 .admin-btn-primary {
-    background: #3498db;
+    background: linear-gradient(135deg, #00d084, #00b374);
     color: #fff;
 }
 .admin-btn-primary:hover {
-    background: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 .admin-btn-secondary {
-    background: #95a5a6;
-    color: #fff;
+    background: #e9ecef;
+    color: #2c3e50;
 }
 .admin-btn-secondary:hover {
-    background: #7f8c8d;
+    background: #dde4e8;
 }
 .admin-btn-danger {
     background: #e74c3c;
@@ -661,7 +704,7 @@ footer {
     border-radius: 12px;
     padding: 20px 24px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-    border: 1px solid #e9ecef;
+    border: 1px solid #e0f7ef;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -669,7 +712,7 @@ footer {
 }
 .admin-stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
 }
 .admin-stat-icon {
     width: 48px;
@@ -680,21 +723,21 @@ footer {
     justify-content: center;
     font-size: 22px;
     color: #fff;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #00d084, #00b374);
 }
-.admin-stat-card:nth-child(1) .admin-stat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.admin-stat-card:nth-child(2) .admin-stat-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.admin-stat-card:nth-child(1) .admin-stat-icon { background: linear-gradient(135deg, #00d084, #00b374); }
+.admin-stat-card:nth-child(2) .admin-stat-icon { background: linear-gradient(135deg, #00d084, #00b374); }
 .admin-stat-content h3 {
     font-size: 26px;
     font-weight: 700;
-    color: #2c3e50;
+    color: #121212;
     margin: 0 0 4px 0;
 }
 .admin-stat-content p {
-    color: #7f8c8d;
+    color: #6c7a74;
     margin: 0;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 @media (max-width: 900px) {
@@ -730,11 +773,11 @@ footer {
 
 /* --- notice.html 관리자 공지사항 관리 페이지 스타일 추가 --- */
 .admin-btn-secondary {
-    background: #95a5a6;
-    color: #fff;
+    background: #e9ecef;
+    color: #2c3e50;
 }
 .admin-btn-secondary:hover {
-    background: #7f8c8d;
+    background: #dde4e8;
 }
 .admin-table-actions {
     display: flex;
@@ -745,25 +788,25 @@ footer {
 /* 추가: 사용자 상세 정보 아이콘 스타일 (키, 몸무게) */
 .detail-item i.fa-weight {
     font-size: 16px;
-    color: #3498db;
+    color: #00d084;
     width: 20px;
 }
 .detail-item i.fa-ruler-vertical {
     font-size: 16px;
-    color: #3498db;
+    color: #00d084;
     width: 20px;
 }
 
 /* --- video-form 전용 폼 스타일 --- */
 .admin-form {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 6px 24px rgba(52, 152, 219, 0.08), 0 1.5px 6px rgba(44, 62, 80, 0.04);
+    background: linear-gradient(135deg, #f8f9fa 0%, #eafff6 100%);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,208,132,0.10), 0 1.5px 8px rgba(0,0,0,0.06);
     padding: 36px 32px;
     display: flex;
     flex-direction: column;
     gap: 22px;
-    border: 1.5px solid #e9ecef;
+    border: 1.5px solid #e0f7ef;
     max-width: 100%;
     margin: 0 auto;
     transition: box-shadow 0.2s;
@@ -775,7 +818,7 @@ footer {
 }
 .admin-form-label {
     font-weight: 700;
-    color: #2980b9;
+    color: #00b374;
     font-size: 15px;
     margin-bottom: 2px;
     letter-spacing: 0.01em;
@@ -784,20 +827,22 @@ footer {
 .admin-form-textarea,
 .admin-form-select {
     padding: 12px 14px;
-    border-radius: 7px;
-    border: 1.5px solid #d0d7de;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
     font-size: 15px;
-    background: #fafdff;
+    background: #fff;
     color: #222;
-    transition: border 0.2s, box-shadow 0.2s;
+    transition: border 0.2s, box-shadow 0.2s, transform .2s;
     outline: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 .admin-form-input:focus,
 .admin-form-textarea:focus,
 .admin-form-select:focus {
-    border: 1.5px solid #3498db;
-    box-shadow: 0 0 0 2px #eaf6fb;
+    border: 2px solid #00d084;
+    box-shadow: 0 4px 16px rgba(0,208,132,0.15);
     background: #fff;
+    transform: translateY(-1px);
 }
 .admin-form-textarea {
     min-height: 90px;
@@ -858,6 +903,8 @@ footer {
     display: inline-block;
     margin-top: 4px;
     font-size: 13px;
-    color: #3498db;
+    color: #00b374;
     cursor: pointer;
+    transition: color .2s;
 }
+.more-link:hover { color: #00d084; }

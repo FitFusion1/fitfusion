@@ -36,12 +36,15 @@ public class LiveCoachingController {
     private final CoachingFeedbackMapper coachingFeedbackMapper;
 
     @GetMapping
-    public String selectExerciseForm(Model model) {
+    public String selectExerciseForm(@RequestParam(name = "exercise", required = false) String exercise, Model model) {
         LiveCoachingForm liveCoachingForm = new LiveCoachingForm();
         liveCoachingForm.setTargetSets(3);
         liveCoachingForm.setTargetReps(10);
         liveCoachingForm.setTargetTime(30);
         List<CoachingExerciseDto> exerciseDtoList = coachingExerciseService.getCoachingExercises();
+        if (exercise != null) {
+            liveCoachingForm.setExerciseId(coachingExerciseService.getExerciseIdByTitle(exercise));
+        }
         model.addAttribute("liveCoachingForm", liveCoachingForm);
         model.addAttribute("exerciseList", exerciseDtoList);
         model.addAttribute("exerciseListJson", coachingExerciseService.convertExercisesToJson(exerciseDtoList));

@@ -88,7 +88,7 @@
     box-shadow: 0 12px 40px rgba(0,0,0,0.12);
 }
 
-.exercise-image {
+.exercise-image, .exercise-item img {
     width: 112px;
     height: 80px;
     object-fit: cover;
@@ -115,10 +115,11 @@
     gap: 8px;
 }
 
-.exercise-title::before {
+/*.exercise-title::before {
     content: '��';
     font-size: 1rem;
-}
+}*/
+.exercise-title::before { content: none; }
 
 .exercise-description {
     color: #666;

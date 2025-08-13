@@ -16,7 +16,7 @@
     <div class="admin-header">
         <div class="admin-header-left">
             <h1><i class="fas fa-film"></i> 운동 영상 콘텐츠 관리</h1>
-            <p class="admin-subtitle">/admin/videos</p>
+            <p class="admin-subtitle">/admin/video</p>
         </div>
         <div class="admin-header-right">
             <a th:href="@{/admin}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
@@ -31,6 +31,14 @@
         </div>
         <div class="admin-table-container">
             <table class="admin-table">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col style="width: 20%;">
+                </colgroup>
                 <thead>
                 <tr>
                     <th>영상 ID</th>
@@ -52,7 +60,7 @@
                     <td th:text="${video.duration}">4:32</td>
                     <td th:text="${#dates.format(video.uploadDate, 'yyyy-MM-dd HH:mm:ss')}">2025-06-03</td>
                     <td>
-                        <div>
+                        <div class="admin-actions-btns">
                             <a th:href="@{/admin/video/modify/{id}(id=${video.videoId})}" class="admin-btn admin-btn-secondary" style="margin-right:8px;"><i class="fas fa-edit"></i> 수정</a>
                             <a th:href="@{/admin/video/delete/{no}(no=${video.videoId})}" class="admin-btn admin-btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');">
                                 <i class="fas fa-trash"></i> 삭제

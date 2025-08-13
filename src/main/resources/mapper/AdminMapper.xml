@@ -164,14 +164,27 @@
     -->
     <select id="getAllNotices" resultType="Notice">
         SELECT
-            notice_id       noticeId,
-            title,
-            content,
-            created_date    createdDate,
-            updated_date    updatedDate,
-            user_id         "user.userId"
+            n.notice_id         noticeId,
+            n.title,
+            n.content,
+            n.created_date      createdDate,
+            n.updated_date      updatedDate,
+            n.user_id           "user.userId",
+            u.username          "user.username",
+            u.password          "user.password",
+            u.name              "user.name",
+            u.email             "user.email",
+            u.gender            "user.gender",
+            u.height            "user.height",
+            u.weight            "user.weight",
+            u.birth_date        "user.birthDate",
+            u.created_date      "user.createdDate",
+            u.updated_date      "user.updatedDate",
+            u.deleted           "user.deleted",
+            u.deleted_date      "user.deletedDate",
+            u.experience_level  "user.experienceLevel"
         FROM
-            fitfusion_notices
+            fitfusion_notices n, fitfusion_users u
         ORDER BY notice_id DESC
 
     </select>

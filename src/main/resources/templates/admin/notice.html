@@ -16,7 +16,7 @@
     <div class="admin-header">
         <div class="admin-header-left">
             <h1><i class="fas fa-bullhorn"></i> 공지사항 관리</h1>
-            <p class="admin-subtitle">/admin/notices</p>
+            <p class="admin-subtitle">/admin/notice</p>
         </div>
         <div class="admin-header-right">
             <a th:href="@{/admin}" class="admin-btn admin-btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</a>
@@ -30,6 +30,13 @@
         </div>
         <div class="admin-table-container">
             <table class="admin-table">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col style="width: 20%;">
+                </colgroup>
                 <thead>
                 <tr>
                     <th>공지 ID</th>
@@ -47,8 +54,8 @@
                         <a th:href="@{/admin/notice/detail/{id}(id=${notice.noticeId})}" th:text="${notice.title}">제목</a>
                     </td>
                     <td th:text="${#dates.format(notice.createdDate, 'yyyy-MM-dd HH:mm:ss')}">2025-06-20</td>
-                    <td th:text="${notice.user.userId}">관리자</td>
-                    <td>
+                    <td th:text="${notice.user.name}">관리자</td>
+                    <td class="admin-actions-btns">
                         <a th:href="@{/admin/notice/modify/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-secondary"><i class="fas fa-edit"></i> 수정</a>
                         <a th:href="@{/admin/notice/delete/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');"><i class="fas fa-trash"></i> 삭제</a>
                     </td>

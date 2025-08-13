@@ -307,4 +307,28 @@ public class AdminService {
 
         adminMapper.updateExercise(exercise);
     }
+
+    public int getActiveUserCount() {
+        return adminMapper.countActiveUsers();
+    }
+
+    public int getDeletedUserCount() {
+        return adminMapper.countDeletedUsers();
+    }
+
+    public int getTodayUserCount() {
+        return adminMapper.countTodayUsers();
+    }
+
+    public int getVideoCount() {
+        return adminMapper.countVideos();
+    }
+
+    public int getExerciseCount() {
+        return adminMapper.countExercises();
+    }
+
+    public int getNoticeCount() {
+        return adminMapper.countNotices();
+    }
 }

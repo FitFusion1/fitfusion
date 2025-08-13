@@ -47,4 +47,16 @@
             EXERCISE_ID = #{id}
     </select>
 
+    <!--
+        int getCoachingExerciseIdByTitle(String title);
+    -->
+    <select id="getCoachingExerciseIdByTitle">
+        SELECT
+            EXERCISE_ID
+        FROM
+            FITFUSION_COACHING_EXERCISES
+        WHERE
+            EXERCISE_TITLE = #{title}
+    </select>
+
 </mapper>

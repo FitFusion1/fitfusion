@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='admin'">
+<head>
+  <meta charset="UTF-8" />
+  <title>관리자 통계</title>
+  <th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+  </th:block>
+</head>
+
+<section layout:fragment="content" class="main">
+  <!-- 헤더 -->
+  <div class="admin-header">
+    <div class="admin-header-left">
+      <h1><i class="fas fa-chart-line"></i> 관리자 통계</h1>
+      <p class="admin-subtitle">/admin/statistics</p>
+    </div>
+    <div class="admin-header-right">
+      <a th:href="@{/admin}" class="admin-btn admin-btn-secondary">
+        <i class="fas fa-arrow-left"></i> 대시보드로
+      </a>
+    </div>
+  </div>
+
+  <!-- 통계 카드 -->
+  <div class="admin-stats-grid">
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon"><i class="fas fa-users"></i></div>
+      <div class="admin-stat-content">
+        <h3 th:text="${countActiveUsers}">0</h3>
+        <p>총 회원 수</p>
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon"><i class="fas fa-user-slash"></i></div>
+      <div class="admin-stat-content">
+        <h3 th:text="${countDeletedUsers}">0</h3>
+        <p>정지 회원</p>
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon"><i class="fas fa-user-plus"></i></div>
+      <div class="admin-stat-content">
+        <h3 th:text="${countTodayUsers}">0</h3>
+        <p>오늘 가입</p>
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon"><i class="fas fa-play-circle"></i></div>
+      <div class="admin-stat-content">
+        <h3 th:text="${countVideos}">0</h3>
+        <p>운동 영상</p>
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon"><i class="fas fa-dumbbell"></i></div>
+      <div class="admin-stat-content">
+        <h3 th:text="${countExercises}">0</h3>
+        <p>운동 종류</p>
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-icon"><i class="fas fa-bullhorn"></i></div>
+      <div class="admin-stat-content">
+        <h3 th:text="${countNotices}">0</h3>
+        <p>공지사항</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상세 분석 영역 -->
+  <div class="admin-section">
+    <h2 class="admin-section-title">
+      <i class="fas fa-chart-pie"></i> 상세 분석
+    </h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-content">
+          <h3 th:text="${countActiveUsers}">0</h3>
+          <p>활성 회원 비율</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content">
+          <h3 th:text="${countDeletedUsers}">0</h3>
+          <p>정지 회원 비율</p>
+        </div>
+      </div>
+      <!-- 필요시 다른 지표 추가 -->
+    </div>
+  </div>
+</section>
+
+</html>
