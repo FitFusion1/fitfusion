@@ -30,7 +30,7 @@ public class AppConfig {
         };
 
         modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setMatchingStrategy(MatchingStrategies.LOOSE)
                 .setSkipNullEnabled(true);
         modelMapper.addConverter(dateConverter);
 

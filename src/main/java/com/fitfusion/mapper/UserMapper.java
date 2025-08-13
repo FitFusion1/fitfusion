@@ -27,5 +27,8 @@ public interface UserMapper {
     List<String> getRoleNamesByUserId(int id);
     User getUserByUsername(String username);
     User getUserByEmail(String email);
+    User getUserById(int id);
+    void updateUser(User user);
+    void updateUserPassword(User user);
 
 }

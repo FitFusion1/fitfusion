@@ -57,6 +57,7 @@
             ce.exercise_preview_image_path  as previewImagePath,
             cl.target_sets                  as targetSets,
             cl.target_reps                  as targetReps,
+            cl.performed_sets               as performedSets,
             cl.performed_reps               as performedReps,
             cl.good_reps                    as goodReps,
             cl.target_time_seconds          as targetTime,

@@ -8,26 +8,162 @@
     <link layout:fragment="css" rel="stylesheet" th:href="@{/css/mypage.css}">
 </head>
 <body>
-<section layout:fragment="content" class="main mypage-main">
-    <h1>My Page</h1>
-    <div class="section" id="user-actions">
-        <h2>Common Actions</h2>
-        <ul class="actions-list">
-            <li><a href="edit_user.html" class="action-link"><i class="fa fa-user-edit"></i> Edit My Info</a></li>
-            <li><a href="#" class="action-link"><i class="fa fa-chart-line"></i> View Progress</a></li>
-            <li><a href="#" class="action-link"><i class="fa fa-dumbbell"></i> Log Exercise</a></li>
-            <li><a href="#" class="action-link"><i class="fa fa-utensils"></i> Log Meal</a></li>
-            <li><a href="#" class="action-link"><i class="fa fa-sign-out-alt"></i> Log Out</a></li>
-        </ul>
+<div layout:fragment="content">
+    <div class="container">
+        <div class="mypage-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>
+                    <i class="bi bi-person-circle"></i>
+                    마이페이지
+                </h1>
+                <p>내 정보와 운동 기록을 한눈에 확인하고 관리해보세요</p>
+            </div>
+
+            <!-- User Actions Section -->
+            <div class="actions-section">
+                <h2>
+                    <i class="bi bi-gear"></i>
+                    주요 기능
+                </h2>
+                <div class="actions-grid">
+                    <a th:href="@{/user/edit}" class="action-card">
+                        <div class="action-icon">
+                            <i class="bi bi-person-gear"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>내 정보 수정</h3>
+                            <p>프로필 정보를 수정하고 관리하세요</p>
+                        </div>
+                    </a>
+                    
+                    <a th:href="@{/myexercise}" class="action-card">
+                        <div class="action-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>운동 진행상황</h3>
+                            <p>운동 목표와 진행 상황을 확인하세요</p>
+                        </div>
+                    </a>
+                    
+                    <a th:href="@{/exerciseLog/list}" class="action-card">
+                        <div class="action-icon">
+                            <i class="bi bi-journal-check"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>운동 기록</h3>
+                            <p>수행한 운동들을 기록하고 관리하세요</p>
+                        </div>
+                    </a>
+                    
+                    <a th:href="@{/routine/list}" class="action-card">
+                        <div class="action-icon">
+                            <i class="bi bi-list-check"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>나의 루틴</h3>
+                            <p>저장된 운동 루틴을 확인하고 관리하세요</p>
+                        </div>
+                    </a>
+                    
+                    <a th:href="@{/live-coaching/history}" class="action-card">
+                        <div class="action-icon">
+                            <i class="bi bi-camera-video"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>AI 코칭 기록</h3>
+                            <p>AI와 함께한 운동 세션 기록을 확인하세요</p>
+                        </div>
+                    </a>
+
+                    <a href="" class="action-card" id="logout-card">
+                        <div class="action-icon">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>로그아웃</h3>
+                            <p>안전하게 로그아웃하세요</p>
+                        </div>
+                    </a>
+                    <form th:action="@{/logout}" method="post" id="logout-form" style="display: none;">
+                        <button type="submit"></button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quick Stats Section -->
+            <div class="stats-section">
+                <h2>
+                    <i class="bi bi-bar-chart"></i>
+                    요약 통계
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">이번 주 운동일</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">0분</div>
+                            <div class="stat-label">이번 주 운동시간</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-target"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">0%</div>
+                            <div class="stat-label">목표 달성률</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="activity-section">
+                <h2>
+                    <i class="bi bi-activity"></i>
+                    최근 활동
+                </h2>
+                <div class="activity-content">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-journal-x"></i>
+                        </div>
+                        <h3>아직 활동 기록이 없습니다</h3>
+                        <p>첫 번째 운동을 시작해보세요!</p>
+                        <a href="/live-coaching" class="btn">
+                            <i class="bi bi-play-circle"></i>
+                            운동 시작하기
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="section" id="exercises">
-        <h2>Tracked Exercises</h2>
-        <div class="placeholder-card">No exercises tracked yet.</div>
-    </div>
-    <div class="section" id="meals">
-        <h2>Tracked Meals</h2>
-        <div class="placeholder-card">No meals tracked yet.</div>
-    </div>
-</section>
+</div>
+
+<th:block layout:fragment="script">
+    <script>
+        const logoutCard = document.getElementById("logout-card");
+        logoutCard.addEventListener("click", function (e) {
+            e.preventDefault();
+           const logoutForm = document.getElementById("logout-form");
+           logoutForm.submit();
+        });
+    </script>
+</th:block>
 </body>
 </html>
