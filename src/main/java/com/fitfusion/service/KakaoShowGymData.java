@@ -32,6 +32,7 @@ public class KakaoShowGymData {
      *
      * @param gymDataDto 삽입할 헬스장 데이터를 담고 있는 객체로, 존재 여부 확인에 사용할 카카오 Place ID를 포함합니다.
      */
+    @Transactional
     public void insertGym(GymDataDto gymDataDto) {
 
         GymDataDto kakaoPlaceData = gymMapper.select(gymDataDto.getKakaoPlaceId());
