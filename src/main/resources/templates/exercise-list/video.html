@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='exercise-video'">
+<head>
+    <meta charset="UTF-8" />
+    <!-- 제목: video.title > exercise.exerciseName + ' - 운동 비디오' > 기본값 -->
+    <title th:text="${video != null && video.title != null ? video.title
+                     : (exercise != null ? exercise.exerciseName + ' - 운동 비디오' : '운동 비디오 정보')}">
+        운동 비디오 정보
+    </title>
+    <link rel="stylesheet" th:href="@{/css/exercise-list.css}">
+</head>
+
+<div layout:fragment="content" class="main">
+    <main class="main-content">
+        <div class="video-detail-container">
+            <div class="video-card">
+
+                <!-- 비디오: videoPath가 있을 때만 표시 -->
+                <th:block th:if="${videoPath != null and !#strings.isEmpty(videoPath)}">
+                    <video controls style="width:100%; border-radius: 12px; background: #000; margin-bottom: 18px;">
+                        <source th:src="${videoPath}" type="video/mp4" />
+                        브라우저가 video 태그를 지원하지 않습니다.
+                    </video>
+                </th:block>
+
+                <!-- 비디오가 없을 때 안내 문구 -->
+                <th:block th:unless="${videoPath != null and !#strings.isEmpty(videoPath)}">
+                    <div style="padding: 20px; background: #f8f9fa; border-radius: 12px; text-align: center; color: #666;">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 2rem; color: #dc3545;"></i>
+                        <h3 style="margin-top: 10px;">영상이 없습니다</h3>
+                        <p>현재 이 운동에 등록된 영상이 없습니다.<br>
+                            관리자에게 문의하여 영상을 등록해 주세요.</p>
+                    </div>
+                </th:block>
+
+                <!-- 화면 제목: video.title > exercise.exerciseName > 기본문구 -->
+                <div class="video-title">
+                    <i class="bi bi-play-circle"></i>
+                    <span th:text="${video != null && video.title != null ? video.title
+                                    : (exercise != null ? exercise.exerciseName : '운동 제목')}">
+                        운동 제목
+                    </span>
+                </div>
+
+                <!-- 설명: video.description > exercise.description > 기본문구 -->
+                <div class="video-description"
+                     th:text="${video != null && video.description != null ? video.description
+                               : (exercise != null && exercise.description != null ? exercise.description
+                               : '이 비디오는 운동 루틴과 자세를 안내합니다.')}">
+                    이 비디오는 집에서 쉽게 따라할 수 있는 상체 근력 운동 루틴을 소개합니다.
+                </div>
+
+                <ul class="video-info-list">
+                    <!-- 운동명 -->
+                    <li>
+                        <i class="bi bi-collection"></i> 운동명:
+                        <span th:text="${exercise != null ? exercise.exerciseName : '정보 없음'}">정보 없음</span>
+                    </li>
+
+                    <!-- 영상 길이: controller에서 'mm분 ss초' 형태로 가공해 내려줌 -->
+                    <li th:if="${videoDurationText != null}">
+                        <i class="bi bi-clock"></i> 영상 길이:
+                        <span th:text="${videoDurationText}">5분 30초</span>
+                    </li>
+
+                    <!-- 업로드 일자: java.util.Date 가정 -->
+                    <li th:if="${video != null && video.uploadDate != null}">
+                        <i class="bi bi-calendar"></i> 업로드 일자:
+                        <span th:text="${#dates.format(video.uploadDate, 'yyyy-MM-dd')}">2025-07-16</span>
+                    </li>
+
+                    <!-- 카테고리명: Video.videoCategory.name 이 존재하는 경우 -->
+                    <li th:if="${video != null && video.videoCategory != null && video.videoCategory.name != null}">
+                        <i class="bi bi-tag"></i> 카테고리:
+                        <span th:text="${video.videoCategory.name}">카테고리명</span>
+                    </li>
+                </ul>
+
+                    <!-- 업로더 칩 -->
+                    <div class="uploader-chip">
+                        <img th:src="@{/images/fitfusion_logo.png}" alt="업로더" class="uploader-chip-avatar">
+                        <div class="uploader-chip-text">
+                            <strong class="uploader-name"
+                                    th:text="${video != null && video.uploadedBy != null ? '업로더 ID: ' + video.uploadedBy : '관리자'}">관리자</strong>
+                            <span class="uploader-sub"
+                                  th:if="${video != null && video.uploadDate != null}"
+                                  th:text="${#dates.format(video.uploadDate, 'yyyy-MM-dd')}">2025-07-16</span>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+</div>
+</html>

@@ -12,5 +12,6 @@ public interface CoachingExerciseMapper {
     CoachingExercise getCoachingExerciseById(int id);
     String getCoachingExerciseNameById(int id);
     String getCoachingExerciseTitleById(int id);
+    int getCoachingExerciseIdByTitle(String title);
 
 }

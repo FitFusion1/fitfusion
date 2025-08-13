@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='exercise-list'">
+<head>
+    <meta charset="UTF-8" />
+    <title>운동 목록</title>
+    <link rel="stylesheet" th:href="@{/css/exercise-list.css}">
+</head>
+
+<div layout:fragment="content" class="main">
+
+    <!-- AI 운동 리스트 -->
+    <main class="main-content">
+        <div class="exercise-search-container">
+            <div class="section-header" style="text-align:center;margin-bottom:40px;">
+                <h1 style="font-size:2.5rem;font-weight:800;color:#121212;margin-bottom:15px;"> AI 자세 교정</h1>
+                <p style="font-size:1.1rem;color:#666;max-width:600px;margin:0 auto;">원하는 운동을 선택하고 자세를 교정받아보세요.</p>
+            </div>
+
+            <!-- 통계 바: 총 개수 표시 -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number" th:text="${countCoachingExercises}">0</span>
+                    <span class="stat-label">AI 운동 개수</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">AI</span>
+                    <span class="stat-label">자세 분석</span>
+                </div>
+                <div class="stat-item" aria-label="서비스 이용 가능 시간: 연중무휴">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">연중무휴</span>
+                </div>
+            </div>
+
+            <div id="aiExerciseList" class="exercise-list" style="margin-bottom: 40px;">
+                <div th:if="${#lists.isEmpty(coachingExercises)}" class="no-results" style="display:block;">
+                    <i class="bi bi-robot"></i>
+                    <h3>등록된 AI 코칭 운동이 없습니다</h3>
+                    <p>관리자에서 AI 코칭 운동을 먼저 등록해 주세요</p>
+                </div>
+
+                <!-- 반복 렌더링 -->
+                <div class="exercise-item"
+                     th:each="exercise : ${coachingExercises}"
+                     th:id="${'ai-exercise-' + exercise.id}">
+
+                    <!-- 이미지 -->
+                    <img th:src="${exercise.previewImagePath != null ? exercise.previewImagePath : '/images/exercise-default.png'}"
+                         th:alt="${exercise.title}" class="exercise-image">
+
+                    <div class="exercise-info">
+                        <h2 class="exercise-title">
+                            <span th:text="${exercise.name}">AI 운동명</span>
+                            <span class="ai-badge">
+                            <i class="bi bi-robot"></i> AI 코칭
+                        </span>
+                        </h2>
+
+                        <!-- 설명 -->
+                        <p class="exercise-description" th:text="${exercise.description}">AI 운동 설명</p>
+
+                        <!-- 팁 (있을 경우만 노출) -->
+                        <p th:if="${exercise.tips != null}" style="font-size:0.9rem; color:#555;">
+                            💡 <span th:text="${exercise.tips}">운동 팁</span>
+                        </p>
+
+                        <div class="exercise-meta">
+                        <span class="difficulty">
+                            <i class="bi bi-clock-history"></i>
+                            <span th:text="${exercise.repTime + '초 / 회'}">반복 시간</span>
+                        </span>
+                            <a class="view-btn"
+                               th:href="@{'/live-coaching?exercise=' + ${exercise.title}}">
+                                <i class="bi bi-play-circle"></i>
+                                AI 코칭 받기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<main class="main-content">
+    <div class="exercise-search-container">
+        <div class="section-header" style="text-align:center;margin-bottom:40px;">
+            <h1 style="font-size:2.5rem;font-weight:800;color:#121212;margin-bottom:15px;">운동 검색</h1>
+            <p style="font-size:1.1rem;color:#666;max-width:600px;margin:0 auto;">원하는 운동을 검색하고 자세를 확인해보세요</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" th:text="${countExercises}">0</span>
+                <span class="stat-label">전체 운동</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" th:text="${CountCategories}">0</span>
+                <span class="stat-label">운동 카테고리</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" th:text="${CountEquipments}">0</span>
+                <span class="stat-label">장비 종류</span>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" id="searchInput"
+                   placeholder="푸시업, 스쿼트, 플랭크 등 운동명을 입력하세요"
+                   class="search-input" onkeyup="filterExercises()">
+        </div>
+
+        <!-- 운동 리스트 -->
+        <div id="exerciseList" class="exercise-list">
+            <!-- 데이터가 없을 때 서버 사이드 메시지 (초기 렌더 기준) -->
+            <div th:if="${#lists.isEmpty(exercises)}" class="no-results" style="display:block;">
+                <i class="bi bi-search"></i>
+                <h3>등록된 운동이 없습니다</h3>
+                <p>관리자에서 운동을 먼저 등록해 주세요</p>
+            </div>
+
+            <!-- 반복 렌더링 -->
+            <div class="exercise-item" th:each="exercise : ${exercises}" th:id="${'exercise-' + exercise.exerciseId}">
+                <!-- 이미지: 아직 DB에 경로가 없다면 플레이스홀더 사용 -->
+                <img th:src="@{/images/exercise-default.png}"
+                     th:alt="${exercise.exerciseName}" class="exercise-image">
+
+                <div class="exercise-info">
+                    <h2 class="exercise-title">
+                        <span th:text="${exercise.exerciseName}">운동명</span>
+                    </h2>
+
+                    <p class="exercise-description" th:text="${exercise.description}">운동 설명</p>
+
+                    <div class="exercise-meta">
+            <span class="difficulty">
+              <!-- 별 아이콘: fatigueLevel 개수만큼 -->
+              <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, exercise.fatigueLevel)}"></i>
+              <span th:text="${exercise.fatigueLevel == 1 ? '초급' : (exercise.fatigueLevel == 2 ? '중급' : '고급')}">난이도</span>
+            </span>
+
+                        <!-- 카테고리/부위/장비 간단 표기 (있으면 노출) -->
+                        <span th:if="${exercise.category != null}" class="badge" style="margin-left:8px;" th:text="${exercise.category}">카테고리</span>
+                        <span th:if="${exercise.mainParts != null}" class="badge" style="margin-left:6px;" th:text="${exercise.mainParts}">주요부위</span>
+                        <span th:if="${exercise.equipment != null}" class="badge" style="margin-left:6px;" th:text="${exercise.equipment}">장비</span>
+
+                        <!-- 상세 보기: 상세 페이지로 이동 -->
+                        <a class="view-btn"
+                           th:href="@{'/exercise-list/' + ${exercise.exerciseId}}">
+                            <i class="bi bi-robot"></i>
+                            상세 보기
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 클라이언트 검색 결과가 없을 때 표시 (JS로 토글) -->
+        <div id="noResults" class="no-results" style="display:none;">
+            <i class="bi bi-search"></i>
+            <h3>검색 결과가 없습니다</h3>
+            <p>다른 키워드로 검색해보세요</p>
+        </div>
+    </div>
+</main>
+</div>
+
+<th:block layout:fragment="script">
+<script>
+    function filterExercises() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const items = document.querySelectorAll('#exerciseList > .exercise-item');
+        const noResults = document.getElementById('noResults');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const name = item.querySelector('.exercise-title').textContent.toLowerCase();
+            const description = item.querySelector('.exercise-description').textContent.toLowerCase();
+            const isVisible = name.includes(input) || description.includes(input);
+
+            item.style.display = isVisible ? 'flex' : 'none';
+            if (isVisible) visibleCount++;
+        });
+
+        noResults.style.display = (visibleCount === 0 && input.length > 0) ? 'block' : 'none';
+    }
+</script>
+</th:block>
+
+</html>

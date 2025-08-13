@@ -106,4 +106,8 @@ public class CoachingExerciseService {
     public String getExerciseTitleById(int exerciseId) {
         return coachingExerciseMapper.getCoachingExerciseTitleById(exerciseId);
     }
+
+    public int getExerciseIdByTitle(String title) {
+        return coachingExerciseMapper.getCoachingExerciseIdByTitle(title);
+    }
 }

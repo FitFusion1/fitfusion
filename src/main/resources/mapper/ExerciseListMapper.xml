@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fitfusion.mapper.ExerciseListMapper">
+
+    <!-- 전체 개수 -->
+    <select id="countExercises" resultType="int">
+        SELECT COUNT(*)
+        FROM FITFUSION_EXERCISES
+    </select>
+
+    <!--
+        int countCoachingExercises();
+    -->
+    <select id="countCoachingExercises" resultType="int">
+        SELECT COUNT(*)
+        FROM fitfusion_coaching_exercises
+    </select>
+
+    <!-- 카테고리 수 -->
+    <select id="getCategoryCount" resultType="int">
+        SELECT COUNT(DISTINCT category)
+        FROM FITFUSION_EXERCISES
+        WHERE category IS NOT NULL
+    </select>
+
+    <!-- 장비 종류 수 -->
+    <select id="getEquipmentCount" resultType="int">
+        SELECT COUNT(DISTINCT equipment)
+        FROM FITFUSION_EXERCISES
+        WHERE equipment IS NOT NULL
+    </select>
+
+
+    <!-- 전체 목록 -->
+    <select id="getAllExercises" resultType="Exercise">
+        SELECT
+            exercise_id   AS exerciseId,
+            name          AS exerciseName,
+            description   AS description,
+            category      AS category,
+            main_parts    AS mainParts,
+            equipment     AS equipment,
+            fatigue_level AS fatigueLevel
+        FROM FITFUSION_EXERCISES
+        ORDER BY exercise_id DESC
+    </select>
+
+    <!--
+        List<CoachingExercise> getAllCoachingExercises();
+    -->
+    <select id="getAllCoachingExercises" resultType="CoachingExercise">
+        SELECT
+            exercise_id                     as id,
+            exercise_title                  as title,
+            exercise_name                   as name,
+            exercise_description            as description,
+            exercise_tips                   as tips,
+            exercise_rep_seconds            as repTime,
+            exercise_preview_image_path     as previewImagePath
+        FROM
+            fitfusion_coaching_exercises
+    </select>
+
+    <!-- 단건 조회 -->
+    <select id="getExerciseById" resultType="Exercise">
+        SELECT
+            exercise_id   AS exerciseId,
+            name          AS exerciseName,
+            description   AS description,
+            category      AS category,
+            main_parts    AS mainParts,
+            equipment     AS equipment,
+            fatigue_level AS fatigueLevel
+        FROM FITFUSION_EXERCISES
+        WHERE exercise_id = #{id}
+    </select>
+
+    <!-- Video + VideoCategory 매핑 -->
+    <resultMap id="videoResultMap" type="com.fitfusion.vo.Video">
+        <id     property="videoId"       column="VIDEO_ID"/>
+        <result property="title"         column="TITLE"/>
+        <result property="description"   column="DESCRIPTION"/>
+        <result property="filePath"      column="FILE_PATH"/>
+        <result property="thumbnailPath" column="THUMBNAIL_PATH"/>
+        <result property="duration"      column="DURATION"/>
+        <result property="uploadDate"    column="UPLOAD_DATE"/>
+        <result property="uploadedBy"    column="UPLOADED_BY"/>
+        <result property="categoryId"    column="CATEGORY_ID"/>
+        <result property="exerciseId"    column="EXERCISE_ID"/>
+
+        <!-- JOIN된 카테고리 -->
+        <association property="videoCategory" javaType="com.fitfusion.vo.VideoCategory">
+            <id     property="categoryId" column="VC_CATEGORY_ID"/>
+            <result property="name"       column="VC_NAME"/>
+        </association>
+    </resultMap>
+
+    <!-- 최신 1건: Oracle 호환 ROWNUM -->
+    <select id="getLatestByExerciseId" resultMap="videoResultMap">
+        SELECT * FROM (
+        SELECT
+        v.VIDEO_ID,
+        v.TITLE,
+        v.DESCRIPTION,
+        v.FILE_PATH,
+        v.THUMBNAIL_PATH,
+        v.DURATION,
+        v.UPLOAD_DATE,
+        v.UPLOADED_BY,
+        v.CATEGORY_ID,
+        v.EXERCISE_ID,
+        vc.CATEGORY_ID AS VC_CATEGORY_ID,
+        vc.NAME        AS VC_NAME
+        FROM FITFUSION_VIDEOS v
+        LEFT JOIN FITFUSION_VIDEO_CATEGORIES vc
+        ON v.CATEGORY_ID = vc.CATEGORY_ID
+        WHERE v.EXERCISE_ID = #{exerciseId}
+        ORDER BY v.UPLOAD_DATE DESC NULLS LAST, v.VIDEO_ID DESC
+        )
+        WHERE ROWNUM &lt;= 1
+    </select>
+
+</mapper>
