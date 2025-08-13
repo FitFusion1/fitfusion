@@ -6,14 +6,13 @@ public enum MealTime {
     DINNER("저녁"),
     SNACK("간식");
 
-    private final String label;
+    private final String displayName;
 
-    MealTime(String label) {
-        this.label = label;
+    MealTime(String displayName) {
+        this.displayName = displayName;
     }
 
-    public String getLabel() {
-        return label;
+    public String getDisplayName() {
+        return displayName;
     }
 }
-

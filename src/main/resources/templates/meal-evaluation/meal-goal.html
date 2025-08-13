@@ -1,0 +1,130 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="ko">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8" />-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>-->
+<!--    <title>목표 설정</title>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />-->
+<!--    <style>-->
+<!--        .step-title {-->
+<!--            font-weight: bold;-->
+<!--            font-size: 1.4rem;-->
+<!--            margin-top: 30px;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+<!--        .btn-purple {-->
+<!--            background-color: #6f42c1;-->
+<!--            color: #fff;-->
+<!--        }-->
+<!--        .btn-purple:hover {-->
+<!--            background-color: #59339c;-->
+<!--            color: #fff;-->
+<!--        }-->
+<!--        .progress-bar-custom {-->
+<!--            height: 8px;-->
+<!--            background-color: #6f42c1;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body class="bg-light">-->
+
+<!--<div class="container py-5">-->
+
+<!--    &lt;!&ndash; Progress bar &ndash;&gt;-->
+<!--    <div class="progress mb-4">-->
+<!--        <div class="progress-bar progress-bar-custom" role="progressbar" style="width: 16.6%;"></div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Step 1: 추천 식단 &ndash;&gt;-->
+<!--    <div id="step1">-->
+<!--        <div class="step-title">건강 데이터를 고려한 맞춤 식단을 추천해드려요.</div>-->
+<!--        <div class="list-group">-->
+<!--            <button type="button" class="list-group-item list-group-item-action">-->
+<!--                <strong>체지방 감소 식단</strong><br>-->
+<!--                체지방 감소를 최우선으로 두고 건강한 다이어트를 도와줘요.-->
+<!--            </button>-->
+<!--            <button type="button" class="list-group-item list-group-item-action">-->
+<!--                <strong>근력 운동 식단</strong><br>-->
+<!--                근육량을 늘리고 운동 능력을 높이는데 도움이 되는 식단이에요.-->
+<!--            </button>-->
+<!--            <button type="button" class="list-group-item list-group-item-action">-->
+<!--                <strong>키토 식단</strong><br>-->
+<!--                탄수화물을 적게 먹고 지방을 많이 먹는 저탄고지 식단이에요.-->
+<!--            </button>-->
+<!--            <button type="button" class="list-group-item list-group-item-action">-->
+<!--                <strong>일반 건강 식단</strong><br>-->
+<!--                특별한 관리가 필요하지 않은 건강한 사람에게 적합한 균형 잡힌 식단이에요.-->
+<!--            </button>-->
+<!--            <button type="button" class="list-group-item list-group-item-action">-->
+<!--                <strong>내가 만드는 식단</strong><br>-->
+<!--                탄단지 비율 등 모든 걸 마음대로 조정할 수 있어요.-->
+<!--            </button>-->
+<!--        </div>-->
+<!--        <button class="btn btn-purple mt-4" onclick="goToStep(2)">다음</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Step 2: 키 입력 &ndash;&gt;-->
+<!--    <div id="step2" class="d-none">-->
+<!--        <div class="step-title">키를 알려주세요.</div>-->
+<!--        <p>건강에 좋은 적정 칼로리를 계산해드릴게요.</p>-->
+<!--        <input type="number" id="height" class="form-control form-control-lg" placeholder="키 (cm)" value="167.0">-->
+<!--        <button class="btn btn-purple mt-4" onclick="goToStep(3)">다음</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Step 3: 몸무게 입력 &ndash;&gt;-->
+<!--    <div id="step3" class="d-none">-->
+<!--        <div class="step-title">몸무게를 알려주세요.</div>-->
+<!--        <p>몸무게에 따라 필요한 에너지량이 달라요.</p>-->
+<!--        <input type="number" id="weight" class="form-control form-control-lg" placeholder="몸무게 (kg)" value="76.8">-->
+<!--        <button class="btn btn-purple mt-4" onclick="goToStep(4)">다음</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Step 4: 목표 몸무게 입력 &ndash;&gt;-->
+<!--    <div id="step4" class="d-none">-->
+<!--        <div class="step-title">목표 몸무게가 있으신가요?</div>-->
+<!--        <p>의사나 운동 전문가가 추천한 몸무게나 원하는 목표치를 입력해주세요.</p>-->
+<!--        <div class="form-check mb-3">-->
+<!--            <input class="form-check-input" type="radio" name="goalWeightOption" id="keepCurrentWeight" checked>-->
+<!--            <label class="form-check-label" for="keepCurrentWeight">-->
+<!--                현재 몸무게를 유지할래요-->
+<!--            </label>-->
+<!--        </div>-->
+<!--        <input type="number" id="goalWeight" class="form-control form-control-lg" placeholder="목표 몸무게 (kg)" value="76.8">-->
+<!--        <div class="alert alert-warning mt-3">-->
+<!--            비만과 관련된 질환 위험이 높아지는 몸무게예요. 근육량이 많지 않다면 조금 더 감량하면 좋을 것 같아요!-->
+<!--        </div>-->
+<!--        <button class="btn btn-purple mt-4" onclick="goToStep(5)">다음</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Step 5: 목표 칼로리 선택 &ndash;&gt;-->
+<!--    <div id="step5" class="d-none">-->
+<!--        <div class="step-title">목표 칼로리를 선택해주세요</div>-->
+<!--        <p>추천 일일 목표 칼로리입니다. 직접 수정할 수 있어요.</p>-->
+<!--        <div class="input-group">-->
+<!--            <input type="number" class="form-control form-control-lg" value="1884" id="targetKcal">-->
+<!--            <span class="input-group-text">kcal</span>-->
+<!--        </div>-->
+<!--        <button class="btn btn-purple mt-4" onclick="goToStep(6)">다음</button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Step 6: 완료 &ndash;&gt;-->
+<!--    <div id="step6" class="d-none">-->
+<!--        <div class="step-title">추천이 완료되었습니다!</div>-->
+<!--        <p>맞춤 식단 정보가 준비되었어요.</p>-->
+<!--        <button class="btn btn-purple mt-4" onclick="alert('식단 추천 완료!')">확인</button>-->
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--<script>-->
+<!--    function goToStep(step) {-->
+<!--        document.querySelectorAll('[id^=step]').forEach(el => el.classList.add('d-none'));-->
+<!--        document.getElementById(`step${step}`).classList.remove('d-none');-->
+
+<!--        let progressWidth = (step/6)*100;-->
+<!--        document.querySelector('.progress-bar').style.width = progressWidth + '%';-->
+<!--    }-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->

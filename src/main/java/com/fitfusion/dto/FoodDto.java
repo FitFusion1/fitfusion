@@ -3,6 +3,7 @@ package com.fitfusion.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fitfusion.enums.FoodUnit;
 import com.fitfusion.util.EmptyStringToNullDateDeserializer;
 import com.fitfusion.util.EmptyStringToNullDoubleDeserializer;
 import com.fitfusion.util.EmptyStringToNullStringDeserializer;
@@ -10,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -80,29 +81,89 @@ public class FoodDto {
     @JsonDeserialize(using = EmptyStringToNullStringDeserializer.class)
     private String foodCat2Name;
 
-    // 영양성분함량 기준이 되는 단위. 보통 100g
-    // 영양성분함량기준량 (DB 필드명 : FOOD_SERVING_SIZE_RAW) ex) 100g
-    @JsonProperty("SERVING_SIZE")
-    @JsonDeserialize(using = EmptyStringToNullStringDeserializer.class)
-    private String foodServingSizeRaw; // API 응답값 그대로 저장 (디버깅/백업용) ex) 100g
+//    // FOOD_UNIT 테이블 삭제 후 Enum화 -> RAW, UnitId 컬럼 삭제
+//    // 영양성분함량 기준이 되는 단위. 보통 100g
+//    // 영양성분함량기준량 (DB 필드명 : FOOD_SERVING_SIZE_RAW) ex) 100g
+//    @JsonProperty("SERVING_SIZE")
+//    @JsonDeserialize(using = EmptyStringToNullStringDeserializer.class)
+//    private String foodServingSizeRaw; // API 응답값 그대로 저장 (디버깅/백업용) ex) 100g
 
-    // 영양성분함량기준량 중 수치값 (DB 필드명 : FOOD_SERVING_VALUE) ex) 100
-    private Double foodServingSizeValue;
+//    // API 원본 문자열 그대로 (뷰 표시용 / DB에 저장 X)
+//    @JsonProperty("SERVING_SIZE") // API 필드명
+//    @JsonDeserialize(using = EmptyStringToNullStringDeserializer.class)
+//    private String foodServingSizeRaw;
+//
+//    @JsonProperty("Z10500") // 식품 전체 중량 (DB 컬럼 FOOD_WEIGHT_RAW) ex) 150.000g, 1,000.000g, 591.000mL
+//    @JsonDeserialize(using = EmptyStringToNullStringDeserializer.class)
+//    private String foodWeightRaw;
 
-    // 영양성분함량기준량의 중 단위 ID (DB 필드명 : FOOD_SERVING_UNIT_ID) ex) g  (FOOD_UNITS 테이블에서 ID 매핑)
-    private Integer foodServingUnitId;
+    // DB 저장용 (정규화된 값)
+    private Double foodServingSizeValue; // 영양성분함량기준량 중 수치값 (DB 필드명 : FOOD_SERVING_VALUE) ex) 100
+    private FoodUnit foodServingSizeUnit; // 영양성분함량기준량의 중 단위 ID (DB 필드명 : FOOD_SERVING_UNIT) ex) g  (FOOD_UNITS 테이블에서 ID 매핑)
 
-    // 식품 전체 중량 (DB 컬럼 FOOD_WEIGHT_RAW) ex) 150.000g, 1,000.000g, 591.000mL
-    @JsonProperty("Z10500")
-    @JsonDeserialize(using = EmptyStringToNullStringDeserializer.class)
-    // API 응답값 그대로 저장 (디버깅/백업용) ex) 150.000g
-    private String foodWeightRaw;
+    private Double foodWeightValue; // 식품 전체 중량 수치값 ex) 150.000
+    private FoodUnit foodWeightUnit; // 식품 전체 중량 단위 ID (DB 필드명 : FOOD_WEIGHT_ID) (단위 매핑 ID (FOOD_UNITS.FOOD_UNIT_ID)) (예: g → 1, mL → 2)
 
-    // 식품 중량 수치값 ex) 150.000
-    private Double foodWeightValue;
+    // 소수점 2자리까지 포맷 (필요 시 변경 가능)
+    //private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
-    // 식품 중량 단위 ID (DB 필드명 : FOOD_WEIGHT_ID) (단위 매핑 ID (FOOD_UNITS.FOOD_UNIT_ID)) (예: g → 1, mL → 2)
-    private Integer foodWeightUnitId;
+    /**
+     * 숫자를 소수점 2자리까지 포맷팅 (스레드 안전)
+     * null일 경우 빈 문자열 반환
+     */
+    private String formatDouble(Double value) {
+        if (value == null) return "";
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(value);
+    }
+
+    /**
+     * 서빙 사이즈 수치값을 포맷팅하여 문자열로 반환
+     */
+    public String getFormattedServingSize() {
+        return formatDouble(foodServingSizeValue);
+    }
+
+    /**
+     * 전체 중량 수치값을 포맷팅하여 문자열로 반환
+     */
+    public String getFormattedWeight() {
+        return formatDouble(foodWeightValue);
+    }
+
+    /**
+     * 서빙 사이즈 수치값과 단위를 합쳐서 문자열로 반환
+     * 둘 중 하나가 없으면 빈 문자열 반환
+     */
+    public String getServingSizeDisplay() {
+        if (foodServingSizeValue == null || foodServingSizeUnit == null) return "";
+        return getFormattedServingSize() + " " + foodServingSizeUnit.getSymbol();
+    }
+
+    /**
+     * 전체 중량 수치값과 단위를 합쳐서 문자열로 반환
+     * 둘 중 하나가 없으면 빈 문자열 반환
+     */
+    public String getWeightDisplay() {
+        if (foodWeightValue == null || foodWeightUnit == null) return "";
+        return getFormattedWeight() + " " + foodWeightUnit.getSymbol();
+    }
+
+    /**
+     * 서빙 사이즈 단위의 심볼을 반환
+     * 단위가 null이면 빈 문자열 반환
+     */
+    public String getFoodServingSizeUnitSymbol() {
+        return (foodServingSizeUnit != null) ? foodServingSizeUnit.getSymbol() : "";
+    }
+
+    /**
+     * 전체 중량 단위의 심볼을 반환
+     * 단위가 null이면 빈 문자열 반환
+     */
+    public String getFoodWeightUnitSymbol() {
+        return (foodWeightUnit != null) ? foodWeightUnit.getSymbol() : "";
+    }
 
     // 1회 섭취참고량 (DB 컬럼 : REFERENCE_INTAKE) ex) '생·숙면 200g, 건면 100g, 당면 30g, 유탕면(봉지)120g, 유탕면(용기)80g', '드레싱 15g, 덮밥소스 165g', 80ml(g), 1식
     @JsonProperty("NUTRI_AMOUNT_SERVING")

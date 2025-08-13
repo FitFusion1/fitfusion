@@ -20,6 +20,7 @@ mybatis:
   configuration:
     jdbc-type-for-null: null
   type-aliases-package: com.fitfusion.vo, com.fitfusion.dto
+  type-handlers-package: com.fitfusion.typehandler
 
 fitfusion:
   upload:
@@ -32,6 +33,7 @@ yolo:
 kakao:
   rest-api-key: 47eef7648a4fcca43d3b58f2460230f5
   redirect-uri: http://localhost:8080/oauth/kakao/callback
-#logging:
-#  level:
-#    org.springframework.security: trace
+
+logging:
+  level:
+    org.springframework.security: trace

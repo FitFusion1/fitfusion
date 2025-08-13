@@ -1,6 +1,7 @@
 package com.fitfusion.mapper;
 
 import com.fitfusion.dto.FoodDto;
+import com.fitfusion.dto.SelectedFoodDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,19 +14,23 @@ public interface FoodMapper {
     // [1] 조회 (SELECT)
     // ==============================================================
 
-    /**
-     * 전체 음식 목록 (풀 데이터: 배치용, 엑셀 다운로드용)
-     */
-    List<FoodDto> findAllForExport();
+//    /**
+//     * 음식 기본 목록 (UI 리스트용)
+//     * - 최소 필드: ID, 이름, ServingSizeRaw, 칼로리
+//     */
+//    List<FoodDto> findAllBasic();
 
     /**
-     * 음식 기본 목록 (UI 리스트용)
-     * - 최소 필드: ID, 이름, ServingSizeRaw, 칼로리
+     * 음식명 LIKE 검색 (자동완성 등 간단 검색)
+     *
+     * @param keyword 검색 키워드
+     * @return  FoodDto 리스트
      */
-    List<FoodDto> findAllBasic();
+    List<FoodDto> searchFoodsByKeyword(@Param("keyword") String keyword);
+
 
     /**
-     * 키워드 검색 + 페이징 (UI 검색 결과)
+     * 키워드 검색 + 페이징 (UI 검색 결과 화면)
      *- 최소 필드: ID, 이름, ServingSizeRaw, 칼로리...
      *
      * @param keyword 검색 키워드
@@ -40,30 +45,6 @@ public interface FoodMapper {
     );
 
     /**
-     * 특정 음식 상세 조회 (단위 정보 포함)
-     *
-     * @param foodId 음식 ID
-     * @return FoodDto
-     */
-    FoodDto findFoodByIdWithUnit(@Param("foodId") Integer foodId);
-
-    /**
-     * 특정 음식 조회 (단위 정보 불필요)
-     *
-     * @param id 음식 ID
-     * @return FoodDto
-     */
-    FoodDto findById(@Param("id") Integer id);
-
-    /**
-     * 음식명 LIKE 검색 (단순 키워드 검색)
-     *
-     * @param keyword 검색 키워드
-     * @return  FoodDto 리스트
-     */
-    List<FoodDto> searchFoodsByKeyword(@Param("keyword") String keyword);
-
-    /**
      * 키워드별 데이터 개수
      *
      * @param keyword 검색 키워드
@@ -72,25 +53,51 @@ public interface FoodMapper {
     int countFoodsByKeyword(@Param("keyword") String keyword);
 
     /**
-     * 식품 대분류 코드(FOOD_CAT1_CD)로 검색  예: 찜류(7), 빵 및 과자류(2), 나물·숙채류(13) 등
+     * 특정 음식 상세 조회
      *
-     * @param foodCat1Code 대분류 코드
-     * @return FoodDto 리스트
+     * @param foodId 음식 ID
+     * @return FoodDto
      */
-    List<FoodDto> findByFoodCat1Code(@Param("foodCat1Code") String foodCat1Code);
+    FoodDto findFoodById(@Param("foodId") Integer foodId);
 
     /**
-     * 수입 여부로 검색 (Y/N)
-     * @param isImported Y/N
-     * @return FoodDto 리스트
+     * UI 전용: 선택된 음식 조회 (SelectedFoodDto)
      */
-    List<FoodDto> findByImported(@Param("isImported") String isImported);
+    List<SelectedFoodDto> findFoodsByIds(@Param("ids") List<Integer> ids);
 
     /**
-     * 모든 음식명 조회 (중복 체크 / 오토컴플릿용)
-     * @return 음식명 리스트
+     * ☆ 비즈니스 로직용: 전체 상세 정보 반환 (FoodDto)
      */
-    List<String> findAllFoodNames();
+    List<FoodDto> findFoodsAsFoodDto(@Param("ids") List<Integer> ids);
+
+//    /**
+//     * 식품 대분류 코드(FOOD_CAT1_CD)로 검색  예: 찜류(7), 빵 및 과자류(2), 나물·숙채류(13) 등
+//     *
+//     * @param foodCat1Code 대분류 코드
+//     * @return FoodDto 리스트
+//     */
+//    List<FoodDto> findByFoodCat1Code(@Param("foodCat1Code") String foodCat1Code);
+//
+//    // 자동완성용
+//    List<String> findAllFoodNames();
+
+//    /**
+//     * 수입 여부로 검색 (Y/N)
+//     * @param isImported Y/N
+//     * @return FoodDto 리스트
+//     */
+//    List<FoodDto> findByImported(@Param("isImported") String isImported);
+
+    /**
+     * 전체 음식 목록 (풀 데이터: 배치용)
+     */
+    List<FoodDto> findAllForExport();
+
+    // 즐겨찾기한 음식
+    List<FoodDto> findFavoriteFoods(int userId);
+
+    // 자주 찾은 음식
+    List<FoodDto> findFrequentFoods(int userId);
 
     // ==============================================================
     // [2] 등록 (INSERT)
