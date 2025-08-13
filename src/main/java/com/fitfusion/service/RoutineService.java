@@ -119,13 +119,15 @@ public class RoutineService {
         routineExerciseMapper.deleteRoutineExercisesByRoutineId(routineDto.getRoutineId());
 
         for (ExerciseItemDto ex : routineDto.getExercises()) {
-            RoutineExercise routineEx = new RoutineExercise();
-            routineEx.setRoutineId(routineDto.getRoutineId());
-            routineEx.setExerciseId(ex.getExerciseId());
-            routineEx.setSets(ex.getSets());
-            routineEx.setReps(ex.getReps());
+            if (ex.getSets() != null) {
+                RoutineExercise routineEx = new RoutineExercise();
+                routineEx.setRoutineId(routineDto.getRoutineId());
+                routineEx.setExerciseId(ex.getExerciseId());
+                routineEx.setSets(ex.getSets());
+                routineEx.setReps(ex.getReps());
 
-            routineExerciseMapper.insertRoutineExerCise(routineEx);
+                routineExerciseMapper.insertRoutineExerCise(routineEx);
+            }
         }
     }
 

@@ -42,9 +42,12 @@
         let page = 1;
         const size = 6;
         let totalPages = Infinity;
+        let isLoading = false;
+        const seen = new Set();
 
         async function loadPage() {
-            if (page > totalPages) return;
+            if (isLoading || page > totalPages) return;
+            isLoading = true;
             try {
                 const res = await fetch(`${API}?page=${page}&size=${size}`, {
                    credentials: 'include',
@@ -52,16 +55,20 @@
                 });
                 if (!res.ok) throw new Error('로드 실패');
                 const {data: routines, meta} = await res.json();
-                totalPages = meta.totalPage;
+                totalPages = meta.totalPage ?? totalPages;
                 routines.forEach(routine => appendCard(routine));
                 page++;
             } catch (err) {
                 console.error(err);
                 alert('루틴 목록을 불러오는 중 오류가 발생했습니다.');
+            } finally {
+                isLoading = false;
             }
         }
 
         function appendCard(routine) {
+            if (seen.has(routine.routineId)) return;
+            seen.add(routine.routineId);
             const card = document.createElement('div');
             card.className = 'RoutineList-card';
             card.innerHTML = `
@@ -102,6 +109,8 @@
                     });
                     if (!d.ok) throw new Error('삭제 실패');
                     list.innerHTML = '';
+                    seen.clear();
+                    isLoading = false;
                     page = 1;
                     totalPages = Infinity;
                     loadPage();
