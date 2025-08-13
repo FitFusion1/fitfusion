@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
@@ -25,9 +24,6 @@ class FoodApiServiceTest {
 
     @Autowired
     private FoodApiService foodApiService;
-
-    @MockBean
-    private com.fitfusion.mapper.UserMapper userMapper;
 
     @BeforeEach
     void beforeTest() {
@@ -44,13 +40,13 @@ class FoodApiServiceTest {
     }
 
     /**
-     * ✅ 운영 스타일 로그 테스트
+     *  운영 스타일 로그 테스트
      * - 키워드 리스트 기반으로 페이지별 데이터 수집 및 저장
      * - API URL, 페이지별 데이터 건수, DB 저장 결과 출력
      */
     @Test
     void testImportByKeyword() {
-        List<String> keywords = List.of("말차", "거봉");
+        List<String> keywords = List.of("라면", "닭");
 
         for (String keyword : keywords) {
             printMainDivider();

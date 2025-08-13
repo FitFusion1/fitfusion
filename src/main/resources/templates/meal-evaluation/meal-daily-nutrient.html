@@ -23,7 +23,7 @@
         .macro-color-carb { color: #ffc107; }
         .macro-color-fat { color: #20c997; }
         .macro-color-protein { color: #6f42c1; }
-        .nutrition-flex {
+        .nutrient-flex {
             display: flex;
             flex-wrap: wrap;
             gap: 30px;
@@ -111,7 +111,7 @@
 
     <h5 class="mt-5">영양물 섭취</h5>
 
-    <div class="nutrition-flex mt-3">
+    <div class="nutrient-flex mt-3">
         <div class="chart-container">
             <canvas id="macroChart"></canvas>
         </div>
@@ -180,7 +180,7 @@
     new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ['Fat', 'Carbs', 'Protein'],
+            labels: ['Fat', 'carbohydrateG', 'Protein'],
             datasets: [{
                 data: [27, 47, 27],
                 backgroundColor: [

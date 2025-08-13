@@ -5,26 +5,174 @@
 
 <mapper namespace="com.fitfusion.mapper.MealRecordMapper">
 
-    <!-- 오늘 섭취 영양소 합계 -->
-    <select id="getTodayNutritionSummary" parameterType="int" resultType="map">
+    <select id="findByMealRecordId" parameterType="int" resultType="com.fitfusion.dto.MealRecordDto">
         SELECT
-        NVL(SUM(CALORIES), 0) AS totalCalories,
-        NVL(SUM(CARBOHYDRATE_G), 0) AS totalCarbs,
-        NVL(SUM(PROTEIN_G), 0) AS totalProtein,
-        NVL(SUM(FAT_G), 0) AS totalFat
-        FROM MEAL_RECORDS
-        WHERE USER_ID = #{userId}
-        AND TRUNC(RECORD_DATE) = TRUNC(SYSDATE)
+             MEAL_RECORD_ID AS mealRecordId
+            , USER_ID AS userId
+            , FOOD_ID AS foodId
+            , MEAL_TIME AS mealTime
+            , USER_INTAKE AS userIntake
+            , RECORD_DATE AS recordDate
+            , CREATED_DATE AS createdDate
+            , UPDATED_DATE AS updatedDate
+        FROM FITFUSION_MEAL_RECORDS
+        WHERE MEAL_RECORD_ID = #{mealRecordId}
     </select>
 
-    <!-- 식단 기록 추가 -->
+
+    <!-- 특정 음식의 영양소(detail 뷰에 사용될 메소드) -->
+    <select id="selectMealRecordDetailById" parameterType="int" resultType="com.fitfusion.dto.MealRecordDto">
+        SELECT
+            r.MEAL_RECORD_ID          AS mealRecordId,
+            r.USER_ID                 AS userId,
+            r.FOOD_ID                 AS foodId,
+            r.MEAL_TIME               AS mealTime,
+            r.USER_INTAKE             AS userIntake,
+            r.RECORD_DATE             AS recordDate,
+
+            f.FOOD_NAME               AS foodName,
+            f.MAKER_NAME              AS makerName,
+            f.FOOD_SERVING_SIZE_VALUE AS foodServingSizeValue,
+            f.FOOD_SERVING_SIZE_UNIT  AS foodServingSizeUnit,
+            f.FOOD_WEIGHT_VALUE       AS foodWeightValue,
+            f.FOOD_WEIGHT_UNIT        AS foodWeightUnit,
+            f.IMAGE_URL               AS imageUrl,
+
+            f.CALORIES                AS calories,
+            f.CARBOHYDRATE_G          AS carbohydrateG,
+            f.PROTEIN_G               AS proteinG,
+            f.FAT_G                   AS fatG,
+            f.SUGAR_G                 AS sugarG,
+            f.SUGAR_ALCOHOL_G         AS sugarAlcoholG,
+            f.FIBER_G                 AS fiberG,
+            f.SATURATED_FAT_G         AS saturatedFatG,
+            f.TRANS_FAT_G             AS transFatG,
+            f.CHOLESTEROL_MG          AS cholesterolMg,
+            f.UNSATURATED_FAT_G       AS unsaturatedFatG,
+            f.SODIUM_MG               AS sodiumMg,
+            f.CAFFEINE_MG             AS caffeineMg,
+            f.CALCIUM_MG              AS calciumMg
+
+        FROM FITFUSION_MEAL_RECORDS r
+                 JOIN FITFUSION_FOOD_ITEMS f ON r.FOOD_ID = f.FOOD_ID
+        WHERE r.MEAL_RECORD_ID = #{mealRecordId}
+    </select>
+
+    <!--  특정 날짜 식단 기록 조회(해당 날짜에 기록된 모든 음식들, 기존에 영양소 정보가 없었으나 modal-detail-nutrient의 값을 js로 보여주기 위해 추가함) -->
+    <select id="getMealRecordsByDate" resultType="com.fitfusion.dto.MealRecordDto">
+        SELECT
+            r.MEAL_RECORD_ID AS mealRecordId,
+            r.USER_ID AS userId,
+            r.FOOD_ID AS foodId,
+            r.MEAL_TIME AS mealTime,
+            r.USER_INTAKE AS userIntake,
+            r.RECORD_DATE AS recordDate,
+            r.CREATED_DATE AS createdDate,
+            r.UPDATED_DATE AS updatedDate,
+            f.FOOD_NAME AS foodName,
+            f.IMAGE_URL AS imageUrl,
+            f.FOOD_SERVING_SIZE_VALUE AS foodServingSizeValue,
+            f.FOOD_SERVING_SIZE_UNIT AS foodServingSizeUnit,
+
+            f.CALORIES                AS calories,
+            f.CARBOHYDRATE_G          AS carbohydrateG,
+            f.PROTEIN_G               AS proteinG,
+            f.FAT_G                   AS fatG,
+            f.SUGAR_G                 AS sugarG,
+            f.SUGAR_ALCOHOL_G         AS sugarAlcoholG,
+            f.FIBER_G                 AS fiberG,
+            f.SATURATED_FAT_G         AS saturatedFatG,
+            f.TRANS_FAT_G             AS transFatG,
+            f.CHOLESTEROL_MG          AS cholesterolMg,
+            f.UNSATURATED_FAT_G       AS unsaturatedFatG,
+            f.SODIUM_MG               AS sodiumMg,
+            f.CAFFEINE_MG             AS caffeineMg,
+            f.CALCIUM_MG              AS calciumMg
+
+        FROM FITFUSION_MEAL_RECORDS r
+                 JOIN FITFUSION_FOOD_ITEMS f ON r.FOOD_ID = f.FOOD_ID
+        WHERE r.USER_ID = #{userId}
+          AND TRUNC(r.RECORD_DATE) = TRUNC(TO_DATE(#{recordDate}, 'YYYY-MM-DD'))
+        ORDER BY r.MEAL_TIME ASC, r.MEAL_RECORD_ID ASC
+    </select>
+
+    <!--  특정 날짜 영양소 합계 -->
+    <select id="getTodayNutrientSummary" resultType="map">
+        SELECT
+            NVL(SUM(f.CALORIES), 0) AS totalCalories,
+            NVL(SUM(f.CARBOHYDRATE_G), 0) AS totalCarbs,
+            NVL(SUM(f.PROTEIN_G), 0) AS totalProtein,
+            NVL(SUM(f.FAT_G), 0) AS totalFat
+        FROM FITFUSION_MEAL_RECORDS r
+                 JOIN FITFUSION_FOOD_ITEMS f ON r.FOOD_ID = f.FOOD_ID
+        WHERE r.USER_ID = #{userId}
+          AND TRUNC(r.RECORD_DATE) = TRUNC(#{recordDate})
+    </select>
+
+    <!--  섭취량 업데이트 -->
+    <update id="updateIntake">
+        UPDATE FITFUSION_MEAL_RECORDS
+        SET USER_INTAKE = #{userIntake},
+            UPDATED_DATE = SYSDATE
+        WHERE MEAL_RECORD_ID = #{mealRecordId}
+    </update>
+
+    <!--  식단 기록 삭제 -->
+    <delete id="deleteByMealRecordId" parameterType="int">
+        DELETE FROM FITFUSION_MEAL_RECORDS
+        WHERE MEAL_RECORD_ID = #{mealRecordId}
+    </delete>
+
+    <!--  단건 Insert -->
     <insert id="insertMealRecord" parameterType="com.fitfusion.dto.MealRecordDto">
-        INSERT INTO MEAL_RECORDS (
-        RECORD_ID, USER_ID, MEAL_TIME, CALORIES, CARBOHYDRATE_G, PROTEIN_G, FAT_G, RECORD_DATE
+        INSERT INTO FITFUSION_MEAL_RECORDS (
+            MEAL_RECORD_ID,
+            USER_ID,
+            FOOD_ID,
+            MEAL_TIME,
+            USER_INTAKE,
+            RECORD_DATE,
+            CREATED_DATE,
+            UPDATED_DATE
         ) VALUES (
-        SEQ_MEAL_RECORDS.NEXTVAL,
-        #{userId}, #{mealTime}, #{calories}, #{carbohydrateG}, #{proteinG}, #{fatG}, SYSDATE
-        )
+                     FITFUSION_MEAL_RECORDS_SEQ.NEXTVAL,
+                     #{userId},
+                     #{foodId},
+                     #{mealTime},
+                     #{userIntake},
+                     #{recordDate},
+                     SYSDATE,
+                     NULL
+                 )
+    </insert>
+
+    <!--  다건 Insert
+          List<MealRecordDto> 처리
+    -->
+    <insert id="insertMealRecords">
+        INSERT ALL
+        <foreach collection="mealRecords" item="r">
+            INTO FITFUSION_MEAL_RECORDS (
+            MEAL_RECORD_ID,
+            USER_ID,
+            FOOD_ID,
+            MEAL_TIME,
+            USER_INTAKE,
+            RECORD_DATE,
+            CREATED_DATE,
+            UPDATED_DATE
+            ) VALUES (
+            FITFUSION_MEAL_RECORDS_SEQ.NEXTVAL,
+            #{r.userId},
+            #{r.foodId},
+            #{r.mealTime, jdbcType=VARCHAR, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{r.userIntake, jdbcType=NUMERIC},
+            #{r.recordDate, jdbcType=DATE},
+            SYSDATE,
+            NULL
+            )
+        </foreach>
+        SELECT 1 FROM DUAL
     </insert>
 
 </mapper>

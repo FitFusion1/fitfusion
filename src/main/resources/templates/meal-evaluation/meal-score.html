@@ -1,0 +1,148 @@
+<div th:fragment="modal-meal-score" class="modal fade" id="modal-meal-score" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="container">
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
+
+                <div class="container">
+                    <header>
+                        <p class="subtitle">오늘은 치팅데이</p>
+                        <h1>눈 감고 있을게요</h1>
+                        <div class="icon">
+                            <img src="https://cdn-icons-png.flaticon.com/512/619/619034.png" alt="축하 아이콘" />
+                        </div>
+                    </header>
+
+                    <section class="meal-info">
+                        <div class="info-card">
+                            <h2>오늘은 치팅데이 🎉</h2>
+                            <p>하하, 오늘은 치팅데이🤭 오늘만 칼로리 리미트 해제인거 알죠?</p>
+                        </div>
+                        <div class="info-card">
+                            <h2>단백질 풍부</h2>
+                            <p>잘 챙겨드셨어요</p>
+                        </div>
+                    </section>
+
+                    <section class="score-section">
+                        <div class="score-circle">
+                            <img src="https://cdn-icons-png.flaticon.com/512/1046/1046759.png" alt="점수 아이콘" />
+                        </div>
+                        <div class="score-text">
+                            <p class="score">6점</p>
+                            <p class="score-desc">맛있으면 0칼로리</p>
+                        </div>
+                    </section>
+
+                    <section class="nutrient-section">
+                        <div class="nutrient-tabs">
+                            <button class="tab active">전체</button>
+                            <button class="tab">점심</button>
+                            <button class="tab">저녁</button>
+                        </div>
+
+                        <div class="nutrient">
+                            <div class="nutrient-header">
+                                <span class="nutrient-name">탄수화물</span>
+                                <span class="nutrient-value">1049g</span>
+                                <span class="label warning">주의</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 90%;"></div>
+                            </div>
+                            <p class="top-list">Top6: 브라우니, 땅콩 수액상 with 일몰소스, 코코아 파우더</p>
+                        </div>
+
+                        <div class="nutrient">
+                            <div class="nutrient-header">
+                                <span class="nutrient-name">단백질</span>
+                                <span class="nutrient-value">210g</span>
+                                <span class="label warning">주의</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 80%;"></div>
+                            </div>
+                            <p class="top-list">Top5: 브라우니, 땅콩, 코코아 파우더</p>
+                        </div>
+
+                        <div class="nutrient">
+                            <div class="nutrient-header">
+                                <span class="nutrient-name">지방</span>
+                                <span class="nutrient-value">848g</span>
+                                <span class="label warning">주의</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 95%;"></div>
+                            </div>
+                            <p class="top-list">Top5: 브라우니, 땅콩, 피자</p>
+                        </div>
+
+                        <div class="nutrient">
+                            <div class="nutrient-header">
+                                <span class="nutrient-name">트랜스지방</span>
+                                <span class="nutrient-value">0.2g</span>
+                                <span class="label safe">최적</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 10%; background-color: #80d3e3;"></div>
+                            </div>
+                            <p class="top-list">Top3: 땅콩, 피자</p>
+                        </div>
+
+                        <div class="nutrient">
+                            <div class="nutrient-header">
+                                <span class="nutrient-name">식이섬유</span>
+                                <span class="nutrient-value">11.8g</span>
+                                <span class="label danger">부족</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 15%; background-color: #ff6b6b;"></div>
+                            </div>
+                            <p class="top-list">Top1: 땅콩</p>
+                        </div>
+
+                        <div class="nutrient">
+                            <div class="nutrient-header">
+                                <span class="nutrient-name">철</span>
+                                <span class="nutrient-value">1.4mg</span>
+                                <span class="label danger">부족</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 5%; background-color: #ff6b6b;"></div>
+                            </div>
+                            <p class="top-list">Top1: 땅콩</p>
+                        </div>
+
+                        <div class="nutrient">
+                            <div class="nutrient-header">
+                                <span class="nutrient-name">비타민B6</span>
+                                <span class="nutrient-value">0mg</span>
+                                <span class="label danger">부족</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 0%; background-color: #ff6b6b;"></div>
+                            </div>
+                            <p class="top-list">Top1: 땅콩</p>
+                        </div>
+
+                        <div class="nutrient">
+                            <div class="nutrient-header">
+                                <span class="nutrient-name">당류</span>
+                                <span class="nutrient-value">496.5g</span>
+                                <span class="label warning">주의</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <button class="confirm-btn">확인했어요</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
