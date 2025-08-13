@@ -66,13 +66,6 @@ public class RoutineService {
     public void deleteRoutineListByUserAndRoutine(int userId, int routineId) {
         routineMapper.deleteRoutineByUserAndRoutineId(userId, routineId);
     }
-    public void updateRoutine(Routine routine) {
-        routineMapper.updateRoutine(routine);
-    }
-
-    public Routine getRoutineDetailByUserId(int userId, int routineId) {
-        return routineMapper.getRoutineDetailByUserAndRoutineId(userId, routineId);
-    }
 
     public RoutineDetailDto getRoutineDetail(int routineId, int userId) {
         RoutineDetailDto routine = routineMapper.getRoutineInfo(routineId, userId);

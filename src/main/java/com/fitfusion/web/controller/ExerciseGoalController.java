@@ -1,9 +1,6 @@
 package com.fitfusion.web.controller;
 
 import com.fitfusion.enums.GoalType;
-import com.fitfusion.mapper.AvoidPartsMapper;
-import com.fitfusion.mapper.ExerciseGoalMapper;
-import com.fitfusion.mapper.TargetPartsMapper;
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseConditionService;
 import com.fitfusion.service.ExerciseGoalService;
@@ -18,7 +15,6 @@ import com.fitfusion.web.form.ExerciseGoalRegisterForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;

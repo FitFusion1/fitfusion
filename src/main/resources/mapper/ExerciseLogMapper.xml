@@ -82,38 +82,6 @@
     </select>
 
 
-    <select id="findExerciseLogsDetail" resultType="ExerciseLogDto">
-        SELECT
-            e.name                  AS exerciseName,
-            l.session_id            AS sessionId,
-            l.log_id                AS logId,
-            l.log_date              AS logDate,
-            l.reps                  AS reps,
-            l.sets                  AS sets,
-            l.weight                AS weight,
-            l.exercise_id           AS exerciseId,
-            l.is_checked            AS isChecked,
-            l.duration_minutes      AS durationMinutes,
-            l.user_id               AS userId,
-            l.routine_exercise_id   AS routineExerciseId,
-            r.name                  AS routineName,
-            re.routine_id           as routineId
-        FROM
-            fitfusion_exercise_logs l,
-            fitfusion_exercises e,
-            fitfusion_routine_exercise re,
-            fitfusion_routine r
-        WHERE
-            l.user_id = #{userId}
-          AND l.exercise_id = e.exercise_id
-          AND l.routine_exercise_id = re.routine_exercise_id
-          AND re.routine_id = r.routine_id
-        ORDER BY
-            l.log_date DESC
-        offset #{offset} rows
-        fetch next #{size} rows only
-    </select>
-
     <select id="findAllExerciseLogsDetail" parameterType="int" resultType="ExerciseLogDto">
         SELECT
             e.name                AS exerciseName,

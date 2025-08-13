@@ -1,12 +1,9 @@
 package com.fitfusion.web.controller;
 
 import com.fitfusion.dto.*;
-import com.fitfusion.enums.BodyPart;
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.*;
 import com.fitfusion.vo.*;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

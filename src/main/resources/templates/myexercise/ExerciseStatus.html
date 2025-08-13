@@ -38,7 +38,7 @@
             부족한 운동 부위:
             <span class="ExerciseStatus-highlight" th:text="${exerciseStatus.leastUsedPart}">등</span>
         </div>
-        <a th:href="@{/routine/targetRecommend}" class="ExerciseStatus-recommend-btn">부족한 운동 추천받기</a>
+        <a th:href="@{/routine/create/target}" class="ExerciseStatus-recommend-btn">부족한 운동 추천받기</a>
     </div>
 
     <!-- 성실도 -->
@@ -87,7 +87,7 @@
     <!-- 하단 버튼 -->
     <div class="ExerciseStatus-button-container">
         <a href="/myexercise" class="ExerciseStatus-btn">나의 운동으로 가기</a>
-        <a href="/routine" class="ExerciseStatus-btn">운동하러 가기</a>
+        <a href="/exercisegoal/goallist" class="ExerciseStatus-btn">운동하러 가기</a>
     </div>
     <th:block layout:fragment="script">
         <!-- Chart.js + Plugin -->

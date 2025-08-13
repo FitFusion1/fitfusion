@@ -1,7 +1,6 @@
 package com.fitfusion.service;
 
 import com.fitfusion.dto.ExerciseGoalDto;
-import com.fitfusion.dto.SelectGoalResponseDto;
 import com.fitfusion.enums.GoalType;
 import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.mapper.ExerciseGoalMapper;
@@ -20,7 +19,6 @@ public class ExerciseGoalService {
 
     private final ExerciseGoalMapper exerciseGoalMapper;
     private final SelectedGoalService selectedGoalService;
-    private final ExerciseConditionService exerciseConditionService;
 
 
     public List<ExerciseGoalDto> getAllGoalByUserId(int userId) {
@@ -32,15 +30,12 @@ public class ExerciseGoalService {
                     .toList();
     }
 
+    @Transactional
     public void insertUserGoalWithSelection(ExerciseGoalRegisterForm formData) {
         exerciseGoalMapper.insertUserGoal(formData);
         selectedGoalService.selectGoal(formData.getUserId(), formData.getGoalId());
     }
 
-    public void insertUserGoal(ExerciseGoalRegisterForm formData) {
-
-        exerciseGoalMapper.insertUserGoal(formData);
-    }
 
     public ExerciseGoal getUserGoalByUserId(int userId, int goalId) {
         return exerciseGoalMapper.getUserGoalByUserIdAndGoalId(userId, goalId);
@@ -61,6 +56,7 @@ public class ExerciseGoalService {
         exerciseGoalMapper.updateGoal(exerciseGoal);
     }
 
+    @Transactional
     public void deleteGoal(int goalId) {
         selectedGoalService.deleteSelectedGoal(goalId);
         exerciseGoalMapper.deleteGoal(goalId);

@@ -2,7 +2,6 @@ package com.fitfusion.mapper;
 
 import com.fitfusion.vo.Condition;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface ConditionMapper {
@@ -16,7 +15,4 @@ public interface ConditionMapper {
 
     int getConditionIdByUserId(int userId);
 
-    void deleteAvoidPartsByUserId(int userId);
-
-    void deleteTargetPartsByUserId(int userId);
 }

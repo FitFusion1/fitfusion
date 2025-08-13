@@ -1,6 +1,5 @@
 package com.fitfusion.web.controller;
 
-import com.fitfusion.dto.ExerciseLogDto;
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.*;
 import lombok.RequiredArgsConstructor;
@@ -9,10 +8,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
