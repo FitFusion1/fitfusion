@@ -21,6 +21,25 @@
     display: block;
 }
 
+/*길찾기, 지도페이지 버튼, 더보기, 갈찾기, 주소복사*/
+.black-btn {
+    background-color: #333;
+    color: white;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease;
+}
+
+.black-btn:hover {
+    background-color: #555;
+}
+
+
 /* ✅ 찜하기 버튼 - 하얀색 배경 + 그림자 + 라운드 */
 .like-button {
     position: absolute;
@@ -259,3 +278,43 @@ li {
     background-color: #ff4d4d; /* 운동 느낌 강렬한 색으로 호버 효과 */
     transform: scale(1.05);
 }
+
+.copy-btn {
+    margin-left: 10px;
+    padding: 4px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+
+#current-location-btn,
+#roadview-btn {
+    position: absolute;
+    right: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+#current-location-btn:hover,
+#roadview-btn:hover {
+    background: #f1f1f1;
+}
+
+#current-location-btn {
+    bottom: 100px;
+}
+
+#roadview-btn {
+    bottom: 50px; /* 현재 위치 버튼 아래로 50px 간격 */
+}
+
+

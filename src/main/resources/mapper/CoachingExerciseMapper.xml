@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.CoachingExerciseMapper">
+
+    <!-- List<CoachingExercise> getAllCoachingExercises(); -->
+    <select id="getAllCoachingExercises" resultType="CoachingExercise">
+        SELECT exercise_id                 id
+             , exercise_title              title
+             , exercise_name               name
+             , exercise_description        description
+             , exercise_tips               tips
+             , exercise_rep_seconds        repTime
+             , exercise_preview_image_path previewImagePath
+        FROM FITFUSION_COACHING_EXERCISES
+    </select>
+
+    <!-- CoachingExercise getCoachingExerciseById(int id); -->
+    <select id="getCoachingExerciseById" resultType="CoachingExercise">
+        SELECT exercise_id                 id
+             , exercise_title              title
+             , exercise_name               name
+             , exercise_description        description
+             , exercise_tips               tips
+             , exercise_rep_seconds        repTime
+             , exercise_preview_image_path previewImagePath
+        FROM FITFUSION_COACHING_EXERCISES
+        WHERE EXERCISE_ID = #{id}
+    </select>
+
+    <!-- String getCoachingExerciseNameById(int id); -->
+    <select id="getCoachingExerciseNameById" resultType="java.lang.String">
+        SELECT
+            exercise_name
+        FROM
+            FITFUSION_COACHING_EXERCISES
+        WHERE
+            EXERCISE_ID = #{id}
+    </select>
+
+    <!-- String getCoachingExerciseTitleById(int id); -->
+    <select id="getCoachingExerciseTitleById" resultType="java.lang.String">
+        SELECT
+            exercise_title
+        FROM
+            FITFUSION_COACHING_EXERCISES
+        WHERE
+            EXERCISE_ID = #{id}
+    </select>
+
+</mapper>

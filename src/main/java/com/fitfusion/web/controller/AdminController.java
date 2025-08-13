@@ -2,6 +2,7 @@ package com.fitfusion.web.controller;
 
 import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.AdminService;
+import com.fitfusion.vo.Exercise;
 import com.fitfusion.vo.Notice;
 import com.fitfusion.vo.User;
 import com.fitfusion.vo.Video;
@@ -29,6 +30,7 @@ public class AdminController {
         model.addAttribute("countActiveUsers", adminService.countActiveUsers());
         model.addAttribute("countNotices", adminService.countNotices());
         model.addAttribute("countVideos", adminService.countVideos());
+        model.addAttribute("countExercises", adminService.countExercises());
         return "admin/admin";
     }
 
@@ -86,13 +88,11 @@ public class AdminController {
     public String createVideo(Model model) {
         model.addAttribute("exercises", adminService.getAllExercises());
         model.addAttribute("categories", adminService.getAllVideoCategories());
-        System.out.println(adminService.getAllExercises());
         return "admin/video-form";
     }
 
     @PostMapping("/video/create")
     public String createVideo(@ModelAttribute AdminVideoForm form, @AuthenticationPrincipal SecurityUser securityUser) {
-        System.out.println(form.toString());
         User user = securityUser.getUser();
         adminService.insertVideo(form, user.getUserId());
 
@@ -133,6 +133,44 @@ public class AdminController {
         return "admin/product";
     }
 
+    @GetMapping("/exercise")
+    public String exercise(Model model) {
+        model.addAttribute("exercises", adminService.getAllExercises());
+        model.addAttribute("countExercises", adminService.countExercises());
+        return "admin/exercise";
+    }
+
+    @GetMapping("/exercise/create")
+    public String createExercise() {
+        return "admin/exercise-form";
+    }
+
+    @PostMapping("/exercise/create")
+    public String createExercise(@ModelAttribute Exercise exercise) {
+        adminService.insertExercise(exercise);
+        return "redirect:/admin/exercise";
+    }
+
+    @GetMapping("/exercise/delete/{no}")
+    public String deleteExercise(@PathVariable int no) {
+        adminService.deleteExerciseById(no);
+        return "redirect:/admin/exercise";
+    }
+
+    @GetMapping("/exercise/modify/{no}")
+    public String modifyExercise(@PathVariable int no, Model model) {
+        Exercise exercise = adminService.getExerciseById(no);
+        model.addAttribute("exercise", exercise);
+        return "admin/exercise-modify-form";
+    }
+
+    @PostMapping("/exercise/modify/{no}")
+    public String modifyExercise(@PathVariable int no, @ModelAttribute Exercise exercise, @AuthenticationPrincipal SecurityUser securityUser) {
+        adminService.modifyExercise(exercise);
+
+        return "redirect:/admin/exercise";
+    }
+
     @GetMapping("/notice")
     public String notice(Model model) {
         model.addAttribute("notices", adminService.getAllNotices());
@@ -151,11 +189,9 @@ public class AdminController {
     }
 
     @PostMapping("/notice/create")
-    public String createNotice(@ModelAttribute AdminNoticeForm form) {
+    public String createNotice(@ModelAttribute AdminNoticeForm form, @AuthenticationPrincipal SecurityUser securityUser) {
 
-        // 테스트 아이디 고정
-        User user = new User();
-        user.setUserId(2);
+        User user = securityUser.getUser();
 
         adminService.insertNotice(form, user.getUserId());
 
@@ -180,8 +216,6 @@ public class AdminController {
         form.setNoticeId(no);
 
         User user = securityUser.getUser();
-
-        System.out.println(form.toString());
 
         adminService.modifyNotice(form, user.getUserId());
 

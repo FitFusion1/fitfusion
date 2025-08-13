@@ -13,61 +13,124 @@
 </head>
 
 <div layout:fragment="content">
-<div class="ExerciseGoal-container">
-    <h1 class="ExerciseGoal-title">운동 목표 관리</h1>
-    <div class="ExerciseGoal-description">
-        나의 목표를 설정하고 관리해보세요. 한 번에 하나의 목표만 적용됩니다.
-    </div>
-
-    <div class="ExerciseGoal-goalList">
-        <!-- 선택된 목표 -->
-        <div class="ExerciseGoal-goalCard"
-             th:each="exerciseGoal : ${exerciseGoals}"
-             th:classappend="${selectedGoal != null and exerciseGoal.goalId == selectedGoal.goalId} ? 'ExerciseGoal-selected' : ''"
-             th:onclick="|location.href='@{/exercisegoal/goaldetail/{goalId}(goalId=${exerciseGoal.goalId})}'|">
-            <div class="ExerciseGoal-goalInfo">
-                <h3>
-                    <span th:text="${exerciseGoal.goalType}">체중 감량 (5kg)</span>
-                    <span class="ExerciseGoal-progressText"
-                      th:text="'목표까지' + (${exerciseGoal.startWeight-exerciseGoal.targetWeight}) +' kg 남았습니다'">남은 정보</span>
-                </h3>
-                <p th:text="'기간: ' + ${#dates.format(exerciseGoal.startDate, 'yyyy.MM.dd')} + '~' + ${#dates.format(exerciseGoal.endDate, 'yyyy.MM.dd')}">기간: 2025.07.01 ~ 2025.08.31</p>
-            </div>
-            <div class="ExerciseGoal-goalActions">
-                <form th:action="@{/exercisegoal/select}" method="post"
-                      th:if="${selectedGoal == null or exerciseGoal.goalId != selectedGoal.goalId}">
-                    <input type="hidden" name="goalId" th:value="${exerciseGoal.goalId}">
-                    <button class="ExerciseGoal-selectButton" type="submit">이 목표 선택</button>
-                </form>
-                <form th:action="@{/exercisegoal/unselect}" method="post"
-                      th:if="${selectedGoal != null and exerciseGoal.goalId == selectedGoal.goalId}">
-                <button class="ExerciseGoal-selectButton ExerciseGoal-active" type="submit">이 목표 선택됨</button>
-                </form>
-
-                <button type="button"
-                        class="ExerciseGoal-selectButton"
-                        th:onclick="|event.stopPropagation(); location.href='@{/exercisegoal/goalupdate/{goalId}(goalId=${exerciseGoal.goalId})}'|">수정</button>
-
-                <form th:action="@{/exercisegoal/goaldelete/{goalId}(goalId=${exerciseGoal.goalId})}" method="post">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="hidden" name="goalId" th:value="${exerciseGoal.goalId}">
-                    <button class="ExerciseGoal-selectButton" type="submit">삭제</button>
-                </form>
-
-            </div>
+    <div class="ExerciseGoal-container">
+        <h1 class="ExerciseGoal-title">운동 목표 관리</h1>
+        <div class="ExerciseGoal-description">
+            나의 목표를 설정하고 관리해보세요. 한 번에 하나의 목표만 적용됩니다.
         </div>
-</div>
-<div class="exercisegoal-button-group">
-    <button class="exercisegoal-add-button" th:onclick="|location.href='@{/exercisegoal/step1}'|">+ 새 목표 추가</button>
-    <form th:action="@{/exercisegoal/checkgoal}" method="post">
-        <button class="exercisegoal-add-button" type="submit" >+ 새 루틴 추가</button>
-    </form>
-</div>
-</div>
+        <div class="goal-notice">
+            <p>💡 근육 증가 목표일 때만 부위·컨디션 조사가 적용됩니다. 다른 목표를 선택하면 이전에 입력한 컨디션 정보는 초기화됩니다.</p>
+        </div>
+
+        <div id="goal-list" class="ExerciseGoal-goalList"></div>
+        <div class="exercisegoal-button-group">
+            <button id="btn-add" class="exercisegoal-add-button" type="button">+ 새 목표 추가</button>
+            <button id="btn-routine" class="exercisegoal-add-button" type="button">+ 새 루틴 추가</button>
+        </div>
+    </div>
 </div>
 <th:block layout:fragment="script">
-    <script th:if="${goalAlert != null}" th:inline="javascript">
-        alert([[${goalAlert}]]);
+    <script>
+        const API = '/api/goals';
+        const list = document.getElementById('goal-list');
+
+        const csrf = () => {
+            const m = document.querySelector('meta[name="_csrf"]');
+            return m ? {'X-CSRF-TOKEN': m.content} : {};
+        };
+
+        const fmt = iso => iso.slice(0, 10).replace(/-/g, '.');
+
+        (async () => render(await fetchGoals()))();
+
+        async function fetchGoals() {
+            const res = await fetch(API, {credentials: 'include'});
+            if (!res.ok) throw new Error('목표 목록을 가져오지 못했습니다.')
+            return res.json();
+        }
+
+        function render({goals, selectedGoal}) {
+            const selectedId = selectedGoal?.goalId ?? null;
+            list.innerHTML = '';
+
+            goals.forEach(g => {
+                const diff = g.startWeight - g.targetWeight;
+                const card = document.createElement('div');
+                card.className = 'ExerciseGoal-goalCard' +
+                    (g.goalId === selectedId ? ' ExerciseGoal-selected' : '');
+                card.innerHTML = `
+                <div class="ExerciseGoal-goalInfo">
+                    <h3>
+                        <span>${g.goalType}</span>
+                        <span class="ExerciseGoal-progressText">목표까지 ${Math.abs(diff)}kg ${diff > 0 ? '감량' : '증량'} 남았습니다</span>
+                    </h3>
+                    <p>
+                        기간: ${fmt(g.startDate)} ~ ${fmt(g.endDate)}</p>
+                </div>
+                <div class="ExerciseGoal-goalActions">
+                    ${selectBtn(g.goalId === selectedId, g.goalId)}
+                    <button class="ExerciseGoal-selectButton"
+                            onclick="location.href='/exercisegoal/goalupdate/${g.goalId}'">
+                        수정
+                    </button>
+                    <button class="ExerciseGoal-selectButton" data-delete="${g.goalId}">삭제</button>
+                </div>`;
+
+                card.addEventListener('click', e => {
+                    if (e.target.closest('.ExerciseGoal-goalActions')) return;
+                    location.href = `/exercisegoal/goaldetail/${g.goalId}`;
+                });
+                list.appendChild(card);
+            });
+        }
+
+        const selectBtn = (selected, goalId) =>
+            selected
+                ? `<button class="ExerciseGoal-selectButton ExerciseGoal-active" data-unselect>
+                 이 목표 선택됨
+                 </button>`
+                : `<button class="ExerciseGoal-selectButton" data-select="${goalId}">
+                 이 목표 선택
+                </button>`;
+            list.addEventListener('click', async e => {
+                const {select, unselect, delete: del} = e.target.dataset;
+                try {
+                    if (select) {
+                        const r = await fetch(`${API}/${select}/select`, {
+                            method: 'POST',
+                            headers: csrf(),
+                            credentials: 'include'
+                        });
+                        const j = await r.json();
+                        if (j.alert) alert(j.alert);
+                    }
+                    if (unselect !== undefined) {
+                        await fetch(`${API}/selected`, {
+                           method: 'DELETE',
+                           headers: csrf(),
+                           credentials: 'include'
+                        });
+                    }
+                    if (del) {
+                        if (!confirm('정말 삭제할까요?')) return;
+                        await fetch(`${API}/${del}`, {
+                            method: 'DELETE',
+                            headers: csrf(),
+                            credentials: 'include'
+                        });
+                    }
+                    render(await fetchGoals());
+                }   catch (err) {
+                    console.error(err);
+                    alert('목표를 가져오지 못했습니다.');
+                }
+            });
+
+            document.getElementById('btn-add')
+                    .addEventListener('click', () => location.href = '/exercisegoal/step1');
+            document.getElementById('btn-routine')
+                    .addEventListener('click', () => location.href = '/routine/create/ai');
+
     </script>
 </th:block>
 </html>

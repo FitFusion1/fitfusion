@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='admin'">
+<head>
+    <meta charset="UTF-8" />
+    <title>운동 목록 관리</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/admin.css}">
+    </th:block>
+    <script>
+        function toggleDescription(btn) {
+            const descDiv = btn.previousElementSibling;
+            if (descDiv.classList.contains('expanded')) {
+                descDiv.classList.remove('expanded');
+                btn.innerText = '더보기';
+            } else {
+                descDiv.classList.add('expanded');
+                btn.innerText = '닫기';
+            }
+        }
+    </script>
+</head>
+
+<section layout:fragment="content" class="main">
+    <!-- 헤더 -->
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1><i class="fas fa-dumbbell"></i> 운동 목록 관리</h1>
+            <p class="admin-subtitle">/admin/exercises</p>
+        </div>
+        <div class="admin-header-right">
+            <a th:href="@{/admin/exercise/create}" class="admin-btn admin-btn-primary">
+                <i class="fas fa-plus"></i> 운동 추가
+            </a>
+        </div>
+    </div>
+
+    <!-- 통계 카드 -->
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon"><i class="fas fa-dumbbell"></i></div>
+            <div class="admin-stat-content">
+                <h3 th:text="${countExercises}">0</h3>
+                <p>총 운동 수</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 운동 테이블 -->
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <colgroup>
+                <col style="width: 8%">
+                <col style="width: 12%">
+                <col style="width: 30%">
+                <col style="width: 10%">
+                <col style="width: 12%">
+                <col style="width: 10%">
+                <col style="width: 8%">
+                <col style="width: 10%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>운동 ID</th>
+                <th>운동명</th>
+                <th>설명</th>
+                <th>카테고리</th>
+                <th>주요 부위</th>
+                <th>기구</th>
+                <th>피로도</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="exercise : ${exercises}">
+                <td th:text="${exercise.exerciseId}">101</td>
+                <td th:text="${exercise.exerciseName}">스쿼트</td>
+                <td>
+                    <div class="truncate-desc" th:text="${exercise.description}"></div>
+                    <span class="more-link" onclick="toggleDescription(this)">더보기</span>
+                </td>
+                <td th:text="${exercise.category}">하체</td>
+                <td th:text="${exercise.mainParts}">대퇴사두근, 둔근</td>
+                <td th:text="${exercise.equipment}">바벨</td>
+                <td th:text="${exercise.fatigueLevel}">중</td>
+                <td>
+                    <a th:href="@{/admin/exercise/modify/{id}(id=${exercise.exerciseId})}" class="admin-btn admin-btn-secondary" style="padding:6px 14px; font-size:14px;"><i class="fas fa-edit"></i> 수정</a>
+                    <a th:href="@{/admin/exercise/delete/{no}(no=${exercise.exerciseId})}" class="admin-btn admin-btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');" style="padding:6px 14px; font-size:14px;">
+                        <i class="fas fa-trash"></i> 삭제
+                    </a>
+                </td>
+                <!--
+                <a th:href="@{/admin/notice/delete/{no}(no=${notice.noticeId})}" class="admin-btn admin-btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');"><i class="fas fa-trash"></i> 삭제</a>
+
+                -->
+            </tr>
+            <tr th:if="${#lists.isEmpty(exercises)}">
+                <td colspan="8" class="admin-empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>등록된 운동이 없습니다.</p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</html>

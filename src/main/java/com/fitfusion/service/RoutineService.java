@@ -2,7 +2,9 @@ package com.fitfusion.service;
 
 import com.fitfusion.dto.ExerciseItemDto;
 import com.fitfusion.dto.RoutineDetailDto;
+import com.fitfusion.dto.RoutineDto;
 import com.fitfusion.dto.RoutineListDto;
+import com.fitfusion.enums.BodyPart;
 import com.fitfusion.mapper.RoutineExerciseMapper;
 import com.fitfusion.mapper.RoutineMapper;
 import com.fitfusion.vo.RecommendedExercise;
@@ -22,6 +24,10 @@ public class RoutineService {
     private final RoutineMapper routineMapper;
     private final RoutineExerciseMapper routineExerciseMapper;
 
+
+    public List<RoutineDto> getRecentRoutine(int userId) {
+        return routineMapper.selectLatestRoutinesByUser(userId);
+    }
 
     @Transactional
     public int saveRecommendedRoutine(int userId, List<RecommendedExercise> exercises) {
@@ -52,16 +58,9 @@ public class RoutineService {
         return routineId;
     }
 
-    public List<RoutineListDto> getRoutineListByUserId(int userId) {
-        return routineMapper.getRoutineListByUserId(userId);
-    }
-
-    public List<RoutineListDto> getRoutineByUserAndRoutineId(int userId, int routineId) {
-        return routineMapper.selectRoutineByUserAndRoutineId(userId, routineId);
-    }
-
-    public List<RoutineListDto> getRoutineByUserId(int userId) {
-        return routineMapper.getRoutineListByUserId(userId);
+    public List<RoutineListDto> getRoutineListByUserId(int userId, int page, int size) {
+        int offset = (page - 1) * size;
+        return routineMapper.getRoutineListByUserId(userId, offset, size);
     }
 
     public void deleteRoutineListByUserAndRoutine(int userId, int routineId) {
@@ -75,12 +74,13 @@ public class RoutineService {
         return routineMapper.getRoutineDetailByUserAndRoutineId(userId, routineId);
     }
 
-    public RoutineDetailDto getRoutineDetail(int routineId) {
-        RoutineDetailDto routine = routineMapper.getRoutineInfo(routineId);
-        List<ExerciseItemDto> exercises = routineMapper.selectRoutineExercises(routineId);
+    public RoutineDetailDto getRoutineDetail(int routineId, int userId) {
+        RoutineDetailDto routine = routineMapper.getRoutineInfo(routineId, userId);
+        List<ExerciseItemDto> exercises = routineMapper.selectRoutineExercises(routineId, userId);
         routine.setRoutineId(routineId);
         routine.setExercises(exercises);
         routine.setTotalExercises(exercises.size());
+
 
         return routine;
     }
@@ -134,5 +134,37 @@ public class RoutineService {
 
             routineExerciseMapper.insertRoutineExerCise(routineEx);
         }
+    }
+
+    public int saveTargetRoutine(int userId, String bodyPart, List<RecommendedExercise> exercises) {
+
+        int routineId = routineMapper.getNextRoutineId();
+
+        Routine routine = Routine.builder()
+                .routineId(routineId)
+                .userId(userId)
+                .name(BodyPart.valueOf(bodyPart).getBodyName() + " 맞춤 루틴")
+                .difficultyLevel("중간")
+                .description("부족 부위 보완 루틴")
+                .createdDate(new Date())
+                .updatedDate(new Date())
+                .build();
+        routineMapper.insertRoutine(routine);
+
+        for (RecommendedExercise re : exercises) {
+            RoutineExercise rel = RoutineExercise.builder()
+                    .routineId(routineId)
+                    .exerciseId(re.getExerciseId())
+                    .sets(re.getSets())
+                    .reps(re.getReps())
+                    .weight(re.getWeight())
+                    .build();
+            routineExerciseMapper.insertRoutineExerCise(rel);
+        }
+        return routineId;
+    }
+
+    public long countRoutineByUserId(int userId) {
+        return routineMapper.countRoutineByUserId(userId);
     }
 }

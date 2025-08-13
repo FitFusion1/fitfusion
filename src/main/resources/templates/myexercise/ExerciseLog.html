@@ -13,40 +13,141 @@
 </head>
 
 <div layout:fragment="content">
-<div class="ExerciseLog-container">
-    <h1 class="ExerciseLog-title">운동 기록</h1>
+    <div class="ExerciseLog-container">
+        <h1 class="ExerciseLog-title">운동 기록</h1>
 
-    <!-- 운동 기록 예시 -->
-    <div class="ExerciseLog-log-entry" th:each="routine : ${routineLogs}">
-        <div class="ExerciseLog-log-header">
-            <h2 th:text="${routine.formattedDate} + '  -  ' + ${routine.routineName}">2025년 7월 6일 - 루틴: 상체 강화 루틴</h2>
-            <div class="ExerciseLog-btn-group">
-                <button class="ExerciseLog-btn">수정</button>
-                <button class="ExerciseLog-btn">삭제</button>
-            </div>
-        </div>
-        <table class="ExerciseLog-table">
-            <thead>
-            <tr>
-                <th>운동명</th>
-                <th>세트</th>
-                <th>반복</th>
-                <th>중량 (kg)</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="exercise : ${routine.exerciseLogs}">
-                <td th:text="${exercise.exerciseName}" class="ExerciseLog-exercise-name">벤치프레스</td>
-                <td th:text="${exercise.sets}">3</td>
-                <td th:text="${exercise.reps}">10</td>
-                <td th:text="${exercise.weight}">60</td>
-            </tr>
-
-            </tbody>
-        </table>
+        <!-- 운동 기록 예시 -->
+        <div class="ExerciseLog-log-entry" id="log-list"></div>
+        <div id="scroll" style="height: 1px;"></div>
+        <!-- 돌아가기 버튼 -->
+        <a href="/myexercise" class="ExerciseLog-back-btn">← 나의 운동 페이지로 돌아가기</a>
     </div>
-    <!-- 돌아가기 버튼 -->
-    <a href="/myexercise" class="ExerciseLog-back-btn">← 나의 운동 페이지로 돌아가기</a>
 </div>
-</div>
+<th:block layout:fragment="script">
+    <script>
+        const API = '/api/exerciseLog';
+        const list = document.getElementById('log-list');
+        const scroll = document.getElementById('scroll');
+
+        const csrf = () => {
+            const m = document.querySelector('meta[name="_csrf"]');
+            return m ? {'X-CSRF-TOKEN': m.content} : {};
+        };
+
+        let page = 1;
+        const size = 1;
+        let totalPage = Infinity;
+        let isLoading = false;
+
+        function sentinelVisible() {
+            const r = scroll.getBoundingClientRect();
+            return r.top <= (window.innerHeight + 200);
+        }
+
+        async function loadPage() {
+            if (isLoading || page > totalPage) return;
+            isLoading = true;
+            try {
+                const response = await fetch(`${API}?page=${page}&size=${size}`, {
+                    credentials: 'include',
+                    headers: csrf()
+                });
+                if (!response.ok) throw new Error('로드 실패');
+                const {logs, meta} = await response.json();
+                totalPage = meta.totalPage;
+                logs.forEach(log => appendCard(log));
+                page++;
+            } catch (err) {
+                console.error(err);
+                alert('운동 기록을 불러오는 중 오류가 발생했습니다.');
+            } finally {
+                isLoading = false;
+                if (page <= totalPage && sentinelVisible()) {
+                    setTimeout(loadPage, 0);
+                }
+            }
+        }
+
+        function appendCard(log) {
+            const card = document.createElement('div');
+            card.className = 'ExerciseLog-log-entry';
+            card.innerHTML = `
+            <div class="ExerciseLog-log-header">
+                <h2>${log.formattedDate} - ${log.routineName}</h2>
+                <div class="ExerciseLog-btn-group">
+                    <button data-routine-id="${log.routineId}" data-session-id="${log.sessionId}" class="ExerciseLog-btn edit">수정</button>
+                    <button data-session-id="${log.sessionId}" class="ExerciseLog-btn delete">삭제</button>
+                </div>
+            </div>
+            `;
+
+            const table = document.createElement('table');
+            table.className = `ExerciseLog-table`;
+            table.innerHTML = `
+                <thead>
+                <tr>
+                    <th>운동명</th>
+                    <th>세트</th>
+                    <th>반복</th>
+                    <th>수행 시간</th>
+                    <th>중량 (kg)</th>
+                </tr>
+                </thead>
+                <tbody>
+                ${log.exerciseLogs.map(ex=>`
+                <tr>
+                    <td>${ex.exerciseName}</td>
+                    <td>${ex.sets}</td>
+                    <td>${ex.reps}</td>
+                    <td >${ex.durationMinutes}</td>
+                    <td>${ex.weight}</td>
+                </tr>
+                `).join('')}
+                </tbody>
+            `;
+            card.appendChild(table);
+            list.appendChild(card);
+        }
+
+        list.addEventListener('click', async e => {
+            const routineId = e.target.dataset.routineId;
+            const sessionId = e.target.dataset.sessionId;
+
+            try {
+                if (e.target.classList.contains('edit')) {
+                    location.href = `/exerciseLog/updateLog/${routineId}/${sessionId}`;
+                    return;
+                }
+                if (e.target.classList.contains('delete')) {
+                    if (!confirm('정말 삭제할까요?')) return;
+                    const d = await fetch(`${API}/${sessionId}`, {
+                       method: 'DELETE',
+                       credentials: 'include',
+                       headers: csrf()
+                    });
+                    if (!d.ok) throw new Error('삭제 실패');
+                    list.innerHTML = '';
+                    page = 1;
+                    totalPage = Infinity;
+                    await loadPage();
+                }
+            } catch (err) {
+                console.error(err);
+                alert('작업 중 오류가 발생했습니다.')
+            }
+        })
+
+        const io = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) loadPage();
+        }, {
+            root : null,
+            rootMargin : '0px 0px 200px 0px',
+            threshold : 0
+        });
+
+        io.observe(scroll);
+        loadPage();
+
+    </script>
+</th:block>
 </html>

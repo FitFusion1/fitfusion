@@ -2,20 +2,25 @@ package com.fitfusion.web.controller;
 
 import com.fitfusion.enums.BodyPart;
 import com.fitfusion.enums.ConditionLevel;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseConditionService;
-import com.fitfusion.service.ExerciseGoalService;
-import com.fitfusion.service.SelectedGoalService;
 import com.fitfusion.web.form.ExerciseConditionForm;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -23,61 +28,66 @@ import java.util.List;
 @RequestMapping("/condition")
 public class ConditionController {
 
-    private final int userId = 1;
-    private final ExerciseConditionService conditionService;
-    private final ExerciseGoalService goalService;
+
+    private final ExerciseConditionService exerciseConditionService;
+
 
     @GetMapping("/save")
+    @PreAuthorize("isAuthenticated()")
     public String saveConditionPage(Model model) {
-        List<BodyPart> bodyParts = Arrays.asList(BodyPart.values());
-        List<ConditionLevel> conditionLevels = Arrays.asList(ConditionLevel.values());
-
-        model.addAttribute("bodyParts", bodyParts);
-        model.addAttribute("conditionLevels", conditionLevels);
-
-        return "/exerciseCondition/ExerciseCondition";
+        modelAtt(model);
+        if (!model.containsAttribute("exerciseConditionForm")){
+            model.addAttribute("exerciseConditionForm", new ExerciseConditionForm());
+        }
+        return "exerciseCondition/ExerciseCondition";
     }
 
+
     @PostMapping("/save")
-    public String saveCondition(@ModelAttribute ExerciseConditionForm formData, HttpSession session, Model model) {
+    @PreAuthorize("isAuthenticated()")
+    public String saveCondition(@AuthenticationPrincipal SecurityUser user,
+                                @Valid @ModelAttribute ExerciseConditionForm formData,
+                                BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes,
+                                HttpSession session,
+                                Model model) {
+
+        int userId = user.getUser().getUserId();
         List<String> avoidParts = formData.getAvoidParts();
         List<String> targetParts = formData.getTargetParts();
-        String condition = formData.getConditionLevel();
+        String conditionLevel = formData.getConditionLevel();
 
-        if (targetParts == null || targetParts.isEmpty()) {
-            model.addAttribute("bodyParts", Arrays.asList(BodyPart.values()));
-            model.addAttribute("conditionLevels", Arrays.asList(ConditionLevel.values()));
-            model.addAttribute("errorMessage", "운동하고 싶은 부위를 한 개 이상 선택해주세요.");
+        List<String> safeAvoid = (avoidParts == null) ? Collections.emptyList() : avoidParts;
+        List<String> safeTarget = (targetParts == null) ? Collections.emptyList() : targetParts;
 
+        if (!safeTarget.isEmpty() &&
+                !safeAvoid.isEmpty() &&
+                !Collections.disjoint(safeAvoid, safeTarget)) {
+            bindingResult.reject("overlap", "하고 싶은 부위와 피하고 싶은 부위는 겹칠 수 없습니다.");
+        }
+
+        if (bindingResult.hasErrors()) {
+            modelAtt(model);
             return "exerciseCondition/ExerciseCondition";
         }
 
-        if (condition == null || condition.isEmpty()) {
-            model.addAttribute("bodyParts", Arrays.asList(BodyPart.values()));
-            model.addAttribute("conditionLevels", Arrays.asList(ConditionLevel.values()));
-            model.addAttribute("errorMessage", "컨디션을 선택해주세요.");
-
-            return "exerciseCondition/ExerciseCondition";
-        }
-
-        if (avoidParts != null && !avoidParts.isEmpty()) {
-            for (String part : avoidParts) {
-                if (targetParts.contains(part)) {
-                    model.addAttribute("bodyParts", Arrays.asList(BodyPart.values()));
-                    model.addAttribute("conditionLevels", Arrays.asList(ConditionLevel.values()));
-                    model.addAttribute("errorMessage", "하고 싶은 부위와 피하고 싶은 부위는 겹칠 수 없습니다.");
-                    return "exerciseCondition/ExerciseCondition";
-                }
-            }
-        }
 
 
-        int conditionId = conditionService.saveConditionAndAvoidAndTartget(userId, formData.getConditionLevel(), formData.getAvoidParts(), formData.getTargetParts());
+        exerciseConditionService.saveConditionAndAvoidAndTarget(userId, conditionLevel ,safeAvoid, safeTarget);
 
-        session.setAttribute("targetParts", formData.getTargetParts());
-        session.setAttribute("avoidParts", formData.getAvoidParts());
-        session.setAttribute("condition", formData.getConditionLevel());
+        session.setAttribute("targetParts", safeTarget);
+        session.setAttribute("avoidParts", safeAvoid);
+        session.setAttribute("condition", conditionLevel);
         session.setAttribute("conditionSet", true);
+
+        redirectAttributes.addFlashAttribute("alertMessage", "컨디션 설정이 저장되었습니다.");
+
         return "redirect:/routine/create/ai";
+    }
+
+    private void modelAtt(Model model) {
+        model.addAttribute("bodyParts", Arrays.asList(BodyPart.values()));
+        model.addAttribute("conditionLevels", Arrays.asList(ConditionLevel.values()));
+
     }
 }

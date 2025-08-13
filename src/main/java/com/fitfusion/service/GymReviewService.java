@@ -1,12 +1,14 @@
 package com.fitfusion.service;
 
 import com.fitfusion.dto.GymReviewDto;
+import com.fitfusion.dto.PagedGymReviewDto;
 import com.fitfusion.mapper.GymReviewMapper;
 import com.fitfusion.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class GymReviewService {
         System.out.println("gymReviewDto.getReviewId()" + gymReviewDto.getReviewId());
         return gymReviewDto;
     }
+
 
     public GymReviewDto updateReview(int commentId, GymReviewDto gymReviewDto, User user ) {
 
@@ -44,5 +47,13 @@ public class GymReviewService {
         gymReviewMapper.deleteReview(gymReview);
 
         return gymReview;
+    }
+
+
+    public List<PagedGymReviewDto> getPagedReviews(int gymId, int offset, int size) {
+
+
+        return gymReviewMapper.selectReviewsPaged(gymId, offset, size);
+
     }
 }

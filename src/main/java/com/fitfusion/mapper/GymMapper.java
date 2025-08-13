@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface GymMapper {
 
-    void insert(GymDataDto gymplaceData);
+    void insert(GymDataDto gymDataDto);
 
     GymDataDto select(@Param("kakaoPlaceId") String kakaoPlaceId);
 

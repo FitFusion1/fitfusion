@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.CoachingFeedbackMapper">
+
+    <!-- int insertCoachingFeedback(CoachingFeedback coachingFeedback); -->
+    <insert id="insertCoachingFeedback" parameterType="CoachingFeedback">
+        <selectKey keyProperty="id"
+                   resultType="int"
+                   order="BEFORE">
+            SELECT FITFUSION_COACHING_FEEDBACKS_SEQ.nextval
+            FROM DUAL
+        </selectKey>
+        INSERT INTO
+            FITFUSION_COACHING_FEEDBACKS
+            (FEEDBACK_ID
+            , COACHING_LOG_ID
+            , ISSUE_CODE
+            , DESCRIPTION
+            , SET_NUMBER
+            , REP_NUMBER
+            , TIMESTAMP_SECOND)
+        VALUES
+        ( #{id}
+        , #{coachingLogId}
+        , #{issueCode}
+        , #{description}
+        , #{setNo}
+        , #{repNo}
+        , #{timestamp}
+        )
+    </insert>
+
+    <!-- List<CoachingFeedback> selectFeedbackByCoachingLogId(int coachingLogId); -->
+    <select id="selectFeedbackByCoachingLogId" resultType="CoachingFeedback">
+        SELECT 
+            FEEDBACK_ID         as id,
+            COACHING_LOG_ID     as coachingLogId,
+            ISSUE_CODE          as issueCode,
+            DESCRIPTION         as description,
+            SET_NUMBER          as setNo,
+            REP_NUMBER          as repNo,
+            TIMESTAMP_SECOND    as timestamp
+        FROM
+            FITFUSION_COACHING_FEEDBACKS
+        WHERE
+            COACHING_LOG_ID = #{coachingLogId}
+        ORDER BY SET_NUMBER, REP_NUMBER, TIMESTAMP_SECOND
+    </select>
+
+</mapper>

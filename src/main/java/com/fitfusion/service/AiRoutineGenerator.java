@@ -187,6 +187,8 @@ public class AiRoutineGenerator {
                 .append("응답은 다음 JSON 형식으로 반환해주세요:\n")
                 .append("[{\"exerciseId\": 1, \"sets\": 3, \"reps\": 15}, ...]");
 
+
+
         return sb.toString();
     }
 

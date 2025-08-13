@@ -9,6 +9,7 @@ import java.util.Date;
 @Setter
 public class ExerciseLog {
     private int logId;
+    private int sessionId;
     private Date logDate;
     private int reps;
     private int weight;

@@ -18,4 +18,6 @@ public class GymDataDto {
     private Double longitude;
     private String kakaoPlaceId;
     private double averageRating;
+    private String profileUrl;
+    private String distance;
 }

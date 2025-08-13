@@ -21,5 +21,7 @@ public class DetailDataDto {
     private Double longitude;
     private double averageRating;
     private int reviewCount;
+    private String profileUrl;
+    private String distance;
     private List<GymReviewDto> gymReviews;
 }

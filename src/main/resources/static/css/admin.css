@@ -828,3 +828,36 @@ footer {
     align-items: center;
     gap: 8px;
 }
+
+.admin-table td:nth-child(3) {
+    white-space: normal;
+    text-align: left;
+    line-height: 1.8;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.truncate-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 4.8em;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.expanded {
+    -webkit-line-clamp: unset !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.more-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: #3498db;
+    cursor: pointer;
+}

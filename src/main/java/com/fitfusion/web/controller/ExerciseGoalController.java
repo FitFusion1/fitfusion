@@ -4,6 +4,7 @@ import com.fitfusion.enums.GoalType;
 import com.fitfusion.mapper.AvoidPartsMapper;
 import com.fitfusion.mapper.ExerciseGoalMapper;
 import com.fitfusion.mapper.TargetPartsMapper;
+import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.ExerciseConditionService;
 import com.fitfusion.service.ExerciseGoalService;
 import com.fitfusion.service.SelectedGoalService;
@@ -11,15 +12,14 @@ import com.fitfusion.validation.Step1Group;
 import com.fitfusion.validation.Step2Group;
 import com.fitfusion.validation.Step3Group;
 import com.fitfusion.validation.Step4Group;
-import com.fitfusion.vo.Exercise;
 import com.fitfusion.vo.ExerciseGoal;
 import com.fitfusion.vo.SelectedGoal;
 import com.fitfusion.web.form.ExerciseGoalRegisterForm;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,9 +27,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,17 +36,10 @@ public class ExerciseGoalController {
 
     private final ExerciseGoalService exerciseGoalService;
     private final SelectedGoalService selectedGoalService;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private ExerciseGoalMapper exerciseGoalMapper;
-    int userId = 1;
-    @Autowired
-    private ExerciseConditionService exerciseConditionService;
-    @Autowired
-    private TargetPartsMapper targetPartsMapper;
-    @Autowired
-    private AvoidPartsMapper avoidPartsMapper;
+    private final ExerciseConditionService exerciseConditionService;
+    private final ExerciseConditionService conditionService;
+    private final ModelMapper modelMapper;
+
 
     @GetMapping("/step1")
     public String step1(Model model) {
@@ -79,8 +69,7 @@ public class ExerciseGoalController {
 
     @PostMapping("/step2")
     public String step2(@Validated(Step2Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
-                        BindingResult bindingResult,
-                        Model model) {
+                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalTwo";
         }
@@ -107,14 +96,14 @@ public class ExerciseGoalController {
     }
 
     @PostMapping("/step4")
-    public String step4(@Validated(Step4Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
+    public String step4(@AuthenticationPrincipal SecurityUser user, @Validated(Step4Group.class) @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
                         BindingResult bindingResult,
                         SessionStatus status) {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/CreateGoalFour";
         }
 
-        formData.setUserId(userId);
+        formData.setUserId(user.getUser().getUserId());
         exerciseGoalService.insertUserGoalWithSelection(formData);
 
         status.setComplete();
@@ -127,36 +116,21 @@ public class ExerciseGoalController {
     }
 
     @GetMapping("/goallist")
-    public String goalList(Model model) {
-
-        List<ExerciseGoal> exerciseGoals = exerciseGoalMapper.getAllUserGoalsByUserId(userId);
-        SelectedGoal selectedGoal = selectedGoalService.getSelectedGoal(userId);
-
-        if (selectedGoal != null) {
-            exerciseGoals.sort((g1, g2) -> {
-                if (g1.getGoalId() == selectedGoal.getGoalId()) return -1;
-                if (g2.getGoalId() == selectedGoal.getGoalId()) return 1;
-                return 0;
-            });
-        }
-
-        model.addAttribute("exerciseGoals", exerciseGoals);
-        model.addAttribute("selectedGoal", selectedGoal);
-
+    public String goalList() {
         return "exerciseGoal/ExerciseGoalList";
     }
 
     @PostMapping("/select")
-    public String selectGoal(@RequestParam int goalId, RedirectAttributes redirectAttributes) {
-        SelectedGoal currentSelected = selectedGoalService.getSelectedGoal(userId);
+    public String selectGoal(@AuthenticationPrincipal SecurityUser user, @RequestParam int goalId, RedirectAttributes redirectAttributes) {
+        SelectedGoal currentSelected = selectedGoalService.getSelectedGoal(user.getUser().getUserId());
 
         if (currentSelected != null && currentSelected.getGoalId() == goalId) {
             return "redirect:/exercisegoal/goallist";
         }
 
-        selectedGoalService.selectGoal(userId, goalId);
+        selectedGoalService.selectGoal(user.getUser().getUserId(), goalId);
 
-        ExerciseGoal goal = exerciseGoalService.getUserGoalByUserId(userId, goalId);
+        ExerciseGoal goal = exerciseGoalService.getUserGoalByUserId(user.getUser().getUserId(), goalId);
         String goalType = goal.getGoalType();
 
         String message = switch (goalType) {
@@ -176,15 +150,15 @@ public class ExerciseGoalController {
     }
 
     @PostMapping("/unselect")
-    public String unselectGoal() {
-        selectedGoalService.deleteSelectedGoal(userId);
+    public String unselectGoal(@AuthenticationPrincipal SecurityUser user) {
+        selectedGoalService.deleteSelectedGoal(user.getUser().getUserId());
 
         return "redirect:/exercisegoal/goallist";
     }
 
     @GetMapping("/goalupdate/{goalId}")
-    public String goalUpdate(@PathVariable("goalId") int goalId, Model model) {
-        ExerciseGoal exerciseGoal = exerciseGoalService.getUserGoalByUserId(userId, goalId);
+    public String goalUpdate(@AuthenticationPrincipal SecurityUser user, @PathVariable("goalId") int goalId, Model model) {
+        ExerciseGoal exerciseGoal = exerciseGoalService.getUserGoalByUserId(user.getUser().getUserId(), goalId);
         ExerciseGoalRegisterForm formData = modelMapper.map(exerciseGoal, ExerciseGoalRegisterForm.class);
         model.addAttribute("exerciseGoalForm", formData);
         model.addAttribute("goalTypes", GoalType.values());
@@ -192,22 +166,22 @@ public class ExerciseGoalController {
     }
 
     @PostMapping("/goalupdate")
-    public String goalUpdate(@Valid @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
+    public String goalUpdate(@AuthenticationPrincipal SecurityUser user, @Valid @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "exerciseGoal/GoalUpdate";
         }
-        formData.setUserId(userId);
+        formData.setUserId(user.getUser().getUserId());
         exerciseGoalService.updateGoal(formData);
         return "redirect:/exercisegoal/goallist";
     }
 
     @DeleteMapping("/goaldelete/{goalId}")
-    public String goalDelete(@PathVariable int goalId) {
-        SelectedGoal selectedGoal = selectedGoalService.getSelectedGoal(userId);
+    public String goalDelete(@AuthenticationPrincipal SecurityUser user, @PathVariable int goalId) {
+        SelectedGoal selectedGoal = selectedGoalService.getSelectedGoal(user.getUser().getUserId());
 
         if (selectedGoal != null && selectedGoal.getGoalId() == goalId) {
-            selectedGoalService.deleteSelectedGoal(userId);
+            selectedGoalService.deleteSelectedGoal(user.getUser().getUserId());
         }
 
         exerciseGoalService.deleteGoal(goalId);
@@ -215,8 +189,8 @@ public class ExerciseGoalController {
     }
 
     @PostMapping("/checkgoal")
-    public String checkGoalAndCreateRoutine(){
-        ExerciseGoal goal = exerciseGoalService.getSelectedGoalByUserId(userId);
+    public String checkGoalAndCreateRoutine(@AuthenticationPrincipal SecurityUser user){
+        ExerciseGoal goal = exerciseGoalService.getSelectedGoalEntityByUserId(user.getUser().getUserId());
         String goalType = (goal != null) ? goal.getGoalType() : null;
 
         // 근육 증가일 경우만 /condition/save로 이동
@@ -225,22 +199,22 @@ public class ExerciseGoalController {
         }
 
         // 그 외(목표가 없거나 근육 증가가 아닌 경우)는 기존 컨디션 삭제
-        int conditionId = exerciseConditionService.getConditionIdByUserId(userId);
+        int conditionId = exerciseConditionService.getConditionIdByUserId(user.getUser().getUserId());
         if (conditionId > 0) {
             exerciseConditionService.deleteTargetPartsByConditionId(conditionId);
             exerciseConditionService.deleteAvoidPartsByConditionId(conditionId);
-            exerciseConditionService.deleteContitionByUserId(userId);
+            exerciseConditionService.deleteConditionByUserId(user.getUser().getUserId());
         }
 
         return "redirect:/routine/create/ai";
     }
 
     @GetMapping("/goaldetail/{goalId}")
-    public String goalDetail(@PathVariable("goalId") int goalId, Model model) {
-        model.addAttribute("goal", exerciseGoalService.getUserGoalByUserId(userId, goalId));
-        model.addAttribute("condition", exerciseConditionService.getConditionLevelByUserId(userId));
-        model.addAttribute("targetParts", targetPartsMapper.getTargetPartsByUserId(userId));
-        model.addAttribute("avoidParts", avoidPartsMapper.getAvoidPartsByUserId(userId));
+    public String goalDetail(@AuthenticationPrincipal SecurityUser user, @PathVariable("goalId") int goalId, Model model) {
+        model.addAttribute("goal", exerciseGoalService.getUserGoalByUserId(user.getUser().getUserId(), goalId));
+        model.addAttribute("condition", exerciseConditionService.getConditionLevelByUserId(user.getUser().getUserId()));
+        model.addAttribute("targetParts", conditionService.getTargetPartsByUserId(user.getUser().getUserId()));
+        model.addAttribute("avoidParts", conditionService.getAvoidPartsByUserId(user.getUser().getUserId()));
         return "exerciseGoal/GoalDetail";
     }
 }

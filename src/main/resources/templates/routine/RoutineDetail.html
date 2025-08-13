@@ -22,6 +22,10 @@
             🧩 세트: <span th:text="${routine.defaultSet}"></span> 세트
         </p>
     </div>
+    <div>
+        <h3>루틴 설명</h3>
+        <div class="RoutineDetail-card" th:text="${routine.description}"></div>
+    </div>
 
     <div class="RoutineDetail-card" th:each="ex : ${routine.exercises}">
         <h3 class="RoutineDetail-name" th:text="${ex.name}">운동명</h3>
@@ -54,6 +58,7 @@
             <input type="hidden" name="routineId" th:value="${routine.routineId}">
             <button class="RoutineDetail-btn RoutineDetail-secondary">삭제하기</button>
         </form>
+        <button class="RoutineDetail-btn RoutineDetail-secondary" onclick=location.href="/routine/list">루틴목록으로 돌아가기</button>
     </div>
 </div>
 </div>

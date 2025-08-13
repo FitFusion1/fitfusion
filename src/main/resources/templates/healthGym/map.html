@@ -13,20 +13,36 @@
 
 <!-- ⬆️ 네비게이션 -->
 <div id="nav-container">
-    <button onclick="location.href='/'">🏠 메인 페이지</button>
-    <a th:href="@{/chatbot}">🤖 헬스보트 챗봇</a>
+    <button class="custom-btn" onclick="location.href='/'">🏠 메인 페이지</button>
 </div>
 
 <!-- 🔍 위치 검색창 -->
 <div id="search-bar">
     <input type="text" id="location-input" placeholder="지역명 또는 역명 (예: 종로3가역)">
-    <button id="set-location-btn">위치 설정</button>
+    <button class="custom-btn" id="set-location-btn">위치 설정</button>
 </div>
 
 <!-- 🗺️ 지도 표시 영역 -->
-<div id="map"></div>
+<div id="map">
+    <div id="current-location-btn" title="현재 위치로 이동">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+            <!-- 바깥 원 (비워진 상태) -->
+            <circle cx="12" cy="12" r="6" stroke="#333" stroke-width="2" fill="none"/>
+            <!-- 안쪽 원 (채워진 상태) -->
+            <circle cx="12" cy="12" r="2" fill="#333"/>
+            <!-- 동서남북 선 -->
+            <line x1="12" y1="2" x2="12" y2="6" stroke="#333" stroke-width="2"/>
+            <line x1="12" y1="18" x2="12" y2="22" stroke="#333" stroke-width="2"/>
+            <line x1="2" y1="12" x2="6" y2="12" stroke="#333" stroke-width="2"/>
+            <line x1="18" y1="12" x2="22" y2="12" stroke="#333" stroke-width="2"/>
+        </svg>
+    </div>
+</div>
 
 <button sec:authorize="isAuthenticated()" id="compare-final-btn">📊 선택한 헬스장 비교하기</button>
+
+
+
 
 <!-- 📉 Kakao Maps API -->
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=96263ed7ed52fb388f0ed47a45e746cd&libraries=services"></script>
