@@ -14,32 +14,20 @@
 
 <div class="RoutineRecommendation">
     <div layout:fragment="content">
-        <h1 class="RoutineRecommendation-title">오늘의 맞춤 추천 루틴</h1>
+        <h1 class="RoutineRecommendation-title" id="title">오늘의 맞춤 추천 루틴</h1>
         <div class="RoutineRecommendation-description">
             당신의 목표와 상태에 맞춰 추천된 루틴입니다. 아래 운동을 순서대로 수행해보세요!
         </div>
 
-        <div class="RoutineRecommendation-list">
-            <div class="RoutineRecommendation-card" th:each="ex : ${recommendedExercises}">
-                <h2 th:text="${ex.exercise.exerciseName}">운동 이름</h2>
-                <div class="RoutineRecommendation-info">
-                    <span th:text="'카테고리: ' + ${ex.exercise.category}">운동 카테고리</span>
-                    <span th:text="'운동 부위: ' + ${ex.exercise.mainParts}">운동 부위</span>
-                    <span th:text="'난이도: ' + ${ex.exercise.fatigueLevel}">난이도</span>
-                    <span th:text="'세트 수: ' + ${ex.sets} + '세트'">세트 수</span>
-                    <span th:text="'반복 수: ' + ${ex.reps} + '회'">반복 수</span>
-                </div>
-            </div>
+        <div class="RoutineRecommendation-error hidden" id="notice"></div>
+
+        <div class="RoutineRecommendation-list" id="list">
+            <div style="opacity:.8;padding:12px">불러오는 중...</div>
         </div>
 
-        <div class="RoutineRecommendation-buttons">
-            <form th:action="@{/routine/save/ai}" method="post">
-                <button type="submit">루틴 저장하기</button>
-            </form>
-                <button type="submit"
-                        style="display:inline";
-                        th:onclick="|location.href='@{/routine/create/ai}'|"
-                        >루틴새로고침</button>
+        <div class="RoutineRecommendation-buttons" style="margin-top: 12px">
+                <button type="button" id="saveBtn">루틴 저장하기</button>
+                <button type="button" id="refreshBtn" style="display:inline">루틴새로고침</button>
 
             <form th:action="@{/condition/save}" method="get" style="display:inline;">
                 <button type="submit">조건 설정하기</button>
@@ -50,4 +38,148 @@
         </div>
     </div>
 </div>
+<th:block layout:fragment="script">
+    <script>
+        const isConditionSet = new URLSearchParams(location.search).get('conditionSet') === 'true';
+
+        const API_GET = '/api/routine/create/ai' + (isConditionSet ? '?conditionSet=true' : '');
+        const API_SAVE = '/api/routine/recommendations/ai/save';
+
+        const $title    = document.getElementById('title');
+        const $list     = document.getElementById('list');
+        const $notice   = document.getElementById('notice');
+        const $save     = document.getElementById('saveBtn');
+        const $refresh  = document.getElementById('refreshBtn');
+
+        function csrfHeaders() {
+            const token  = document.querySelector('meta[name="_csrf"]')?.content;
+            const header = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+            return token ? { [header]: token } : {};
+        }
+
+        function escapeHtml(s) {
+            return String(s ?? '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        async function loadRecommendations() {
+            $notice.classList.add('hidden');
+            $list.innerHTML = '<div style="opacity:.8;padding:12px">불러오는 중...</div>'
+            try {
+                const res = await fetch(API_GET, {credentials: 'include'});
+                if (res.status === 200) {
+                    const data = await res.json();
+                    const items = Array.isArray(data.recommended) ? data.recommended : data.exercises;
+
+                    if (data.title) $title.textContent = data.title;
+
+                    if (!items || items.length === 0) {
+                        $list.innerHTML = '<div style="opacity:.8;padding:12px">추천 결과가 없습니다.</div>';
+                        return;
+                    }
+
+                    $list.innerHTML = '';
+                    items.forEach((ex) => {
+                        const info = ex.exercise || {};
+                        const name = info.exerciseName || '운동';
+                        const cat = info.category || '-';
+                        const part = info.mainParts || '-';
+                        const diff = info.fatigueLevel || '-';
+                        const sets = ex.sets ?? ex.recommendedSets ?? 3;
+                        const reps = ex.reps ?? ex.recommendedReps ?? 10;
+
+                        const card = document.createElement('div');
+                        card.className = 'RoutineRecommendation-card';
+                        card.dataset.id = ex.exerciseId;
+                        card.dataset.sets = sets;
+                        card.dataset.reps = reps;
+
+                        card.innerHTML = `
+                            <h2>${escapeHtml(name)}</h2>
+                            <div class="RoutineRecommendation-info">
+                                <span>카테고리: ${escapeHtml(cat)}</span>
+                                <span>운동부위: ${escapeHtml(part)}</span>
+                                <span>난이도: ${escapeHtml(diff)}</span>
+                                <span>세트 수: ${sets}세트</span>
+                                <span>반복 수: ${reps}회</span>
+                            </div>
+                        `;
+                        $list.appendChild(card);
+                        });
+
+                } else if (res.status === 409) {
+                    const err = await res.json().catch(() => ({}));
+                    $notice.classList.remove('hidden');
+                    $notice.innerHTML = `
+                        <div>${escapeHtml(err.message || '사전 조건이 필요합니다.')}</div>
+                        ${err.next ? `<div style="margin-top:8px"><a href="${err.next}">지금 설정하러 가기</a></div>` : ''}
+                    `;
+                    $list.innerHTML = '';
+                    if (err.next) {
+                        window.location.href = err.next;
+                    }
+                } else {
+                    $list.innerHTML = '<div style="opacity:.8;padding:12px">불러오기에 실패했습니다.</div>';
+                }
+            } catch (e) {
+                console.error(e);
+                $list.innerHTML = '<div style="opacity:.8; padding:12px">네트워크 오류가 발생했습니다.</div>';
+            }
+        }
+
+        async function saveRoutine() {
+            const cards = Array.from(document.querySelectorAll('.RoutineRecommendation-card'));
+            if (cards.length === 0) {
+                alert('저장할 추천 항목이 없습니다.');
+                return;
+            }
+
+            const name = ($title.textContent || '').trim() || 'AI 추천 루틴';
+
+            const payload = {
+                routineName: name,
+                exercises: cards.map(c => ({
+                    exerciseId: Number(c.dataset.id),
+                    sets: Number(c.dataset.sets),
+                    reps: Number(c.dataset.reps)
+                }))
+            };
+
+            try{
+                $save.disabled = true;
+                $save.textContent = '저장 중...';
+                const res = await fetch(API_SAVE, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json', ...csrfHeaders() },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.status === 201) {
+                    const location = res.headers.get('Location');
+                    const body = await res.json().catch(() => ({}));
+                    alert(body.message || '저장 완료');
+
+                    const id = location?.split('/').pop() || body.routineId;
+                    if (id) window.location.href = '/routine/detail/' + id;
+                    else window.location.href = '/routine/list';
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    alert(err.message || '저장에 실패했습니다.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('네트워크 오류로 저장에 실패했습니다.');
+            } finally {
+                $save.disabled = false;
+                $save.textContent = '루틴 저장하기'
+            }
+        }
+
+        $refresh.addEventListener('click', loadRecommendations);
+        $save.addEventListener('click', saveRoutine);
+        loadRecommendations()
+    </script>
+</th:block>
 </html>

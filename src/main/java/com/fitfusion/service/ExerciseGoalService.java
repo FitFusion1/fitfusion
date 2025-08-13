@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -19,15 +21,21 @@ public class ExerciseGoalService {
     private final SelectedGoalService selectedGoalService;
 
 
+    public List<ExerciseGoalDto> getAllGoalByUserId(int userId) {
+
+        List<ExerciseGoal> goals = exerciseGoalMapper.getAllUserGoalsByUserId(userId);
+
+        return goals.stream()
+                    .map(ExerciseGoalDto::new)
+                    .toList();
+    }
+
+    @Transactional
     public void insertUserGoalWithSelection(ExerciseGoalRegisterForm formData) {
         exerciseGoalMapper.insertUserGoal(formData);
         selectedGoalService.selectGoal(formData.getUserId(), formData.getGoalId());
     }
 
-    public void insertUserGoal(ExerciseGoalRegisterForm formData) {
-
-        exerciseGoalMapper.insertUserGoal(formData);
-    }
 
     public ExerciseGoal getUserGoalByUserId(int userId, int goalId) {
         return exerciseGoalMapper.getUserGoalByUserIdAndGoalId(userId, goalId);
@@ -48,6 +56,7 @@ public class ExerciseGoalService {
         exerciseGoalMapper.updateGoal(exerciseGoal);
     }
 
+    @Transactional
     public void deleteGoal(int goalId) {
         selectedGoalService.deleteSelectedGoal(goalId);
         exerciseGoalMapper.deleteGoal(goalId);
@@ -58,6 +67,7 @@ public class ExerciseGoalService {
     }
     public ExerciseGoalDto getSelectedGoalDtoByUserId(int userId) {
         ExerciseGoal goal = exerciseGoalMapper.findSelectedGoalByUserId(userId);
+
         return new ExerciseGoalDto(goal);
     }
 

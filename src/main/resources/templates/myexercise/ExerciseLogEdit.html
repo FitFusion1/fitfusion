@@ -17,7 +17,7 @@
         <h1 class="ExerciseLogEdit-title">운동 기록 수정</h1>
 
         <!-- 기록 수정 폼 -->
-        <form th:action="@{/exerciseLog/updateLog}" method="post" th:object="${routineLog}">
+        <form th:action="@{/exerciseLog/updateLog}" id="saveForm" method="post" th:object="${routineLog}">
             <input type="hidden" name="_method" value="put">
             <input type="hidden" th:field="*{routineId}"/>
             <input type="hidden" th:field="*{sessionId}"/>
@@ -63,19 +63,18 @@
                 </tr>
                 </tbody>
             </table>
-
+        </form>
+        <form id="deleteForm"
+              th:action="@{/exerciseLog/deleteLog/{sessionId}(sessionId=${routineLog.sessionId})}"
+              method="post" style="display: none;">
+            <input type="hidden" name="_method" value="delete">
+        </form>
             <!-- ✅ 버튼 그룹 -->
             <div class="ExerciseLogEdit-button-container">
-                <button type="submit" class="ExerciseLogEdit-button save-btn">기록 저장</button>
-
-                <form th:action="@{/exerciseLog/deleteLog/{sessionId}(sessionId=${routineLog.sessionId})}" method="post" class="ExerciseLogEdit-deleteForm">
-                    <input type="hidden" name="_method" value="delete">
-                    <button type="submit" class="ExerciseLogEdit-button delete-btn">기록 삭제</button>
-                </form>
-
+                <button type="submit" form="saveForm" class="ExerciseLogEdit-button save-btn">기록 저장</button>
+                <button type="submit" form="deleteForm" class="ExerciseLogEdit-button delete-btn">기록 삭제</button>
                 <a href="/exerciseLog/list" class="ExerciseLogEdit-button cancel-btn">취소</a>
             </div>
-        </form>
     </div>
 </div>
 </html>

@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitfusion.mapper.RoutineMapper">
 
+    <select id="countRoutineByUserId" parameterType="int" resultType="long">
+        select count(*)
+        from fitfusion_routine
+        where user_id = #{userId}
+    </select>
+
     <select id="selectLatestRoutinesByUser" parameterType="int" resultType="RoutineDto">
         SELECT
             r.routine_id AS routineId,
@@ -17,7 +23,7 @@
             FETCH FIRST 4 ROWS ONLY
     </select>
 
-    <select id="getRoutineListByUserId" parameterType="int" resultType="RoutineListDto">
+    <select id="getRoutineListByUserId" resultType="RoutineListDto">
         select
             r.routine_id        as routineId,
             r.name              as routineName,
@@ -51,6 +57,8 @@
             r.user_id = #{userId}
         order by
             r.created_date desc
+        offset #{offset} rows
+        fetch next #{size} rows only
     </select>
 
     <insert id="insertRoutine" parameterType="Routine">
@@ -76,37 +84,6 @@
     <select id="getNextRoutineId" resultType="int">
         select fitfusion_routine_seq.nextval
         from dual
-    </select>
-    
-    <select id="getRoutineDetailByUserAndRoutineId" resultType="Routine">
-        select
-            routine_id               as routineId
-             , user_id                  as userId
-             , name                     as name
-             , difficulty_level         as difficultyLevel
-             , created_date             as createdDate
-             , updated_date             as updatedDate
-             , description              as description
-        from
-            fitfusion_routine
-        where
-            user_id = #{userId}
-          and routine_id = #{routineId}
-    </select>
-    <select id="selectRoutineByUserAndRoutineId" parameterType="map" resultType="Routine">
-        select
-               routine_id               as routineId
-             , user_id                  as userId
-             , name                     as name
-             , difficulty_level         as difficultyLevel
-             , created_date             as createdDate
-             , updated_date             as updatedDate
-             , description              as description
-        from
-            fitfusion_routine
-        where
-            user_id = #{userId}
-        and routine_id = #{routineId}
     </select>
     
     <update id="updateRoutine" parameterType="Routine">

@@ -12,9 +12,9 @@
 </head>
 <div layout:fragment="content">
     <div class="RoutineCompletion-container">
-        <h2 class="RoutineCompletion-title">오늘의 전신 루틴 수행 체크</h2>
+        <h2 class="RoutineCompletion-title" th:text="|${routine.routineName} 수행 체크|">오늘의 전신 루틴 수행 체크</h2>
 
-        <form th:action="@{/exerciseLog/execute/{routineId}(routineId=${routine.routineId})}" method="post" th:object="${routineLogDto}">
+        <form th:action="@{/routine/execute/{routineId}(routineId=${routine.routineId})}" method="post" th:object="${routineLogDto}">
             <input type="hidden" th:value="${routine.routineId}" name="routineId"/>
 
             <div class="RoutineCompletion-card" th:each="exercise, status : ${routine.exercises}">
@@ -53,12 +53,19 @@
                         </div>
 
                         <div class="RoutineCompletion-duration-wrapper">
-                            <label for="duration-${status.index}">운동 소요 시간 (분):</label>
+                            <label th:for="|duration-${status.index}|">운동 소요 시간 (분):</label>
+
                             <input type="number"
-                                   class="RoutineCompletion-duration-input"
-                                   id="duration-${status.index}"
-                                   th:name="|exerciseLogs[${status.index}].durationMinutes|"
+                                   class="RoutineCompletion-input-sm"
+                                   th:id="|duration-${status.index}|"
+                                   th:field="*{exerciseLogs[__${status.index}__].durationMinutes}"
                                    placeholder="예: 10"/>
+                            <label th:for="|weight-${status.index}|">무게 (kg):</label>
+                            <input type="number"
+                                   class="RoutineCompletion-input-sm"
+                                   th:id="|weight-${status.index}|"
+                                   th:field="*{exerciseLogs[__${status.index}__].weight}"
+                                   placeholder="예: 10" min="0" step="1"/>
                         </div>
                     </div>
                 </div>

@@ -11,19 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ExerciseConditionService {
 
-    private final int userId = 1;
     private final AvoidPartsMapper avoidPartsMapper;
     private final ConditionMapper conditionMapper;
     private final TargetPartsMapper targetPartsMapper;
 
-    
     public ExerciseConditionForm getConditionAndAvoidAndTargetByUserId(int userId) {
         List<String> avoidParts = avoidPartsMapper.getAvoidPartsByUserId(userId);
         List<String> targetParts = targetPartsMapper.getTargetPartsByUserId(userId);
@@ -36,8 +33,13 @@ public class ExerciseConditionService {
         
         return formData;
     }
-    
-    public int saveConditionAndAvoidAndTartget(int userId, String conditionLevel, List<String> avoidParts, List<String> targetParts) {
+
+    @Transactional
+    public void saveConditionAndAvoidAndTarget(int userId, String conditionLevel, List<String> avoidParts, List<String> targetParts) {
+
+        List<String> safeAvoid = normalize(avoidParts);
+        List<String> safeTarget = normalize(targetParts);
+
         avoidPartsMapper.deleteAvoidPartsByUserId(userId);
         targetPartsMapper.deleteTargetPartsByUserId(userId);
         conditionMapper.deleteConditionByUserId(userId);
@@ -48,11 +50,9 @@ public class ExerciseConditionService {
         condition.setConditionId(conditionId);
         condition.setUserId(userId);
         condition.setConditionLevel(conditionLevel);
-
         conditionMapper.insertCondition(condition);
 
-        if (avoidParts != null && !avoidParts.isEmpty()) {
-            for (String bodyName : avoidParts) {
+            for (String bodyName : safeAvoid) {
                 AvoidPart avoidPart = new AvoidPart();
                 avoidPart.setUserId(condition.getUserId());
                 avoidPart.setConditionId(conditionId);
@@ -60,10 +60,9 @@ public class ExerciseConditionService {
 
                 avoidPartsMapper.insertAvoidPart(avoidPart);
             }
-        }
 
-        if (targetParts != null && !targetParts.isEmpty()) {
-            for (String bodyName : targetParts) {
+
+            for (String bodyName : safeTarget) {
                 TargetPart targetPart = new TargetPart();
                 targetPart.setUserId(condition.getUserId());
                 targetPart.setConditionId(conditionId);
@@ -72,54 +71,43 @@ public class ExerciseConditionService {
                 targetPartsMapper.insertTargetPart(targetPart);
             }
         }
-        return conditionId;
-    }
 
-    public void saveAvoidParts(int userId, int conditionId, List<String> avoidParts) {
+    @Transactional
+    public void deleteConditionByUserId(int userId) {
+        targetPartsMapper.deleteTargetPartsByUserId(userId);
         avoidPartsMapper.deleteAvoidPartsByUserId(userId);
-        if (avoidParts != null) {
-            for (String part : avoidParts) {
-                AvoidPart avoidPart = new AvoidPart();
-                avoidPart.setUserId(userId);
-                avoidPart.setConditionId(conditionId);
-                avoidPart.setBodyName(part);
-
-                avoidPartsMapper.insertAvoidPart(avoidPart);
-            }
-        }
-    }
-
-    public int saveCondition(int userId, String conditionLevel) {
-        int conditionId = conditionMapper.getNextConditionId();
-
-        Condition condition = new Condition();
-        condition.setConditionId(conditionId);
-        condition.setUserId(userId);
-        condition.setConditionLevel(conditionLevel);
-
-        conditionMapper.insertCondition(condition);
-
-        return conditionId;
-    }
-
-    public void deleteContitionByUserId(int userId) {
         conditionMapper.deleteConditionByUserId(userId);
+    }
+
+    public List<String> getTargetPartsByUserId(int userId) {
+        return targetPartsMapper.getTargetPartsByUserId(userId);
+    }
+
+    public List<String> getAvoidPartsByUserId(int userId) {
+        return avoidPartsMapper.getAvoidPartsByUserId(userId);
     }
 
     public int getConditionIdByUserId(int userId) {
         return conditionMapper.getConditionIdByUserId(userId);
     }
 
+    @Transactional
     public void deleteTargetPartsByConditionId(int conditionId) {
         targetPartsMapper.deleteTargetPartsByConditionId(conditionId);
     }
 
+    @Transactional
     public void deleteAvoidPartsByConditionId(int conditionId) {
         avoidPartsMapper.deleteAvoidPartsByConditionId(conditionId);
     }
 
     public String getConditionLevelByUserId(int userId) {
          return conditionMapper.getConditionLevelByUserId(userId);
+    }
+
+    private List<String> normalize(List<String> src) {
+        if (src == null || src.isEmpty()) return Collections.emptyList();
+        return new ArrayList<>(new LinkedHashSet<>(src));
     }
 
 }

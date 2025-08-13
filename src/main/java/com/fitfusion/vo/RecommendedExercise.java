@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class RecommendedExercise {
-    private int exerciseId;
-    private int routineExerciseId;
+    private Integer exerciseId;
+    private Integer routineExerciseId;
     private int sets;
     private int reps;
     private int weight;

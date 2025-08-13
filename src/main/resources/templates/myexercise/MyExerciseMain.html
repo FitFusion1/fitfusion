@@ -30,7 +30,7 @@
         <div class="MyExercise-section">
             <div class="MyExercise-section-header">
                 <h2>📊 운동 통계</h2>
-                <a class="MyExercise-btn" href="/goal">전체보기</a>
+                <a class="MyExercise-btn" href="/myexercise/exercisestatus">전체보기</a>
             </div>
             <div id="status-card" class="MyExercise-highlight"></div>
         </div>
@@ -71,7 +71,7 @@
             const userId = 3;   // 실제 로그인 ID로 교체
 
             /* 1) 목표 -------------------------------------------------- */
-            fetch(`/api/goals?userId=${userId}`)
+            fetch(`/api/myExercise/goal?userId=${userId}`)
                 .then(r => r.json())
                 .then(g => {
                     const box = document.getElementById('goal-info');
@@ -97,7 +97,7 @@
                 });
 
             /* 2) 최근 루틴 -------------------------------------------- */
-            fetch(`/api/routines?userId=${userId}`)
+            fetch(`/api/myExercise/routines?userId=${userId}`)
                 .then(r => r.json())
                 .then(list => {
                     const box = document.getElementById('routine-container');
@@ -108,14 +108,14 @@
                         box.appendChild(c);
 
                         box.style.cursor = 'pointer';
-                        box.addEventListener('click', () =>{
+                        c.addEventListener('click', () =>{
                             location.href = `/routine/detail/${rt.routineId}`
                         });
                     });
                 });
 
             /* 3) 최근 수행 운동 ---------------------------------------- */
-            fetch(`/api/exercise-logs?userId=${userId}`)
+            fetch(`/api/myExercise/exercise-logs?userId=${userId}`)
                 .then(r => r.json())
                 .then(list => {
                     const box = document.getElementById('log-container');
@@ -128,7 +128,7 @@
                 });
 
             /* 4) 운동 통계(즉시) ------------------------------------ */
-            fetch(`/api/exercise-status?userId=${userId}`)
+            fetch(`/api/myExercise/exercise-status?userId=${userId}`)
                 .then(r => r.json())
                 .then(d => statusCard(d));
 
@@ -211,7 +211,7 @@
 
             const loadCard = () => {
                 if (step >= meta.length) return;
-                fetch(`/api/exercise-status?userId=${userId}`)
+                fetch(`/api/myExercise/exercise-status?userId=${userId}`)
                     .then(r => r.json())
                     .then(d => {
                         const cur = meta[step];

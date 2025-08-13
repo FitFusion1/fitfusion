@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitfusion.mapper.CoachingLogMapper">
+
+    <!-- int insertCoachingLog(CoachingLog coachingLog); -->
+    <insert id="insertCoachingLog" parameterType="CoachingLog">
+        <selectKey keyProperty="id"
+                   resultType="int"
+                   order="BEFORE">
+            SELECT FITFUSION_COACHING_SEQ.nextval
+            FROM DUAL
+        </selectKey>
+        INSERT INTO
+            FITFUSION_COACHING_LOGS
+        ( COACHING_LOG_ID
+        , USER_ID
+        , EXERCISE_ID
+        , TARGET_SETS
+        , TARGET_REPS
+        , PERFORMED_SETS
+        , PERFORMED_REPS
+        , GOOD_REPS
+        , TARGET_TIME_SECONDS
+        , PERFORMED_TIME_SECONDS
+        , GOOD_TIME_SECONDS
+        , ACCURACY_PCT
+        , DURATION_SECONDS
+        , PERFORMED_DATE
+        )
+        VALUES
+        ( #{id}
+        , #{userId}
+        , #{exerciseId}
+        , #{targetSets}
+        , #{targetReps}
+        , #{performedSets}
+        , #{performedReps}
+        , #{goodReps}
+        , #{targetTime}
+        , #{performedTime}
+        , #{goodTime}
+        , #{accuracyPercent}
+        , #{duration}
+        , #{performedDate}
+        )
+    </insert>
+
+    <!-- List<CoachingHistoryDto> getCoachingHistoryByUserId(int userId); -->
+    <select id="getCoachingHistoryByUserId" resultType="CoachingHistoryDto">
+        SELECT
+            cl.coaching_log_id              as id,
+            cl.user_id                      as userId,
+            cl.exercise_id                  as exerciseId,
+            ce.exercise_name                as exerciseName,
+            ce.exercise_title               as exerciseTitle,
+            ce.exercise_description         as exerciseDescription,
+            ce.exercise_preview_image_path  as previewImagePath,
+            cl.target_sets                  as targetSets,
+            cl.target_reps                  as targetReps,
+            cl.performed_reps               as performedReps,
+            cl.good_reps                    as goodReps,
+            cl.target_time_seconds          as targetTime,
+            cl.performed_time_seconds       as performedTime,
+            cl.good_time_seconds            as goodTime,
+            cl.accuracy_pct                 as accuracyPercent,
+            cl.duration_seconds             as duration,
+            cl.performed_date               as performedDate
+        FROM
+            FITFUSION_COACHING_LOGS cl
+                LEFT JOIN
+            FITFUSION_COACHING_EXERCISES ce ON cl.exercise_id = ce.exercise_id
+        WHERE
+            cl.user_id = #{userId}
+        ORDER BY
+            cl.performed_date DESC
+    </select>
+
+    <!-- CoachingHistoryDto getCoachingHistoryById(int id); -->
+    <select id="getCoachingHistoryById" resultType="CoachingHistoryDto">
+        SELECT
+            cl.coaching_log_id              as id,
+            cl.user_id                      as userId,
+            cl.exercise_id                  as exerciseId,
+            ce.exercise_name                as exerciseName,
+            ce.exercise_title               as exerciseTitle,
+            ce.exercise_description         as exerciseDescription,
+            ce.exercise_preview_image_path  as previewImagePath,
+            cl.target_sets                  as targetSets,
+            cl.target_reps                  as targetReps,
+            cl.performed_sets               as performedSets,
+            cl.performed_reps               as performedReps,
+            cl.good_reps                    as goodReps,
+            cl.target_time_seconds          as targetTime,
+            cl.performed_time_seconds       as performedTime,
+            cl.good_time_seconds            as goodTime,
+            cl.accuracy_pct                 as accuracyPercent,
+            cl.duration_seconds             as duration,
+            cl.performed_date               as performedDate
+        FROM
+            FITFUSION_COACHING_LOGS cl
+                LEFT JOIN
+            FITFUSION_COACHING_EXERCISES ce ON cl.exercise_id = ce.exercise_id
+        WHERE
+            cl.coaching_log_id = #{id}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}" th:with="menu='live-coaching'">
+
+<head>
+    <title>운동 상세 기록</title>
+        <link rel="stylesheet" th:href="@{/css/live-coaching-detail.css}" layout:fragment="css">
+</head>
+
+<div layout:fragment="content">
+    <div class="container">
+        <div class="detail-container">
+            <!-- Detail Header -->
+            <div class="detail-header">
+                <div class="detail-header-content">
+                    <a th:href="@{/live-coaching/history}" class="back-button">
+                        <i class="bi bi-arrow-left"></i>
+                        기록 목록으로
+                    </a>
+
+                    <div class="exercise-header-info">
+                        <div class="exercise-details">
+                            <h1>
+                                <i class="bi bi-person-arms-up"></i>
+                                <span th:text="${historyDetail.exerciseName}">푸시업</span>
+                            </h1>
+                            <div class="exercise-meta">
+                                <div class="meta-item">
+                                    <i class="bi bi-calendar3"></i>
+                                    <span th:text="${#dates.format(historyDetail.performedDate, 'yyyy년 MM월 dd일 HH:mm')}">2024년 01월 01일 10:00</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-clock"></i>
+                                    <span th:text="${historyDetail.formattedDuration}">5:30</span>
+                                </div>
+                                <div class="meta-item" th:if="${!historyDetail.timedExercise}">
+                                    <i class="bi bi-layers"></i>
+                                    <span th:text="${historyDetail.targetSets} + '세트'">3세트</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="completion-badge" th:classappend="${historyDetail.completionStatus == '완료'} ? 'completed' : 'incomplete'">
+                            <div class="completion-status" th:text="${historyDetail.completionStatus}">완료</div>
+                            <div class="completion-subtitle">운동 상태</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="detail-grid">
+                <!-- Main Stats Section -->
+                <div class="main-stats-section">
+                    <h2 class="section-title">
+                        <i class="bi bi-graph-up"></i>
+                        운동 성과
+                    </h2>
+
+                    <!-- Performance Overview -->
+                    <div class="performance-overview">
+                        <div class="performance-card info" th:if="${!historyDetail.timedExercise}">
+                            <div class="performance-value info" th:text="${historyDetail.performedSets}">3</div>
+                            <div class="performance-label">총 완료 세트</div>
+                        </div>
+                        <div class="performance-card primary" th:if="${!historyDetail.timedExercise}">
+                            <div class="performance-value primary" th:text="${historyDetail.goodReps}">8</div>
+                            <div class="performance-label">좋은 자세 반복</div>
+                        </div>
+                        <div class="performance-card warning" th:if="${!historyDetail.timedExercise}">
+                            <div class="performance-value warning" th:text="${historyDetail.performedReps - historyDetail.goodReps}">2</div>
+                            <div class="performance-label">개선 필요 반복</div>
+                        </div>
+                        <div class="performance-card info" th:if="${!historyDetail.timedExercise}">
+                            <div class="performance-value info" th:text="${historyDetail.performedReps}">10</div>
+                            <div class="performance-label">총 반복 횟수</div>
+                        </div>
+
+                        <div class="performance-card primary" th:if="${historyDetail.timedExercise}">
+                            <div class="performance-value primary" th:text="${historyDetail.goodTime} + '초'">25초</div>
+                            <div class="performance-label">좋은 자세 시간</div>
+                        </div>
+                        <div class="performance-card warning" th:if="${historyDetail.timedExercise}">
+                            <div class="performance-value warning" th:text="${historyDetail.performedTime - historyDetail.goodTime} + '초'">5초</div>
+                            <div class="performance-label">개선 필요 시간</div>
+                        </div>
+                        <div class="performance-card info" th:if="${historyDetail.timedExercise}">
+                            <div class="performance-value info" th:text="${historyDetail.performedTime} + '초'">30초</div>
+                            <div class="performance-label">총 운동 시간</div>
+                        </div>
+                    </div>
+
+                    <!-- Accuracy Breakdown -->
+                    <div class="accuracy-breakdown">
+                        <h4>
+                            <i class="bi bi-target"></i>
+                            정확도 분석
+                        </h4>
+                        <div class="accuracy-meter">
+                            <div class="accuracy-fill" th:style="'width: ' + ${historyDetail.accuracyPercent} + '%'">
+                                <div class="accuracy-text" th:text="${historyDetail.formattedAccuracy}">85%</div>
+                            </div>
+                        </div>
+                        <p th:if="${historyDetail.accuracyPercent >= 80}">
+                            우수한 정확도입니다! 대부분의 동작을 정확한 자세로 완료하셨습니다.
+                        </p>
+                        <p th:if="${historyDetail.accuracyPercent >= 60 and historyDetail.accuracyPercent < 80}">
+                            양호한 정확도입니다. AI 피드백을 참고하여 자세를 개선해보세요.
+                        </p>
+                        <p th:if="${historyDetail.accuracyPercent < 60}">
+                            자세 개선이 필요합니다. AI 코칭의 실시간 피드백에 더 집중해보세요.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="sidebar-section">
+                    <!-- Exercise Summary -->
+                    <div class="summary-card">
+                        <h3 class="section-title">
+                            <i class="bi bi-list-check"></i>
+                            운동 요약
+                        </h3>
+                        <ul class="summary-list">
+                            <li th:if="${!historyDetail.timedExercise}">
+                                <span class="summary-label">목표 세트:</span>
+                                <span class="summary-value" th:text="${historyDetail.targetSets} + '세트'">3세트</span>
+                            </li>
+                            <li th:if="${!historyDetail.timedExercise}">
+                                <span class="summary-label">실제 완료 세트:</span>
+                                <span class="summary-value" th:text="${historyDetail.performedSets} + '세트'">3세트</span>
+                            </li>
+                            <li th:if="${!historyDetail.timedExercise}">
+                                <span class="summary-label">목표 반복:</span>
+                                <span class="summary-value" th:text="${historyDetail.targetReps * historyDetail.targetSets} + '회'">30회</span>
+                            </li>
+                            <li th:if="${!historyDetail.timedExercise}">
+                                <span class="summary-label">실제 반복:</span>
+                                <span class="summary-value" th:text="${historyDetail.performedReps} + '회'">10회</span>
+                            </li>
+                            <li th:if="${historyDetail.timedExercise}">
+                                <span class="summary-label">목표 시간:</span>
+                                <span class="summary-value" th:text="${historyDetail.targetTime * historyDetail.targetSets} + '초'">90초</span>
+                            </li>
+                            <li th:if="${historyDetail.timedExercise}">
+                                <span class="summary-label">실제 시간:</span>
+                                <span class="summary-value" th:text="${historyDetail.performedTime} + '초'">30초</span>
+                            </li>
+                            <li>
+                                <span class="summary-label">운동 시간:</span>
+                                <span class="summary-value" th:text="${historyDetail.formattedDuration}">5:30</span>
+                            </li>
+                            <li>
+                                <span class="summary-label">정확도:</span>
+                                <span class="summary-value" th:text="${historyDetail.formattedAccuracy}">85%</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="summary-card">
+                        <h3 class="section-title">
+                            <i class="bi bi-lightning"></i>
+                            빠른 실행
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a th:href="@{/live-coaching}" class="detail-btn" style="justify-content: center; text-decoration: none;">
+                                <i class="bi bi-play-circle"></i>
+                                새 운동 시작
+                            </a>
+                            <a th:href="@{/live-coaching/history}" class="expand-btn" style="justify-content: center; text-decoration: none; color: #666;">
+                                <i class="bi bi-clock-history"></i>
+                                전체 기록 보기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Section -->
+            <div class="feedback-section">
+                <h2 class="section-title">
+                    <i class="bi bi-chat-dots"></i>
+                    AI 코칭 피드백
+                </h2>
+
+                <div th:if="${#lists.isEmpty(feedbackList)}" class="no-feedback">
+                    <div class="no-feedback-content">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <h3>완벽한 운동이었습니다!</h3>
+                        <p>이번 운동에서는 AI가 개선점을 발견하지 못했습니다. 정확한 자세로 운동을 수행하셨네요!</p>
+                    </div>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(feedbackList)}" class="feedback-list">
+                    <div th:each="feedback : ${feedbackList}" class="feedback-item">
+                        <div class="feedback-header">
+                            <div class="feedback-meta">
+                                <span class="set-rep-info">
+                                    <i class="bi bi-layers"></i>
+                                    <span th:text="${feedback.setNo} + '세트'">1세트</span>
+                                    <span th:if="${feedback.repNo > 0}" th:text="' - ' + ${feedback.repNo} + '회'"> - 5회</span>
+                                </span>
+                                <span class="timestamp-info">
+                                    <i class="bi bi-clock"></i>
+                                    <span th:text="${feedback.timestamp} + '초'">15초</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="feedback-description" th:text="${feedback.description}">
+                            팔꿈치를 더 깊게 구부려주세요.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insights Section -->
+            <div class="insights-section">
+                <h2 class="section-title">
+                    <i class="bi bi-lightbulb"></i>
+                    운동 분석 및 제안
+                </h2>
+
+                <div th:if="${historyDetail.accuracyPercent >= 80}">
+                    <div class="insight-item success">
+                        <div class="insight-title success">
+                            <i class="bi bi-check-circle"></i>
+                            우수한 성과
+                        </div>
+                        <div class="insight-description">
+                            정확도 <span th:text="${historyDetail.formattedAccuracy}">85%</span>로 매우 좋은 결과를 얻으셨습니다.
+                            이 자세를 계속 유지하며 운동 강도를 점진적으로 높여보세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${historyDetail.accuracyPercent >= 60 and historyDetail.accuracyPercent < 80}">
+                    <div class="insight-item info">
+                        <div class="insight-title info">
+                            <i class="bi bi-info-circle"></i>
+                            개선 포인트
+                        </div>
+                        <div class="insight-description">
+                            현재 정확도는 <span th:text="${historyDetail.formattedAccuracy}">70%</span>입니다.
+                            AI 피드백에 더 집중하고, 동작을 천천히 정확하게 수행해보세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${historyDetail.accuracyPercent < 60}">
+                    <div class="insight-item warning">
+                        <div class="insight-title warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            자세 개선 필요
+                        </div>
+                        <div class="insight-description">
+                            정확도가 <span th:text="${historyDetail.formattedAccuracy}">50%</span>로 개선이 필요합니다.
+                            속도보다는 정확한 자세에 집중하고, AI 피드백을 실시간으로 확인해보세요.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insight-item info" th:if="${historyDetail.completionStatus == '완료'}">
+                    <div class="insight-title info">
+                        <i class="bi bi-trophy"></i>
+                        목표 달성
+                    </div>
+                    <div class="insight-description">
+                        설정한 목표를 성공적으로 달성하셨습니다! 다음에는 조금 더 도전적인 목표를 설정해보는 것은 어떨까요?
+                    </div>
+                </div>
+
+                <div class="insight-item warning" th:if="${historyDetail.completionStatus == '미완료'}">
+                    <div class="insight-title warning">
+                        <i class="bi bi-flag"></i>
+                        목표 미달성
+                    </div>
+                    <div class="insight-description">
+                        이번에는 목표에 조금 미치지 못했지만 괜찮습니다. 꾸준한 연습을 통해 점진적으로 개선해나가세요.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate accuracy meter
+            const accuracyFill = document.querySelector('.accuracy-fill');
+            if (accuracyFill) {
+                const targetWidth = accuracyFill.style.width;
+                accuracyFill.style.width = '0%';
+                setTimeout(() => {
+                    accuracyFill.style.width = targetWidth;
+                }, 500);
+            }
+
+            // Animate performance cards
+            const performanceCards = document.querySelectorAll('.performance-card');
+            performanceCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100 + 300);
+            });
+        });
+    </script>
+</th:block>
+</html>

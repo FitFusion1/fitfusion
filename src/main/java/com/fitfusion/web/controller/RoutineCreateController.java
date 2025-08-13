@@ -19,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,19 +38,33 @@ public class RoutineCreateController {
     @GetMapping("/create/ai")
     public String aiRoutine(@AuthenticationPrincipal SecurityUser user, HttpSession session, RedirectAttributes redirectAttributes, Model model) {
         try {
-            ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
-            List<Exercise> exercises = exerciseService.getAllExercises();
 
             ExerciseGoal goal = exerciseGoalService.getSelectedGoalEntityByUserId(user.getUser().getUserId());
             String goalType = (goal != null) ? goal.getGoalType() : null;
             Boolean conditionSet = (Boolean) session.getAttribute("conditionSet");
 
-            if ("근육 증가".equals(goalType) && (condition == null || conditionSet == null || !conditionSet)) {
+            if ("근육 증가".equals(goalType) && !Boolean.TRUE.equals(conditionSet)) {
                 redirectAttributes.addFlashAttribute("alertMessage", "근육 증가 목표는 사용자 맞춤 설정이 필요합니다. 루틴을 직접 선택해주세요.");
                 return "redirect:/condition/save";
             }
 
+            ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
 
+            if (condition == null) {
+                @SuppressWarnings("unchecked")
+                List<String> avoid = (List<String>) session.getAttribute("avoidParts");
+                @SuppressWarnings("unchecked")
+                List<String> target = (List<String>) session.getAttribute("targetParts");
+                String level = (String) session.getAttribute("condition");
+
+                ExerciseConditionForm tmp = new ExerciseConditionForm();
+                tmp.setAvoidParts(avoid != null ? avoid : Collections.emptyList());
+                tmp.setTargetParts(target != null ? target : Collections.emptyList());
+                tmp.setConditionLevel(level);
+                condition = tmp;
+            }
+
+            List<Exercise> exercises = exerciseService.getAllExercises();
             List<RecommendedExercise> recommended = aiRoutineGenerator.generateRoutine(condition, exercises, goalType);
 
             for (RecommendedExercise re : recommended) {
@@ -63,7 +74,7 @@ public class RoutineCreateController {
 
             model.addAttribute("recommendedExercises", recommended);
             model.addAttribute("routineName", "오늘의 AI 추천 루틴");
-
+            session.setAttribute("recommendedExercises", recommended);
 
             return "routine/RoutineRecommendation";
 
@@ -72,6 +83,24 @@ public class RoutineCreateController {
             model.addAttribute("errorMessage", "추천 루틴 생성 중 오류가 발생했습니다.");
             return "routine/RoutineRecommendation";
         }
+    }
+
+    @PostMapping("/save/ai")
+    public String saveRecommendedRoutine(@AuthenticationPrincipal SecurityUser user,
+                                         HttpSession session,
+                                         RedirectAttributes redirect)  {
+
+        @SuppressWarnings("unchecked")
+        List<RecommendedExercise> recommended = (List<RecommendedExercise>) session.getAttribute("recommendedExercises");
+
+        if (recommended == null || recommended.isEmpty()) {
+            redirect.addFlashAttribute("alertMessage", "저장할 추천 루틴이 없습니다. 다시 생성해 주세요");
+            return "redirect:/routine/create/ai";
+        }
+
+        routineService.saveRecommendedRoutine(user.getUser().getUserId(), recommended);
+        session.removeAttribute("recommendedExercises");
+        return "redirect:/routine/list";
     }
 
     @GetMapping("/create/custom")
@@ -131,19 +160,6 @@ public class RoutineCreateController {
         return "redirect:/routine/list";
     }
 
-    @PostMapping("/save/ai")
-    public String saveRecommendedRoutine(@AuthenticationPrincipal SecurityUser user) throws Exception {
-
-        ExerciseConditionForm condition = conditionService.getConditionAndAvoidAndTargetByUserId(user.getUser().getUserId());
-        List<Exercise> allExercises = exerciseService.getAllExercises();
-        String goalType = exerciseGoalService.getSelectedGoalEntityByUserId(user.getUser().getUserId()).getGoalType();
-
-
-        List<RecommendedExercise> recommendedExercises = aiRoutineGenerator.generateRoutine(condition, allExercises, goalType);
-        routineService.saveRecommendedRoutine(user.getUser().getUserId(), recommendedExercises);
-        return "redirect:/routine/list";
-    }
-
     @PostMapping("/update/custom")
     public String updateCustomRoutine(@AuthenticationPrincipal SecurityUser user, @ModelAttribute RoutineDetailDto routine) {
         routineService.updateCustomRoutine(user.getUser().getUserId(), routine);
@@ -151,10 +167,9 @@ public class RoutineCreateController {
     }
 
     @GetMapping("/create/target")
-    public String targetRecommend(Model model) throws Exception{
+    public String targetRecommend(@AuthenticationPrincipal SecurityUser user, Model model) throws Exception{
 
-        int userId = 3;
-        List<BodyPart> lackParts = targetPartRoutineService.findLackParts(userId);
+        List<BodyPart> lackParts = targetPartRoutineService.findLackParts(user.getUser().getUserId());
         List<Exercise> exercises = exerciseService.getAllExercises();
 
         Map<BodyPart, List<RecommendedExercise>> routines =
@@ -165,14 +180,13 @@ public class RoutineCreateController {
     }
 
     @PostMapping("/save/target")
-    public String saveTargetRoutine(TargetRoutineDto targetRoutineDto, HttpSession session, RedirectAttributes redirect) throws Exception{
-        int userId = 3;
+    public String saveTargetRoutine(@AuthenticationPrincipal SecurityUser user, TargetRoutineDto targetRoutineDto) throws Exception{
 
         List<RecommendedExercise> exercises = objectMapper.readValue(
                 targetRoutineDto.getRoutineJson(),
                 new TypeReference<List<RecommendedExercise>>() {});
 
-        routineService.saveTargetRoutine(userId,targetRoutineDto.getBodyPart(), exercises);
+        routineService.saveTargetRoutine(user.getUser().getUserId(),targetRoutineDto.getBodyPart(), exercises);
 
         return "redirect:/routine/list";
     }

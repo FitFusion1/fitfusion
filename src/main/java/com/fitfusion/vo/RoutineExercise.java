@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoutineExercise {
-    private int routinExerciseId;
+    private int routineExerciseId;
     private int routineId;
     private int exerciseId;
     private int sets;

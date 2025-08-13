@@ -4,26 +4,28 @@ import com.fitfusion.dto.ExerciseLogDto;
 import com.fitfusion.dto.RoutineLogDto;
 import com.fitfusion.vo.ExerciseLog;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
 public interface ExerciseLogMapper {
 
-    void deleteExerciseLogByUserAndLogId(int userId, int sessionId);
+    void deleteExerciseLogByUserAndLogId(@Param("userId") int userId, @Param("sessionId") int sessionId);
 
-    void insertExerciseLog(ExerciseLog log);
+    void insertExerciseLog(@Param("log") ExerciseLog log);
 
-    List<ExerciseLogDto> findExerciseLog(int userId);
+    List<ExerciseLogDto> findExerciseLog(@Param("userId") int userId);
 
-    List<ExerciseLogDto> findRoutineLogsDetail(int userId);
+    List<ExerciseLogDto> findAllExerciseLogsDetail(@Param("userId") int userId);
 
     int getNextSessionId();
 
-    RoutineLogDto getRoutineInfo(int routineId);
+    RoutineLogDto getRoutineInfo(@Param("routineId") int routineId);
 
-    List<ExerciseLogDto> getRoutineLogDetail(int userId, int routineId, int sessionId);
+    List<ExerciseLogDto> getRoutineLogDetail(@Param("userId") int userId, @Param("routineId") int routineId, @Param("sessionId") int sessionId);
 
     void updateExerciseLog(ExerciseLogDto exerciseLog);
 
+    long countDistinctSessionByUserId(@Param("userId") int userId);
 }

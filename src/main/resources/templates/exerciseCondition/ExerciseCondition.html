@@ -13,50 +13,64 @@
 </head>
 
 <div class="ExerciseCondition">
-<div layout:fragment="content">
-<div class="ExerciseCondition-container">
-    <h1 class="ExerciseCondition-title">오늘 운동 조건을 선택해주세요</h1>
-    <form th:action="@{/condition/save}" method="post">
-        <div th:if="${errorMessage}" style="color: red; margin-bottom: 10px;">
-            <p th:text="${errorMessage}"></p>
-        </div>
-        <!-- 피하고 싶은 부위 -->
-        <div class="ExerciseCondition-form-group">
-            <label class="ExerciseCondition-label">1. 피하고 싶은 부위가 있다면 선택해주세요</label>
-            <div class="ExerciseCondition-grid">
-                <label class="ExerciseCondition-option" th:each="part : ${bodyParts}">
-                    <input type="checkbox" name="avoidParts" th:value="${part.bodyName}" />
-                    <span th:text="${part.bodyName}">부위명</span>
-                </label>
-            </div>
-        </div>
+    <div layout:fragment="content">
+        <div class="ExerciseCondition-container">
+            <h1 class="ExerciseCondition-title">오늘 운동 조건을 선택해주세요</h1>
+            <form th:action="@{/condition/save}" th:object="${exerciseConditionForm}" method="post">
+                <div th:if="${#fields.hasErrors()}" style="color: red; margin-bottom: 10px;">
+                    <div th:each="e : ${#fields.globalErrors()}" th:text="${e}"></div>
+                </div>
+                <!-- 피하고 싶은 부위 -->
+                <div class="ExerciseCondition-form-group">
+                    <label class="ExerciseCondition-label">1. 피하고 싶은 부위가 있다면 선택해주세요</label>
+                    <div class="ExerciseCondition-grid">
+                        <label class="ExerciseCondition-option" th:each="part : ${bodyParts}">
+                            <input type="checkbox" name="avoidParts" th:value="${part.bodyName}"/>
+                            <span th:text="${part.bodyName}">부위명</span>
+                        </label>
+                    </div>
+                    <div th:if="${#fields.hasErrors('avoidParts')}" th:errors="*{avoidParts}"
+                         style="color: red; margin-bottom: 10px;">
+                </div>
 
-        <!-- 하고 싶은 부위 -->
-        <div class="ExerciseCondition-form-group">
-            <label class="ExerciseCondition-label">2. 오늘 운동하고 싶은 부위를 선택해주세요</label>
-            <div class="ExerciseCondition-grid">
-                <label class="ExerciseCondition-option" th:each="part : ${bodyParts}">
-                    <input type="checkbox" name="targetParts" th:value="${part.bodyName}" />
-                    <span th:text="${part.bodyName}">부위명</span>
-                </label>
-            </div>
-        </div>
+                </div>
+                <!-- 하고 싶은 부위 -->
+                <div class="ExerciseCondition-form-group">
+                    <label class="ExerciseCondition-label">2. 오늘 운동하고 싶은 부위를 선택해주세요</label>
+                    <div class="ExerciseCondition-grid">
+                        <label class="ExerciseCondition-option" th:each="part : ${bodyParts}">
+                            <input type="checkbox" name="targetParts" th:value="${part.bodyName}"/>
+                            <span th:text="${part.bodyName}">부위명</span>
+                        </label>
+                    </div>
+                    <div th:if="${#fields.hasErrors('targetParts')}" th:errors="*{targetParts}"
+                         style="color: red; margin-bottom: 10px;">
+                </div>
+                <!-- 컨디션 상태 -->
+                <div class="ExerciseCondition-form-group">
+                    <label class="ExerciseCondition-label">3. 오늘 컨디션은 어떤가요?</label>
+                    <div class="ExerciseCondition-radio-group">
+                        <label class="ExerciseCondition-radio" th:each="level : ${conditionLevels}">
+                            <input type="radio" name="conditionLevel" th:value="${level.getLevel()}"/>
+                            <span th:text="${level.emoji + ' ' + level.level}">컨디션</span>
+                        </label>
+                    </div>
+                    <div th:if="${#fields.hasErrors('conditionLevel')}" th:errors="*{conditionLevel}"
+                         style="color: red; margin-bottom: 10px;">
+                </div>
 
-        <!-- 컨디션 상태 -->
-        <div class="ExerciseCondition-form-group">
-            <label class="ExerciseCondition-label">3. 오늘 컨디션은 어떤가요?</label>
-            <div class="ExerciseCondition-radio-group">
-                <label class="ExerciseCondition-radio" th:each="level : ${conditionLevels}">
-                    <input type="radio" name="conditionLevel" th:value="${level.getLevel()}"/>
-                    <span th:text="${level.emoji + ' ' + level.level}">컨디션</span>
-                </label>
-            </div>
+                <div class="ExerciseCondition-nav">
+                    <a th:href="@{/myexercise}" class="ExerciseCondition-nav-btn">
+                        나의 운동으로 돌아가기
+                    </a>
+                    <button type="submit" class="ExerciseCondition-submit-btn">루틴 추천 받기</button>
+                    <a th:href="@{/exercisegoal/goallist}" class="ExerciseCondition-nav-btn">
+                        목표 설정으로 돌아가기
+                    </a>
+                </div>
+            </form>
         </div>
-
-        <button type="submit" class="ExerciseCondition-submit-btn">루틴 추천 받기</button>
-    </form>
-</div>
-</div>
+    </div>
 </div>
 <th:block layout:fragment="script">
     <script th:if="${alertMessage}" th:inline="javascript">

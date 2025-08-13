@@ -8,7 +8,7 @@
         select part
         from (
             select ex.category   as part,
-                   count(*)     as cnt
+                   count(*)      as cnt
             from fitfusion_exercise_logs l, fitfusion_exercises ex
             where l.user_id = #{userId}
             and ex.exercise_id = l.exercise_id

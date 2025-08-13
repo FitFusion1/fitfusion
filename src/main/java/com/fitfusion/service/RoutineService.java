@@ -58,27 +58,13 @@ public class RoutineService {
         return routineId;
     }
 
-    public List<RoutineListDto> getRoutineListByUserId(int userId) {
-        return routineMapper.getRoutineListByUserId(userId);
-    }
-
-    public List<RoutineListDto> getRoutineByUserAndRoutineId(int userId, int routineId) {
-        return routineMapper.selectRoutineByUserAndRoutineId(userId, routineId);
-    }
-
-    public List<RoutineListDto> getRoutineByUserId(int userId) {
-        return routineMapper.getRoutineListByUserId(userId);
+    public List<RoutineListDto> getRoutineListByUserId(int userId, int page, int size) {
+        int offset = (page - 1) * size;
+        return routineMapper.getRoutineListByUserId(userId, offset, size);
     }
 
     public void deleteRoutineListByUserAndRoutine(int userId, int routineId) {
         routineMapper.deleteRoutineByUserAndRoutineId(userId, routineId);
-    }
-    public void updateRoutine(Routine routine) {
-        routineMapper.updateRoutine(routine);
-    }
-
-    public Routine getRoutineDetailByUserId(int userId, int routineId) {
-        return routineMapper.getRoutineDetailByUserAndRoutineId(userId, routineId);
     }
 
     public RoutineDetailDto getRoutineDetail(int routineId, int userId) {
@@ -169,5 +155,9 @@ public class RoutineService {
             routineExerciseMapper.insertRoutineExerCise(rel);
         }
         return routineId;
+    }
+
+    public long countRoutineByUserId(int userId) {
+        return routineMapper.countRoutineByUserId(userId);
     }
 }

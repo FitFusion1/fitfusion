@@ -8,9 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -34,6 +32,7 @@ public class UserService {
         return false;
     }
 
+    @Transactional
     public User registerUser(UserRegisterForm form) {
         User foundUser = userMapper.getUserByUsername(form.getUsername());
         if (foundUser != null) {

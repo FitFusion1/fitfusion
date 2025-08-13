@@ -1,0 +1,1239 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'IBM Plex Sans KR', sans-serif;
+}
+
+body {
+    color: #000;
+    background: #f7f7f7;
+    line-height: 1.6;
+}
+
+/* Main Content */
+.main-content {
+    padding: 40px 0;
+    min-height: calc(100vh - 140px);
+}
+
+.pose-detection-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Exercise Header */
+.exercise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #00d084 0%, #00b374 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 32px rgba(0, 208, 132, 0.2);
+}
+
+.exercise-info h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.exercise-info h1 span {
+    color: #e8f5e8;
+    font-weight: 600;
+}
+
+.exercise-targets {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.target-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 16px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.target-item i {
+    font-size: 1.1rem;
+    color: #e8f5e8;
+}
+
+.target-item span {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.target-item strong {
+    font-weight: 700;
+    color: #fff;
+}
+
+/* Progress Circle */
+.exercise-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.progress-ring {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Total Time Display */
+.total-time-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.total-time-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 16px 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 160px;
+}
+
+.total-time-card i {
+    font-size: 1.5rem;
+    color: #e8f5e8;
+}
+
+.total-time-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.total-time-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #e8f5e8;
+    margin-bottom: 2px;
+}
+
+.total-time-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+}
+
+/* Stop Exercise Button */
+.stop-exercise-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stop-exercise-btn {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.stop-exercise-btn:hover {
+    background: linear-gradient(135deg, #c82333, #a71e2a);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+    color: #fff;
+}
+
+.stop-exercise-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.stop-exercise-btn:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.stop-exercise-btn:disabled:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    transform: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stop-exercise-btn i {
+    font-size: 1.2rem;
+}
+
+/* Rest Timer Section */
+.rest-timer-section {
+    margin-bottom: 30px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.rest-timer-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.rest-timer-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    pointer-events: none;
+}
+
+.rest-timer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.rest-timer-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rest-timer-header h3 i {
+    font-size: 1.3rem;
+    color: #e8f5e8;
+}
+
+.rest-timer-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.rest-timer-controls .btn {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.rest-timer-controls .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rest-timer-display {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.rest-timer-circle {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+}
+
+.rest-timer-ring {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.rest-timer-ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 6;
+}
+
+.rest-timer-ring-progress {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+.rest-timer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.rest-timer-text span {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: white;
+    display: block;
+}
+
+.rest-timer-info {
+    flex: 1;
+}
+
+.rest-timer-info p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.rest-timer-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.rest-timer-buttons .btn {
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rest-timer-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.rest-timer-buttons .btn-primary {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.rest-timer-buttons .btn-primary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.rest-timer-buttons .btn-secondary {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.rest-timer-buttons .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Rest Timer Animation */
+.rest-timer-section.active {
+    animation: pulse 2s infinite;
+}
+
+.rest-timer-section.completed {
+    background: linear-gradient(135deg, #00d084 0%, #00b374 100%);
+}
+
+/* Rest Timer Edit Modal Styles */
+.rest-time-edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.rest-time-edit-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.rest-time-edit-content {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+.rest-time-edit-modal.show .rest-time-edit-content {
+    transform: scale(1);
+}
+
+.rest-time-edit-content h4 {
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 700;
+}
+
+.rest-time-input-group {
+    margin-bottom: 25px;
+}
+
+.rest-time-input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.rest-time-input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.rest-time-input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.rest-time-edit-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.rest-time-edit-buttons .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+/* Progress Ring Styles */
+.progress-ring-circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 8;
+}
+
+.progress-ring-circle {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 339.292;
+    stroke-dashoffset: 339.292;
+    transition: stroke-dashoffset 0.5s ease;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: white;
+}
+
+/* Demo Section */
+.demo-section {
+    margin-bottom: 60px;
+}
+
+.demo-column {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin: 0 auto;
+}
+
+.demo-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    padding: 30px;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.demo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.demo-card h3 {
+    color: #00d084;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.demo-card p {
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+}
+
+/* Webcam Section */
+.webcam-section {
+    text-align: center;
+}
+
+.webcam-btn {
+    background: #00d084;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.webcam-btn:hover {
+    background: #00b374;
+    color: #fff;
+}
+
+.webcam-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+#webcam {
+    width: 100%;
+    height: auto;
+    display: block;
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+}
+
+.output_canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+    transform: rotateY(180deg);
+}
+
+.webcam-flex-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+/* Webcam Left Section */
+.webcam-left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 480px;
+    max-width: 640px;
+    flex-shrink: 0;
+}
+
+/* Enhanced Feedback and Progress Section */
+.feedback-rep-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 320px;
+    max-width: 380px;
+    flex-shrink: 0;
+}
+
+.feedback-section, .rep-section, .progress-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e8e8e8;
+}
+
+.feedback-section h4, .rep-section h4, .progress-section h4 {
+    color: #00d084;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feedback-content {
+    align-content: center;
+    min-height: 80px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #00d084;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    color: #333;
+}
+
+.feedback-content.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-style: italic;
+}
+
+/* Set Counter */
+.set-display {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #00d084;
+    margin-bottom: 15px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0f9f6 0%, #e8f5e8 100%);
+    border-radius: 12px;
+    border: 2px solid #00d084;
+}
+
+/* Current Rep Counter */
+.current-rep-display {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #2196f3;
+    margin-bottom: 15px;
+    padding: 18px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-radius: 12px;
+    border: 2px solid #2196f3;
+}
+
+/* Rep Counters */
+.rep-counters {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.rep-counter {
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid;
+    transition: all 0.3s ease;
+}
+
+.rep-counter.good {
+    background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+    border-color: #00d084;
+    color: #00d084;
+}
+
+.rep-counter.bad {
+    background: linear-gradient(135deg, #ffeaea 0%, #f8d7da 100%);
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.rep-counter.total {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-color: #2196f3;
+    color: #2196f3;
+}
+
+.rep-counter-value {
+    font-size: 2rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.rep-counter-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Timer Counters */
+.timer-counters {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.timer-counter {
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid;
+    transition: all 0.3s ease;
+}
+
+.timer-counter.good {
+    background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+    border-color: #00d084;
+    color: #00d084;
+}
+
+.timer-counter.bad {
+    background: linear-gradient(135deg, #ffeaea 0%, #f8d7da 100%);
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.timer-counter.total {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-color: #2196f3;
+    color: #2196f3;
+}
+
+.timer-counter-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.timer-counter-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Accuracy Display */
+.accuracy-display {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-radius: 12px;
+    border: 2px solid #ffc107;
+    margin-top: 15px;
+}
+
+.accuracy-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ff8c00;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.accuracy-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #856404;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Progress Details */
+.progress-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.progress-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.progress-item:last-child {
+    border-bottom: none;
+}
+
+.progress-label {
+    font-weight: 500;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.progress-value {
+    font-weight: 700;
+    color: #00d084;
+    font-size: 1.1rem;
+}
+
+/* Instructions Section */
+.instructions-section {
+    margin-top: 60px;
+}
+
+.instruction-card {
+    text-align: center;
+    padding: 30px 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    height: 100%;
+    transition: transform 0.2s ease;
+}
+
+.instruction-card:hover {
+    transform: translateY(-5px);
+}
+
+.icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #00d084, #00b374);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.icon-wrapper i {
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.instruction-card h4 {
+    color: #121212;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.instruction-card p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Exercise Tips Section */
+.exercise-tips-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px;
+    margin-top: 40px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    border: 1px solid #e8e8e8;
+}
+
+.exercise-tips-section h3 {
+    color: #00d084;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tips-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.tip-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #00d084;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tip-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 208, 132, 0.15);
+}
+
+.tip-item h5 {
+    color: #00d084;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.tip-item p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* MediaPipe Canvas Overlay */
+.canvas {
+    z-index: 1;
+    position: absolute;
+    pointer-events: none;
+}
+
+.highlighter {
+    background: rgba(0, 208, 132, 0.25);
+    border: 1px dashed #00d084;
+    z-index: 1;
+    position: absolute;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pulse {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.invisible {
+    opacity: 0.2;
+    transition: opacity 500ms ease-in-out;
+}
+
+.removed {
+    display: none;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Status Colors */
+.status-good {
+    color: #00d084;
+    border-left-color: #00d084;
+}
+
+.status-warning {
+    color: #ff8c00;
+    border-left-color: #ff8c00;
+}
+
+.status-error {
+    color: #ff4d4d;
+    border-left-color: #ff4d4d;
+}
+
+.status-info {
+    color: #008cff;
+    border-left-color: #008cff;
+}
+
+.success {
+    border-color: #00d084 !important;
+}
+
+.error {
+    border-color: #dc3545 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .webcam-flex-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .webcam-left-section {
+        width: 100%;
+        max-width: none;
+        min-width: auto;
+    }
+
+    .feedback-rep-container {
+        width: 100%;
+        max-width: none;
+        min-width: auto;
+    }
+
+    .rep-counters, .timer-counters {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .rest-timer-display {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .rest-timer-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .exercise-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .exercise-info h1 {
+        font-size: 1.8rem;
+    }
+
+    .exercise-targets {
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .target-item {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .progress-circle {
+        width: 100px;
+        height: 100px;
+    }
+
+    .progress-text {
+        font-size: 1rem;
+    }
+
+    .total-time-card {
+        min-width: 140px;
+        padding: 12px 16px;
+    }
+
+    .total-time-value {
+        font-size: 1.1rem;
+    }
+
+    .set-display {
+        font-size: 1.8rem;
+    }
+
+    .current-rep-display {
+        font-size: 1.6rem;
+    }
+
+    .rep-counter-value, .timer-counter-value {
+        font-size: 1.5rem;
+    }
+
+    .accuracy-value {
+        font-size: 1.8rem;
+    }
+
+    .demo-card {
+        padding: 20px;
+    }
+
+    .instruction-card {
+        padding: 20px 15px;
+    }
+
+    .rest-timer-card {
+        padding: 20px;
+    }
+
+    .rest-timer-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .rest-timer-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .rest-timer-controls {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .rest-timer-buttons {
+        justify-content: center;
+    }
+
+    .rest-timer-buttons .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .exercise-header {
+        padding: 15px;
+    }
+
+    .exercise-info h1 {
+        font-size: 1.5rem;
+    }
+
+    .exercise-targets {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .target-item {
+        width: 100%;
+        max-width: 200px;
+        justify-content: center;
+    }
+
+    .tips-content {
+        grid-template-columns: 1fr;
+    }
+
+    .feedback-section, .rep-section, .progress-section {
+        padding: 15px;
+    }
+
+    .rep-counter, .timer-counter {
+        padding: 10px;
+    }
+
+    .rep-counter-value, .timer-counter-value {
+        font-size: 1.3rem;
+    }
+
+    .accuracy-value {
+        font-size: 1.5rem;
+    }
+
+    .rest-timer-card {
+        padding: 15px;
+    }
+
+    .rest-timer-display {
+        gap: 15px;
+    }
+
+    .rest-timer-circle {
+        width: 80px;
+        height: 80px;
+    }
+
+    .rest-timer-text span {
+        font-size: 1.5rem;
+    }
+
+    .rest-timer-info p {
+        font-size: 1rem;
+    }
+
+    .rest-timer-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .rest-timer-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .rest-time-edit-content {
+        padding: 20px;
+        margin: 20px;
+    }
+}

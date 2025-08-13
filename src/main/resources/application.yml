@@ -28,4 +28,3 @@ fitfusion:
 yolo:
   api:
     url: http://localhost:8000/detect/
-
