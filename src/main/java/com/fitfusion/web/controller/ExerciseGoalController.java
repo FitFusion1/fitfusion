@@ -155,9 +155,18 @@ public class ExerciseGoalController {
     }
 
     @GetMapping("/goalupdate/{goalId}")
-    public String goalUpdate(@AuthenticationPrincipal SecurityUser user, @PathVariable("goalId") int goalId, Model model) {
+    public String goalUpdate(@AuthenticationPrincipal SecurityUser user,
+                             @PathVariable("goalId") int goalId,
+                             Model model,
+                             SessionStatus status) {
+
+        status.setComplete();
+
         ExerciseGoal exerciseGoal = exerciseGoalService.getUserGoalByUserId(user.getUser().getUserId(), goalId);
         ExerciseGoalRegisterForm formData = modelMapper.map(exerciseGoal, ExerciseGoalRegisterForm.class);
+
+        if (formData.getGoalType() != null) formData.setGoalType(formData.getGoalType().trim());
+
         model.addAttribute("exerciseGoalForm", formData);
         model.addAttribute("goalTypes", GoalType.values());
         return "exerciseGoal/GoalUpdate";
