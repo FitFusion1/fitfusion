@@ -5,9 +5,7 @@
 
 <head>
     <title>AI 운동 코칭</title>
-    <th:block layout:fragment="css">
-        <link rel="stylesheet" th:href="@{/css/exercise-feedback.css}">
-    </th:block>
+    <link rel="stylesheet" th:href="@{/css/exercise-feedback.css}" layout:fragment="css">
 </head>
 
 <div layout:fragment="content">
@@ -111,7 +109,7 @@
                         <p>웹캠 앞에서 운동 자세를 취하면 AI가 실시간으로 자세를 분석하고 피드백을 제공합니다</p>
 
                         <div class="webcam-section">
-                            <button id="webcamButton" class="webcam-btn">
+                            <button id="webcamButton" class="webcam-btn" disabled>
                                 <i class="bi bi-camera-video-fill"></i>
                                 <span>웹캠 시작</span>
                             </button>
@@ -304,6 +302,7 @@
         const targetSets = /*[(${liveCoachingForm.targetSets})]*/ 3;
         const targetReps = /*[(${liveCoachingForm.targetReps})]*/ 10;
         const targetTime = /*[(${liveCoachingForm.targetTime})]*/ 30;
+        const audioBaseUrl = /*[[@{/audio/}]]*/ '';
     </script>
     <script th:defer th:src="@{/js/exercise-feedback.js}" type="module"></script>
 </th:block>

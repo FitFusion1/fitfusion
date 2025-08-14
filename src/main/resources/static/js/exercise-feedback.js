@@ -24,7 +24,6 @@ let exerciseState = 'ready';
 let isInGoodPose = false;
 let lastPoseTime = 0;
 let badPoseStartTime = null;
-const badPoseDurationThreshold = 2000; // 2 seconds in milliseconds
 let feedbackEvents = [];
 let workoutPaused = false;
 let workoutDiscontinued = false;
@@ -85,6 +84,143 @@ const stopExerciseButton = document.getElementById("stop-exercise-btn");
 
 const canvasCtx = canvasElement.getContext("2d");
 
+// ===== Audio Manager with Automatic Cooldowns =====
+const audioManager = {
+    audioMap: {},
+    isPlaying: false,
+    queue: [],
+    lastPlayTimes: {},
+    cooldown: 3000, // ms — change if you want longer/shorter cooldowns
+
+    init() {
+        // ===== Counts =====
+        this.audioMap.count = [];
+        for (let i = 1; i <= 50; i++) {
+            this.audioMap.count[i] = new Audio(audioBaseUrl + `count/count_${i}.mp3`);
+        }
+
+        // ===== Feedback =====
+        this.audioMap.feedback = {
+            badPose: new Audio(audioBaseUrl + 'feedback/bad_pose.mp3'),
+            goodPose: new Audio(audioBaseUrl + 'feedback/good_pose.mp3')
+        };
+
+        // ===== Rest =====
+        this.audioMap.rest = {
+            start: new Audio(audioBaseUrl + 'rest/rest_start.mp3'),
+            nearEnd: new Audio(audioBaseUrl + 'rest/rest_near_end.mp3'),
+            end: new Audio(audioBaseUrl + 'rest/rest_end.mp3')
+        };
+
+        // ===== Misc =====
+        this.audioMap.misc = {
+            detectingPose: new Audio(audioBaseUrl + 'misc/detecting_pose.mp3'),
+            detectingFailure: new Audio(audioBaseUrl + 'misc/detecting_failure.mp3'),
+            startExercise: new Audio(audioBaseUrl + 'misc/start_exercise.mp3'),
+            setComplete: new Audio(audioBaseUrl + 'misc/set_complete.mp3'),
+            exerciseComplete: new Audio(audioBaseUrl + 'misc/exercise_complete.mp3')
+        };
+
+        // ===== Encouragements =====
+        this.audioMap.encouragements = [
+            new Audio(audioBaseUrl + 'encouragements/encourage_1.mp3'),
+            new Audio(audioBaseUrl + 'encouragements/encourage_2.mp3'),
+            new Audio(audioBaseUrl + 'encouragements/encourage_3.mp3'),
+            new Audio(audioBaseUrl + 'encouragements/encourage_4.mp3'),
+            new Audio(audioBaseUrl + 'encouragements/encourage_5.mp3'),
+            new Audio(audioBaseUrl + 'encouragements/encourage_6.mp3'),
+            new Audio(audioBaseUrl + 'encouragements/encourage_7.mp3')
+        ];
+
+        // ===== Dumbbell Curl =====
+        this.audioMap.dumbbellCurl = {
+            badElbowX: new Audio(audioBaseUrl + 'dumbbellCurl/bad_elbow_x.mp3'),
+            badElbowY: new Audio(audioBaseUrl + 'dumbbellCurl/bad_elbow_y.mp3')
+        };
+
+        // ===== Pushup =====
+        this.audioMap.pushup = {
+            badHipHigh: new Audio(audioBaseUrl + 'pushup/bad_hip_high.mp3'),
+            badHipLow: new Audio(audioBaseUrl + 'pushup/bad_hip_low.mp3')
+        };
+
+        // ===== Plank =====
+        this.audioMap.plank = {
+            badHipHigh: new Audio(audioBaseUrl + 'plank/bad_hip_high.mp3'),
+            badHipLow: new Audio(audioBaseUrl + 'plank/bad_hip_low.mp3')
+        };
+
+        // ===== Squat =====
+        this.audioMap.squat = {
+            badKneeForward: new Audio(audioBaseUrl + 'squat/bad_knee_forward.mp3')
+        };
+    },
+
+    // ===== Core play logic with cooldown =====
+    play(audio, key) {
+        if (!audio) return;
+
+        const now = Date.now();
+        const lastPlayed = this.lastPlayTimes[key] || 0;
+        if (now - lastPlayed < this.cooldown) return;
+
+        this.lastPlayTimes[key] = now;
+
+        if (this.isPlaying) {
+            this.queue.push({ audio, key });
+        }
+
+        this.isPlaying = true;
+        audio.currentTime = 0;
+        audio.play().catch(err => console.error(err));
+
+        audio.onended = () => {
+            this.isPlaying = false;
+            if (this.queue.length > 0) {
+                const next = this.queue.shift();
+                this.play(next.audio, next.key);
+            }
+        };
+    },
+
+    // ===== Category wrappers with automatic keys =====
+    playCount(num) {
+        if (this.audioMap.count[num]) {
+            this.play(this.audioMap.count[num], `count-${num}`);
+        }
+    },
+
+    playFeedback(type) {
+        if (this.audioMap.feedback[type]) {
+            this.play(this.audioMap.feedback[type], `feedback-${type}`);
+        }
+    },
+
+    playRest(type) {
+        if (this.audioMap.rest[type]) {
+            this.play(this.audioMap.rest[type], `rest-${type}`);
+        }
+    },
+
+    playMisc(type) {
+        if (this.audioMap.misc[type]) {
+            this.play(this.audioMap.misc[type], `misc-${type}`);
+        }
+    },
+
+    playEncouragement() {
+        const arr = this.audioMap.encouragements;
+        const idx = Math.floor(Math.random() * arr.length);
+        this.play(arr[idx], `encouragement-${idx}`);
+    },
+
+    playExerciseSpecific(exercise, clip) {
+        if (this.audioMap[exercise] && this.audioMap[exercise][clip]) {
+            this.play(this.audioMap[exercise][clip], `${exercise}-${clip}`);
+        }
+    }
+};
+
 // Exercise configurations
 const exerciseConfigs = {
     'pushup': {
@@ -144,21 +280,22 @@ const exerciseConfigs = {
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function () {
     initializeExercise();
+    audioManager.init();
+    createPoseLandmarker()
+        .then(() => {enableWebcamButton.disabled = false})
+        .catch(console.error);
     setupEventListeners();
-    createPoseLandmarker().catch(console.error);
 });
 
 function initializeExercise() {
-    // Get exercise configuration
     const exerciseKey = getExerciseKey(currentExerciseTitle);
     exerciseConfig = exerciseConfigs[exerciseKey];
 
     if (!exerciseConfig) {
-        console.error('Exercise configuration not found:', currentExerciseTitle);
+        console.error('운동 설정을 불러오지 못했습니다:', currentExerciseTitle);
         return;
     }
 
-    // Update UI based on exercise type
     isTimedExercise = exerciseConfig.isTimed;
 
     if (isTimedExercise) {
@@ -173,30 +310,19 @@ function initializeExercise() {
         timerSection.style.display = 'none';
     }
 
-    // Update exercise name
     const exerciseNameSpan = document.querySelector('#exercise-name span');
     if (exerciseNameSpan) {
         exerciseNameSpan.textContent = exerciseConfig.name;
     }
 
-    // Show exercise tips
     showExerciseTips();
-
-    // Initialize progress circle
     updateProgressCircle();
-
-    // Initialize accuracy
     updateAccuracy();
-
-    // Initialize current rep display
     updateCurrentRepDisplay();
-
-    // Initialize total time elapsed display
     updateTotalTimeElapsed();
 }
 
 function getExerciseKey(exerciseName) {
-    // Map exercise names to config keys
     const exerciseMap = {
         'pushup': 'pushup',
         'squat': 'squat',
@@ -231,7 +357,7 @@ async function createPoseLandmarker() {
         vision,
         {
             baseOptions: {
-                modelAssetPath: "/models/pose_landmarker_lite.task",
+                modelAssetPath: "/models/pose_landmarker_heavy.task",
                 delegate: "GPU"
             },
             runningMode: runningMode,
@@ -243,11 +369,6 @@ let localStream;
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
 async function enableCam(event) {
-    if (!poseLandmarker) {
-        console.log("Wait! poseLandmarker not loaded yet.");
-        return;
-    }
-
     const constraints = {
         video: true,
         audio: false
@@ -257,11 +378,9 @@ async function enableCam(event) {
         localStream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = localStream;
 
-        // Wait for the video to be ready before continuing
         video.onloadedmetadata = () => {
             video.play();
 
-            // Now that video dimensions are available, set canvas size
             canvasElement.width = video.videoWidth;
             canvasElement.height = video.videoHeight;
 
@@ -294,7 +413,6 @@ function predictWebcam() {
             if (result.landmarks.length > 0) {
                 const landmarks = result.landmarks[0];
 
-                // Create a structured object of named landmark points
                 const landmarkPoints = {
                     leftShoulder: landmarks[11],
                     rightShoulder: landmarks[12],
@@ -312,10 +430,8 @@ function predictWebcam() {
                     rightToe: landmarks[32]
                 };
 
-                // Draw landmarks
                 drawLandmarks(landmarks);
 
-                // Check pose based on exercise type
                 if (exerciseConfig && exerciseConfig.checkPose) {
                     exerciseConfig.checkPose(landmarkPoints);
                 }
@@ -336,7 +452,6 @@ function predictWebcam() {
 function drawLandmarks(landmarks) {
     if (!exerciseConfig) return;
 
-    // First, draw the landmark points (circles)
     exerciseConfig.landmarks.forEach(index => {
         const landmark = landmarks[index];
         if (landmark && checkVisibility(landmark)) {
@@ -347,7 +462,6 @@ function drawLandmarks(landmarks) {
         }
     });
 
-    // Next, define and draw the connectors (lines)
     const connections = [
         // Arms
         [11, 13], [13, 15], // left arm (shoulder -> elbow -> wrist)
@@ -387,7 +501,6 @@ function checkVisibility(landmark) {
     return landmark.visibility > 0.5;
 }
 
-// Exercise-specific pose checking functions
 function checkPushupPose(points) {
     if (workoutPaused) return;
     const {
@@ -423,6 +536,7 @@ function checkPushupPose(points) {
     if (!shoulder || !elbow || !wrist || !hip || !ankle ||
         !checkVisibility(shoulder) || !checkVisibility(elbow) || !checkVisibility(wrist) || !checkVisibility(hip) || !checkVisibility(ankle)) {
         updateFeedback("몸 전체가 선명하게 보이도록 웹캠 위치를 조정해주세요.", "warning");
+        audioManager.playMisc("detectingFailure");
         isInGoodPose = false;
         poseLockTime = null;
         return;
@@ -437,6 +551,7 @@ function checkPushupPose(points) {
             pushupBodyAngle < 27 && hipState === 'straight' && armAngle > 145,
             2000,
             () => {
+                audioManager.playMisc("startExercise");
                 exerciseState = 'down';
                 updateFeedback("준비 완료! 내려가세요.", "good");
             },
@@ -445,33 +560,33 @@ function checkPushupPose(points) {
         return;
     }
 
-    // Check if the user has stood up
     if (pushupBodyAngle > 45) {
         updateFeedback("푸시업 자세가 아닙니다. 다시 푸시업 자세를 취하세요.", "warning");
         isInGoodPose = false;
-        // The user has stood up, reset the state
         exerciseState = 'ready';
+        audioManager.playFeedback("badPose");
         return;
     }
 
-    // Always prioritize feedback on incorrect hip posture.
     if (hipState !== 'straight') {
         let code = '';
         let desc = '';
+        let audioKey = '';
         if (hipState === 'sagging') {
             updateFeedback("허리가 너무 처졌습니다. 복근에 힘을 주고 허리를 드세요!", "warning");
             code = 'HIP_LOW';
             desc = '허리가 쳐졌습니다.';
+            audioKey = 'badHipLow';
         } else {
             updateFeedback("엉덩이가 너무 높습니다. 허리를 일직선으로 내려주세요!", "warning");
             code = 'HIP_HIGH';
             desc = '허리가 들렸습니다.';
+            audioKey = 'badHipHigh';
         }
-        handleBadPose(code, desc);
+        handleBadPose(code, desc, 1500, () => {audioManager.playExerciseSpecific('pushup', audioKey)});
         return;
     }
 
-    // State: 'down' - User is moving from the top to the bottom of the push-up.
     if (exerciseState === 'down') {
         if (armAngle < 110 && pushupBodyAngle < 18) { // User has reached the bottom.
             exerciseState = 'up'; // Transition to the 'up' state.
@@ -481,14 +596,18 @@ function checkPushupPose(points) {
         }
         handleGoodPose();
     }
-    // State: 'up' - User is moving from the bottom back to the top.
     else if (exerciseState === 'up') {
-        if (armAngle > 115 && pushupBodyAngle > 21) { // User has returned to the top, completing a rep.
+        if (armAngle > 115 && pushupBodyAngle > 21) {
             goodReps++;
             totalReps++;
             currentRep++;
             currentGoodReps++;
-            exerciseState = 'down'; // Reset state for the next repetition.
+            exerciseState = 'down';
+            if (goodReps < targetReps - 2 && Math.random() < 0.2) {
+                audioManager.playEncouragement();
+            } else {
+                audioManager.playCount(goodReps);
+            }
             updateFeedback(`${goodReps}개 완료!`, "good");
             updateRepDisplay();
             checkSetCompletion();
@@ -541,6 +660,7 @@ function checkSquatPose(points) {
     if (!shoulder || !elbow || !wrist || !hip || !ankle || !toe ||
         !checkVisibility(shoulder) || !checkVisibility(elbow) || !checkVisibility(wrist) || !checkVisibility(hip) || !checkVisibility(ankle)) {
         updateFeedback("몸 전체가 선명하게 보이도록 웹캠 위치를 조정해주세요.", "warning");
+        audioManager.playMisc("detectingFailure");
         isInGoodPose = false;
         poseLockTime = null;
         return;
@@ -556,6 +676,7 @@ function checkSquatPose(points) {
             kneeAngle > 150 && bodyAngle > 150,
             3000,
             () => {
+                audioManager.playMisc("startExercise");
                 exerciseState = 'down';
                 updateFeedback("좋은 자세입니다! 천천히 앉으면서 스쿼트를 시작하세요.", "good");
             },
@@ -566,7 +687,10 @@ function checkSquatPose(points) {
 
     if (kneeToeDiff > kneeToeTolerance) {
         updateFeedback("무릎이 발끝을 넘어갔습니다! 엉덩이를 뒤로 빼세요.", "warning");
-        handleBadPose("KNEE_FORWARD", "무릎이 발끝을 넘어갔습니다.");
+        handleBadPose("KNEE_FORWARD",
+            "무릎이 발끝을 넘어갔습니다.",
+            1000,
+            () => {audioManager.playExerciseSpecific('squat', 'badKneeForward')});
         return;
     }
 
@@ -586,6 +710,11 @@ function checkSquatPose(points) {
             currentRep++;
             currentGoodReps++;
             exerciseState = 'down';
+            if (goodReps < targetReps - 2 && Math.random() < 0.2) {
+                audioManager.playEncouragement();
+            } else {
+                audioManager.playCount(goodReps);
+            }
             updateFeedback(`${goodReps}개 완료!`, "good");
             updateRepDisplay();
             checkSetCompletion();
@@ -632,6 +761,7 @@ function checkPlankPose(points) {
     if (!shoulder || !elbow || !wrist || !hip || !ankle ||
         !checkVisibility(shoulder) || !checkVisibility(elbow) || !checkVisibility(wrist) || !checkVisibility(hip) || !checkVisibility(ankle)) {
         updateFeedback("몸 전체가 선명하게 보이도록 웹캠 위치를 조정해주세요.", "warning");
+        audioManager.playMisc("detectingFailure");
         isInGoodPose = false;
         poseLockTime = null;
         return;
@@ -646,6 +776,7 @@ function checkPlankPose(points) {
             groundBodyAngle < 40 && hipState === 'straight' && armAngle < 110,
             1500,
             () => {
+                audioManager.playMisc("startExercise");
                 exerciseState = 'holding';
                 updateFeedback("완벽한 플랭크 자세입니다! 이제 시작합니다.", "good");
             },
@@ -664,16 +795,19 @@ function checkPlankPose(points) {
     if (hipState !== 'straight') {
         let code = '';
         let desc = '';
+        let audioKey = '';
         if (hipState === 'sagging') {
             updateFeedback("허리가 너무 처졌습니다. 복근에 힘을 주고 허리를 드세요!", "warning");
             code = 'HIP_LOW';
             desc = '허리가 쳐졌습니다.';
+            audioKey = 'badHipLow';
         } else {
             updateFeedback("엉덩이가 너무 높습니다. 허리를 일직선으로 내려주세요!", "warning");
             code = 'HIP_HIGH';
             desc = '허리가 들렸습니다.';
+            audioKey = 'badHipHigh';
         }
-        handleBadPose(code, desc);
+        handleBadPose(code, desc, 1500, () => {audioManager.playExerciseSpecific('plank', audioKey)});
         return;
     }
     handleGoodPose();
@@ -692,6 +826,7 @@ function checkDumbbellCurlPose(points) {
         !checkVisibility(leftShoulder) || !checkVisibility(rightShoulder) || !checkVisibility(leftElbow) || !checkVisibility(rightElbow) ||
         !checkVisibility(leftWrist) || !checkVisibility(rightWrist) || !checkVisibility(leftHip) || !checkVisibility(rightHip)) {
         updateFeedback("자세를 인식할 수 없습니다. 덤벨을 들고 웹캠 앞에 서주세요.", "warning");
+        audioManager.playMisc("detectingFailure");
         isInGoodPose = false;
         poseLockTime = null;
         return;
@@ -717,6 +852,7 @@ function checkDumbbellCurlPose(points) {
             avgArmAngle > curlDownAngleThreshold,
             5000,
             () => {
+                audioManager.playMisc("startExercise");
                 initialLeftElbow = {x: leftElbow.x, y: leftElbow.y};
                 initialRightElbow = {x: rightElbow.x, y: rightElbow.y};
                 exerciseState = 'up';
@@ -741,13 +877,15 @@ function checkDumbbellCurlPose(points) {
 
         if (leftDriftX > maxXDrift || rightDriftX > maxXDrift) {
             updateFeedback("팔꿈치가 옆으로 벌어졌습니다. 몸에 붙이세요.", "warning");
-            handleBadPose("ELBOW_X_DRIFT", "팔꿈치가 옆으로 벌어졌습니다.");
+            handleBadPose("ELBOW_X_DRIFT", "팔꿈치가 옆으로 벌어졌습니다.", 1500,
+                () => {audioManager.playExerciseSpecific('dumbbellCurl', 'badElbowX')});
             return;
         }
 
         if (leftDriftY > maxYDrift || rightDriftY > maxYDrift) {
             updateFeedback("팔꿈치가 너무 올라갔거나 내려갔습니다. 고정하세요.", "warning");
-            handleBadPose("ELBOW_Y_DRIFT", "팔꿈치가 위로 들렸습니다.");
+            handleBadPose("ELBOW_Y_DRIFT", "팔꿈치가 위로 들렸습니다.", 1500,
+                () => {audioManager.playExerciseSpecific('dumbbellCurl', 'badElbowY')});
             return;
         }
     }
@@ -769,6 +907,11 @@ function checkDumbbellCurlPose(points) {
             currentRep++;
             currentGoodReps++;
             exerciseState = 'up';
+            if (goodReps < targetReps - 2 && Math.random() < 0.2) {
+                audioManager.playEncouragement();
+            } else {
+                audioManager.playCount(goodReps);
+            }
             updateRepDisplay();
             checkSetCompletion();
             updateFeedback(`${goodReps}개 완료!`, "good");
@@ -804,8 +947,7 @@ function handleGoodPose() {
     }
 
     if (isTimedExercise) {
-        // For timed exercises, accumulate good time
-        if (Date.now() - lastPoseTime >= 100) { // Update every 100ms
+        if (Date.now() - lastPoseTime >= 100) {
             goodTime++;
             currentExerciseTime++;
             globalExerciseTime++;
@@ -818,14 +960,14 @@ function handleGoodPose() {
         const elapsed = now - lastPoseTime;
 
         if (elapsed >= 100) {
-            globalExerciseTime += Math.floor(elapsed / 100); // keep consistent with timed
+            globalExerciseTime += Math.floor(elapsed / 100);
             lastPoseTime = now;
             updateTimerDisplay();
         }
     }
 }
 
-function handleBadPose(code, desc) {
+function handleBadPose(code, desc, durationThreshold, onLog) {
     if (isInGoodPose) {
         isInGoodPose = false;
         badPoseStartTime = Date.now();
@@ -834,7 +976,8 @@ function handleBadPose(code, desc) {
     const now = Date.now();
     const elapsed = now - lastPoseTime;
 
-    if (badPoseStartTime && (now - badPoseStartTime >= badPoseDurationThreshold)) {
+    if (badPoseStartTime && (now - badPoseStartTime >= durationThreshold)) {
+        onLog();
         if (isTimedExercise) {
             if (elapsed >= 100) {
                 badTime++;
@@ -867,6 +1010,7 @@ function checkPoseStability(isPoseGood, ms, onStable, failMessage) {
     if (isPoseGood) {
         if (!poseLockTime) {
             poseLockTime = Date.now();
+            audioManager.playMisc("detectingPose");
             updateFeedback("잠시만 기다려주세요... 자세 확인 중", "info");
         } else if (Date.now() - poseLockTime > ms) {
             poseLockTime = null;
@@ -940,12 +1084,10 @@ function calculateHipPosition(shoulder, hip, ankle) {
 
 function checkSetCompletion() {
     if (isTimedExercise) {
-        // For timed exercises, check if good time reaches target
         if (goodTime / 10 >= targetTime) {
             completeSet();
         }
     } else {
-        // For rep-based exercises, check if good reps reach target
         if (currentGoodReps >= targetReps) {
             completeSet();
         }
@@ -953,6 +1095,7 @@ function checkSetCompletion() {
 }
 
 function completeSet() {
+    audioManager.playMisc("setComplete");
     workoutPaused = true;
     poseLockTime = null;
     resetExerciseState(currentExerciseTitle)
@@ -961,15 +1104,16 @@ function completeSet() {
         showRestTimer();
         startRestTimer();
         updateFeedback("세트 완료! 휴식 시간을 가져보세요. 😌", "good");
+
+        setTimeout(() => {
+            audioManager.playRest("start");
+        }, 1500); // 1.5-second delay
     } else {
-        // Final set completed
+        audioManager.playMisc("exerciseComplete");
         setDisplay.innerHTML = "완료!";
         setDisplay.classList.add("pulse");
 
-        // Include rest time in total duration
         const totalDuration = Math.floor(globalExerciseTime / 10) + totalRestTime;
-
-        // Save session data with rest time included
         saveSessionDataWithRestTime(totalDuration);
     }
 }
@@ -1001,7 +1145,7 @@ function updateCurrentRepDisplay() {
 
 function updateTotalTimeElapsed() {
     const minutes = Math.floor((globalExerciseTime / 10 + totalRestTime) / 60);
-    const seconds = Math.floor((globalExerciseTime / 10 + totalRestTime)  % 60);
+    const seconds = Math.floor((globalExerciseTime / 10 + totalRestTime) % 60);
     const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     totalTimeElapsedSpan.textContent = timeString;
 }
@@ -1148,6 +1292,9 @@ function startRestTimer() {
             totalRestTime++;
             updateRestTimerDisplay();
             updateRestTimerRing();
+            if (Math.floor(currentRestTime / 5) === 1 && (currentRestTime % 5 === 0)) {
+                audioManager.playRest("nearEnd");
+            }
         } else {
             completeRestTimer();
         }
@@ -1198,6 +1345,7 @@ function updateRestTimerRing() {
 }
 
 function startNextSet() {
+    audioManager.playRest("end");
     if (currentSet < targetSets) {
         currentSet++;
         resetSetCounters();
@@ -1250,9 +1398,7 @@ function saveRestTime() {
     }
 }
 
-// Stop exercise function
 function stopExercise() {
-    // Stop webcam if running
     if (webcamRunning) {
         webcamRunning = false;
         if (video.srcObject) {
@@ -1261,7 +1407,6 @@ function stopExercise() {
         }
     }
 
-    // Stop rest timer if active
     if (isRestActive) {
         stopRestTimer();
     }
@@ -1269,31 +1414,25 @@ function stopExercise() {
     workoutPaused = true;
     workoutDiscontinued = true;
     exerciseState = 'ready';
-    // Calculate total duration including rest time
     const totalDuration = Math.floor(globalExerciseTime / 10) + totalRestTime;
 
-    // Save session data
+    audioManager.playMisc("exerciseComplete");
     saveSessionDataWithRestTime(totalDuration);
 
-    // Update UI to show exercise stopped
     updateFeedback("운동이 중단되었습니다.", "warning");
 
-    // Disable the stop button
     stopExerciseButton.disabled = true;
     stopExerciseButton.innerHTML = '<i class="bi bi-stop-circle"></i><span>운동 중단됨</span>';
 }
 
-// Enhanced setupEventListeners function
 function setupEventListeners() {
     if (hasGetUserMedia()) {
         enableWebcamButton.addEventListener("click", enableCam);
     } else {
-        console.warn("getUserMedia() is not supported by your browser");
         enableWebcamButton.disabled = true;
         enableWebcamButton.textContent = "웹캠을 지원하지 않습니다";
     }
 
-    // Rest timer event listeners
     if (startRestButton) {
         startRestButton.addEventListener("click", startRestTimer);
     }

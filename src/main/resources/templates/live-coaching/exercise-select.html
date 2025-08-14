@@ -5,9 +5,7 @@
 
 <head>
     <title>코칭 운동 선택</title>
-    <th:block layout:fragment="css">
-        <link rel="stylesheet" th:href="@{/css/exercise-select.css}">
-    </th:block>
+    <link rel="stylesheet" th:href="@{/css/exercise-select.css}" layout:fragment="css">
 </head>
 
 <div class="exercise-select-container" layout:fragment="content">
@@ -54,8 +52,8 @@
                             <i class="bi bi-repeat"></i> 반복 횟수
                         </label>
                         <input th:field="*{targetReps}" type="number" class="form-input"
-                               min="1" max="100" value="10" required>
-                        <small class="form-help">1-100회</small>
+                               min="1" max="50" value="10" required>
+                        <small class="form-help">1-50회</small>
                     </div>
 
                     <div class="form-group" id="timer-input-field" style="display: none">
