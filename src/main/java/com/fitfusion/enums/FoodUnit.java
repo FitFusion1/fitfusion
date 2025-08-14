@@ -7,7 +7,10 @@ import java.util.*;
 
 public enum FoodUnit {
 
+    G("g"),
+    g("g"),
     GRAM("g"),
+    mL("mL"),
     MILLILITER("mL");
 
     private final String symbol;

@@ -91,7 +91,7 @@ function enableCheckedOnly() {
 /*       modal-detail-nutrient.html 모달 부분                */
 // /* ===================================================== */
 document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.querySelector(".modal-detail-nutrient__modal");
+    const modal = document.querySelector(".modal-dialog");
     const btnClose = modal.querySelector(".btn-close");
     const cancelBtn = modal.querySelector("#detail-nutrient__cancel-btn");
 
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 필요시 외부에서 openModal 호출하도록 전역에 노출 가능
-    window.openDetailNutrientModal = openModal;
+    // window.openDetailNutrientModal = openModal;
 });
 
 // 영양소 모달 값 계산
