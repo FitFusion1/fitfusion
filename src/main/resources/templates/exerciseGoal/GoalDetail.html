@@ -59,13 +59,18 @@
                 </button>
             </div>
 
+            <form th:action="@{/exercisegoal/goaldelete/{goalId}(goalId=${goal.goalId})}" id="delete" method="post"
+                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="goalId" th:value="${goal.goalId}">
+            </form>
+
             <!-- 오른쪽 버튼들 -->
             <div class="GoalDetail-rightButtons">
                 <button class="GoalDetail-btn GoalDetail-editBtn" th:onclick="|location.href='@{/exercisegoal/goalupdate/{goalId}(goalId=${goal.goalId})}'|">
                     수정
                 </button>
-                <button class="GoalDetail-btn GoalDetail-deleteBtn"
-                        onclick="confirm('정말 삭제하시겠습니까?') && (window.location.href='/exercisegoal/goaldelete')">삭제
+                <button class="GoalDetail-btn GoalDetail-deleteBtn" form="delete">삭제
                 </button>
             </div>
         </div>

@@ -54,7 +54,8 @@
                     class="RoutineDetail-btn RoutineDetail-secondary"
                     th:onclick="|location.href='@{/routine/update/{routineId}(routineId=${routine.routineId})}'|">
                 수정하기</button>
-        <form th:action="@{/routine/delete}" th:method="post">
+        <form th:action="@{/routine/delete/{routineId}(routineId=${routine.routineId})}" th:method="post">
+            <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="routineId" th:value="${routine.routineId}">
             <button class="RoutineDetail-btn RoutineDetail-secondary">삭제하기</button>
         </form>
