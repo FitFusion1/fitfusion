@@ -60,9 +60,19 @@ public class SecurityConfig {
         return (request, response, authentication) -> {
             boolean isAdmin = authentication.getAuthorities().stream()
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+            String accept = request.getHeader("Accept");
+            String requestedWith = request.getHeader("X-Requested-With");
+            boolean isAjax = "XMLHttpRequest".equalsIgnoreCase(requestedWith) ||
+                    (accept != null && accept.contains("application/json"));
 
             if (isAdmin) {
-                response.sendRedirect("/admin");
+                if (isAjax) {
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("{\"redirect\":\"admin\"}");
+                    response.getWriter().flush();
+                } else {
+                    response.sendRedirect("/admin");
+                }
             } else {
                 SavedRequestAwareAuthenticationSuccessHandler defaultHandler =
                         new SavedRequestAwareAuthenticationSuccessHandler();
