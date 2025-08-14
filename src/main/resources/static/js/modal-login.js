@@ -84,7 +84,11 @@
                 username: usernameInput,
                 password: passwordInput
             },
-            success: function() {
+            success: function(res) {
+                if (res.redirect) {
+                    window.location.href = res.redirect;
+                    return;
+                }
                 $.get('/api/get-redirect-url', function(res) {
                    window.location.href = res.data || '/';
                 });
