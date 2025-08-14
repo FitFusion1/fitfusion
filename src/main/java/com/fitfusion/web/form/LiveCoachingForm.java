@@ -27,7 +27,7 @@ public class LiveCoachingForm {
 
     @NotNull(message = "목표 반복 횟수를 입력해주세요.")
     @Min(value = 1, message = "1회 이상 입력해주세요.")
-    @Max(value = 100, message = "100회 이하로 설정해주세요.")
+    @Max(value = 50, message = "50회 이하로 설정해주세요.")
     private int targetReps;
 
     private int targetTime;

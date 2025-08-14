@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
         adjustInputValues(this, 1, 10);
     });
     repsInput.addEventListener('input', function () {
-        adjustInputValues(this, 1, 100);
+        adjustInputValues(this, 1, 50);
     });
     timerInput.addEventListener('input', function () {
         adjustInputValues(this, 15, 180);
