@@ -173,9 +173,12 @@ public class ExerciseGoalController {
     }
 
     @PostMapping("/goalupdate")
-    public String goalUpdate(@AuthenticationPrincipal SecurityUser user, @Valid @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
-                             BindingResult bindingResult) {
+    public String goalUpdate(@AuthenticationPrincipal SecurityUser user,
+                             @Valid @ModelAttribute("exerciseGoalForm") ExerciseGoalRegisterForm formData,
+                             BindingResult bindingResult,
+                             Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("goalTypes", GoalType.values());
             return "exerciseGoal/GoalUpdate";
         }
         formData.setUserId(user.getUser().getUserId());
@@ -191,7 +194,7 @@ public class ExerciseGoalController {
             selectedGoalService.deleteSelectedGoal(user.getUser().getUserId());
         }
 
-        exerciseGoalService.deleteGoal(goalId);
+        exerciseGoalService.deleteGoal(goalId, user.getUser().getUserId());
         return "redirect:/exercisegoal/goallist";
     }
 
@@ -223,5 +226,10 @@ public class ExerciseGoalController {
         model.addAttribute("targetParts", conditionService.getTargetPartsByUserId(user.getUser().getUserId()));
         model.addAttribute("avoidParts", conditionService.getAvoidPartsByUserId(user.getUser().getUserId()));
         return "exerciseGoal/GoalDetail";
+    }
+
+    @ModelAttribute("exerciseGoalForm")
+    public ExerciseGoalRegisterForm initExerciseGoalForm() {
+        return new ExerciseGoalRegisterForm();
     }
 }
