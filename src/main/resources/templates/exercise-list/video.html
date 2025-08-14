@@ -81,7 +81,6 @@
 
                     <!-- 업로더 칩 -->
                     <div class="uploader-chip">
-                        <img th:src="@{/images/fitfusion_logo.png}" alt="업로더" class="uploader-chip-avatar">
                         <div class="uploader-chip-text">
                             <strong class="uploader-name"
                                     th:text="${video != null && video.uploadedBy != null ? '업로더 ID: ' + video.uploadedBy : '관리자'}">관리자</strong>
