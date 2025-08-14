@@ -1,8 +1,11 @@
 package com.fitfusion.service;
 
 import com.fitfusion.dto.CoachingHistoryDto;
+import com.fitfusion.mapper.CoachingFeedbackMapper;
 import com.fitfusion.mapper.CoachingLogMapper;
+import com.fitfusion.vo.CoachingFeedback;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +14,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CoachingHistoryService {
 
+    @Autowired
     private final CoachingLogMapper coachingLogMapper;
+
+    @Autowired
+    private final CoachingFeedbackMapper coachingFeedbackMapper;
+
+    public List<CoachingFeedback> getFeedbackByCoachingLogId(int id) {
+        return coachingFeedbackMapper.selectFeedbackByCoachingLogId(id);
+    }
 
     public List<CoachingHistoryDto> getCoachingHistoryByUserId(int userId) {
         return coachingLogMapper.getCoachingHistoryByUserId(userId);

@@ -6,7 +6,6 @@ import com.fitfusion.security.SecurityUser;
 import com.fitfusion.service.CoachingExerciseService;
 import com.fitfusion.service.CoachingHistoryService;
 import com.fitfusion.web.form.LiveCoachingForm;
-import com.fitfusion.mapper.CoachingFeedbackMapper;
 import com.fitfusion.vo.CoachingFeedback;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +30,6 @@ public class LiveCoachingController {
 
     @Autowired
     private final CoachingHistoryService coachingHistoryService;
-    
-    @Autowired
-    private final CoachingFeedbackMapper coachingFeedbackMapper;
 
     @GetMapping
     public String selectExerciseForm(@RequestParam(name = "exercise", required = false) String exercise, Model model) {
@@ -89,7 +85,7 @@ public class LiveCoachingController {
             return "redirect:/live-coaching/history";
         }
 
-        List<CoachingFeedback> feedbackList = coachingFeedbackMapper.selectFeedbackByCoachingLogId(id);
+        List<CoachingFeedback> feedbackList = coachingHistoryService.getFeedbackByCoachingLogId(id);
 
         model.addAttribute("historyDetail", historyDetail);
         model.addAttribute("feedbackList", feedbackList);
