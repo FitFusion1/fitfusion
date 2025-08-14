@@ -58,58 +58,55 @@ public class MealRecordController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) MealTime mealTime,
-            @RequestParam(defaultValue = "1") int page,   // 기본 1페이지
-            @RequestParam(defaultValue = "10") int size,  // 페이지당 10개
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal SecurityUser securityUser,
             Model model) {
 
-        int userId = (securityUser != null) ? securityUser.getUser().getUserId() : 1;
+        int userId = securityUser.getUser().getUserId();
 
+        // 선택된 날짜가 없으면 오늘
+        Date baseDate = (date != null) ? date : new Date();
+
+        // 이전/다음 날짜 계산
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(baseDate);
+        cal.add(Calendar.DATE, -1);
+        Date prevDate = cal.getTime();
+        cal.add(Calendar.DATE, 2);
+        Date nextDate = cal.getTime();
+
+        // 끼니 선택, 기본값: BREAKFAST
         MealTime viewMealTime = (mealTime != null ? mealTime : MealTime.BREAKFAST);
 
-        // 날짜 계산
-        Date targetDate = (date == null) ? new Date() : date;
-        String currentDate = DATE_FORMAT.format(targetDate);
-
-        // 이전/다음 날짜
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(targetDate);
-        cal.add(Calendar.DATE, -1);
-        String prevDate = DATE_FORMAT.format(cal.getTime());
-        cal.add(Calendar.DATE, 2);
-        String nextDate = DATE_FORMAT.format(cal.getTime());
-
-        // 기존 끼니별 식단 기록 조회
+        // DB 조회 (Date 타입 그대로)
         Map<MealTime, List<MealRecordDto>> groupedRecords =
-                Optional.ofNullable(mealRecordService.getMealRecordsGroupedByMealTime(userId, currentDate))
+                Optional.ofNullable(mealRecordService.getMealRecordsGroupedByMealTime(userId, baseDate))
                         .orElse(Collections.emptyMap());
 
         model.addAttribute("mealRecords", groupedRecords);
-        model.addAttribute("date", currentDate);
-        model.addAttribute("prevDate", prevDate);
-        model.addAttribute("nextDate", nextDate);
+        model.addAttribute("date", DATE_FORMAT.format(baseDate));
+        model.addAttribute("prevDate", DATE_FORMAT.format(prevDate));
+        model.addAttribute("nextDate", DATE_FORMAT.format(nextDate));
         model.addAttribute("mealTimes", MealTime.values());
         model.addAttribute("size", size);
 
-        // MealRecordWrapper 생성
-        MealRecordWrapper wrapper = new MealRecordWrapper();  // 리스트는 클래스에서 기본 초기화
+        // MealRecordWrapper + 검색 + 페이징 처리
+        MealRecordWrapper wrapper = new MealRecordWrapper();
         List<FoodDto> foods = null;
 
-        // 검색 결과 + 페이징 (있을 때만) + MealRecordWrapper 초기화
         if (keyword != null && !keyword.isBlank()) {
             PageResponseDto<FoodDto> pageResult = foodService.searchFoodsPaged(keyword, page, size);
             foods = pageResult.getContent();
 
-            // foods 모델에 추가
             model.addAttribute("foods", foods);
             model.addAttribute("pageResult", pageResult);
 
-            // foods 개수만큼 MealRecordDto 추가 (wrapper에)
             if (foods != null && !foods.isEmpty()) {
                 for (FoodDto food : foods) {
                     MealRecordDto record = new MealRecordDto();
                     record.setMealTime(viewMealTime);
-                    record.setRecordDate(targetDate);
+                    record.setRecordDate(baseDate);
                     record.setFoodServingSizeValue(food.getFoodServingSizeValue());
                     record.setFoodServingSizeUnit(food.getFoodServingSizeUnit());
                     wrapper.getMealRecords().add(record);
@@ -117,7 +114,6 @@ public class MealRecordController {
             }
         }
 
-        // Wrapper & 기타 모델 추가
         model.addAttribute("selectedMealTime", viewMealTime);
         model.addAttribute("mealRecordWrapper", wrapper);
         model.addAttribute("keyword", keyword != null ? keyword : "");

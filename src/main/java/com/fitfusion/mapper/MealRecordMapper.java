@@ -1,9 +1,11 @@
 package com.fitfusion.mapper;
 
 import com.fitfusion.dto.MealRecordDto;
+import com.fitfusion.enums.MealTime;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +29,11 @@ public interface MealRecordMapper {
      * @param recordDate 조회할 날짜 (YYYY-MM-DD)
      */
     List<MealRecordDto> getMealRecordsByDate(@Param("userId") int userId,
-                                             @Param("recordDate") String recordDate);
+                                             @Param("recordDate") Date recordDate);
 
+    List<MealRecordDto> selectMealRecordsByMealTime(@Param("userId") int userId,
+                                                    @Param("recordDate") Date recordDate,
+                                                    @Param("mealTime") MealTime mealTime);
     /**
      * ✅ 섭취량 업데이트 (USER_INTAKE)
      * @param mealRecordId 식단 기록 ID
@@ -49,7 +54,7 @@ public interface MealRecordMapper {
      * @return 칼로리, 탄수화물, 단백질, 지방 등 합계 Map
      */
     Map<String, Object> getTodayNutrientSummary(@Param("userId") int userId,
-                                                @Param("recordDate") String recordDate);
+                                                @Param("recordDate") Date recordDate);
 
     /**
      * ✅ 단건 식단 기록 저장

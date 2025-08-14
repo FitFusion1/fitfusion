@@ -92,22 +92,87 @@
         FROM FITFUSION_MEAL_RECORDS r
                  JOIN FITFUSION_FOOD_ITEMS f ON r.FOOD_ID = f.FOOD_ID
         WHERE r.USER_ID = #{userId}
-          AND TRUNC(r.RECORD_DATE) = TRUNC(TO_DATE(#{recordDate}, 'YYYY-MM-DD'))
+          AND TRUNC(r.RECORD_DATE) = TRUNC(#{recordDate})
+        ORDER BY r.MEAL_TIME ASC, r.MEAL_RECORD_ID ASC
+    </select>
+
+    <!--  특정 날짜 식단 기록 조회(영양소 포함) -->
+    <select id="selectMealRecordsByMealTime" resultType="com.fitfusion.dto.MealRecordDto">
+        SELECT
+            r.MEAL_RECORD_ID AS mealRecordId,
+            r.USER_ID AS userId,
+            r.FOOD_ID AS foodId,
+            r.MEAL_TIME AS mealTime,
+            r.USER_INTAKE AS userIntake,
+            r.RECORD_DATE AS recordDate,
+            r.CREATED_DATE AS createdDate,
+            r.UPDATED_DATE AS updatedDate,
+            f.FOOD_NAME AS foodName,
+            f.IMAGE_URL AS imageUrl,
+            f.FOOD_SERVING_SIZE_VALUE AS foodServingSizeValue,
+            f.FOOD_SERVING_SIZE_UNIT AS foodServingSizeUnit,
+
+            f.CALORIES                AS calories,
+            f.CARBOHYDRATE_G          AS carbohydrateG,
+            f.PROTEIN_G               AS proteinG,
+            f.FAT_G                   AS fatG,
+            f.SUGAR_G                 AS sugarG,
+            f.SUGAR_ALCOHOL_G         AS sugarAlcoholG,
+            f.FIBER_G                 AS fiberG,
+            f.SATURATED_FAT_G         AS saturatedFatG,
+            f.TRANS_FAT_G             AS transFatG,
+            f.CHOLESTEROL_MG          AS cholesterolMg,
+            f.UNSATURATED_FAT_G       AS unsaturatedFatG,
+            f.SODIUM_MG               AS sodiumMg,
+            f.CAFFEINE_MG             AS caffeineMg,
+            f.CALCIUM_MG              AS calciumMg
+
+        FROM FITFUSION_MEAL_RECORDS r
+                 JOIN FITFUSION_FOOD_ITEMS f ON r.FOOD_ID = f.FOOD_ID
+        WHERE r.USER_ID = #{userId}
+          AND TRUNC(r.RECORD_DATE) = TRUNC(#{recordDate})
+          AND r.MEAL_TIME = #{mealTime}
         ORDER BY r.MEAL_TIME ASC, r.MEAL_RECORD_ID ASC
     </select>
 
     <!--  특정 날짜 영양소 합계 -->
     <select id="getTodayNutrientSummary" resultType="map">
         SELECT
-            NVL(SUM(f.CALORIES), 0) AS totalCalories,
-            NVL(SUM(f.CARBOHYDRATE_G), 0) AS totalCarbs,
-            NVL(SUM(f.PROTEIN_G), 0) AS totalProtein,
-            NVL(SUM(f.FAT_G), 0) AS totalFat
+        NVL(SUM(f.CALORIES), 0) AS calories,                 <!-- 열량 -->
+        NVL(SUM(f.CARBOHYDRATE_G), 0) AS carbohydrateG,      <!-- 탄수화물 -->
+        NVL(SUM(f.PROTEIN_G), 0) AS proteinG,                <!-- 단백질 -->
+        NVL(SUM(f.FAT_G), 0) AS fatG,                        <!-- 지방 -->
+        NVL(SUM(f.SUGAR_G), 0) AS sugarG,                    <!-- 당류 -->
+        NVL(SUM(f.FIBER_G), 0) AS fiberG,                    <!-- 식이섬유 -->
+        NVL(SUM(f.CALCIUM_MG), 0) AS calciumMg,              <!-- 칼슘 -->
+        NVL(SUM(f.IRON_MG), 0) AS ironMg,                    <!-- 철 (Iron) -->
+        NVL(SUM(f.POTASSIUM_MG), 0) AS potassiumMg,          <!-- 칼륨 -->
+        NVL(SUM(f.SODIUM_MG), 0) AS sodiumMg,                <!-- 나트륨 -->
+        NVL(SUM(f.VITAMIN_C_MG), 0) AS vitaminCMg,           <!-- 비타민 C -->
+        NVL(SUM(f.CHOLESTEROL_MG), 0) AS cholesterolMg,      <!-- 콜레스테롤 -->
+        NVL(SUM(f.SATURATED_FAT_G), 0) AS saturatedFatG,     <!-- 포화지방산 -->
+        NVL(SUM(f.TRANS_FAT_G), 0) AS transFatG,             <!-- 트랜스지방산 -->
+        NVL(SUM(f.UNSATURATED_FAT_G), 0) AS unsaturatedFatG, <!-- 총 불포화지방산 -->
+        NVL(SUM(f.SUGAR_ALCOHOL_G), 0) AS sugarAlcoholG,     <!-- 당알콜 -->
+        NVL(SUM(f.CAFFEINE_MG), 0) AS caffeineMg             <!-- 카페인 -->
+
         FROM FITFUSION_MEAL_RECORDS r
-                 JOIN FITFUSION_FOOD_ITEMS f ON r.FOOD_ID = f.FOOD_ID
+        JOIN FITFUSION_FOOD_ITEMS f ON r.FOOD_ID = f.FOOD_ID
         WHERE r.USER_ID = #{userId}
-          AND TRUNC(r.RECORD_DATE) = TRUNC(#{recordDate})
+        AND TRUNC(r.RECORD_DATE) = TRUNC(#{recordDate})
     </select>
+
+<!--    <select id="getTodayNutrientSummary" resultType="map">-->
+<!--        SELECT-->
+<!--            NVL(SUM(f.CALORIES), 0) AS totalCalories,-->
+<!--            NVL(SUM(f.CARBOHYDRATE_G), 0) AS totalCarbs,-->
+<!--            NVL(SUM(f.PROTEIN_G), 0) AS totalProtein,-->
+<!--            NVL(SUM(f.FAT_G), 0) AS totalFat-->
+<!--        FROM FITFUSION_MEAL_RECORDS r-->
+<!--                 JOIN FITFUSION_FOOD_ITEMS f ON r.FOOD_ID = f.FOOD_ID-->
+<!--        WHERE r.USER_ID = #{userId}-->
+<!--          AND TRUNC(r.RECORD_DATE) = TRUNC(#{recordDate})-->
+<!--    </select>-->
 
     <!--  섭취량 업데이트 -->
     <update id="updateIntake">

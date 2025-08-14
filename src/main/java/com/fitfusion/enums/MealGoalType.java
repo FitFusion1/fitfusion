@@ -4,24 +4,29 @@ import lombok.Getter;
 
 // 추후 추가 예정
 @Getter
-public enum DietGoalType {
-    LOSS("감량"),
-    MAINTAIN("유지"),
-    GAIN("증량");
+public enum MealGoalType {
+    LOSS("loss", "감량"),
+    MAINTAIN("maintain", "유지"),
+    GAIN("gain", "증량");
 
-    private final String label;
+    private final String code;      // URL이나 내부 처리용
+    private final String label;     // 화면에 보여줄 한글 이름
 
-    DietGoalType(String label) {
+    MealGoalType(String code, String label) {
+        this.code = code;
         this.label = label;
     }
 
-    public static DietGoalType fromLabel(String label) {
-        for (DietGoalType type : values()) {
-            if (type.label.equals(label)) {
+    public static MealGoalType fromCode(String code) {
+        if (code == null) {
+            throw new IllegalArgumentException("Code must not be null");
+        }
+        for (MealGoalType type : values()) {
+            if (type.code.equals(code)) {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unknown diet goal: " + label);
+        throw new IllegalArgumentException("Unknown MealGoal: " + code);
     }
 }
 

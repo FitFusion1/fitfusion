@@ -16,6 +16,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+/* 실행 시 실제로 음식DB가 DB에 저장됩니다. (키워드 기반)
+*
+* - 단, api키가  securekey.yml에 있어야 합니다.(아래의 작성 내용)
+*
+* mfds:
+  fooddb:
+    apiKey: 09J9RfG3PEw4tLqCW/Px5eZjpoXzwT7Ojcd6j3LRmcD6qKCJOgyOlcoNmVi4lApSzuN4kRYsCKt8U0UZRV8mzQ==
+*
+* */
+
 @Slf4j
 @SpringBootTest(classes = {FoodApiService.class, RestTemplateConfig.class})
 @EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
@@ -46,7 +56,7 @@ class FoodApiServiceTest {
      */
     @Test
     void testImportByKeyword() {
-        List<String> keywords = List.of("라면", "닭");
+        List<String> keywords = List.of("닭","밥"); // 단일 키워드도 가능
 
         for (String keyword : keywords) {
             printMainDivider();

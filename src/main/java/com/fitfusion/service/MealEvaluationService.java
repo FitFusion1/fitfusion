@@ -1,10 +1,13 @@
 package com.fitfusion.service;
 
 import com.fitfusion.dto.NutrientSummaryDto;
-import com.fitfusion.enums.DietGoalType;
+import com.fitfusion.enums.MealGoalType;
 import com.fitfusion.vo.User;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -24,7 +27,7 @@ public class MealEvaluationService {
     private static final double FAT_MAX = 25;
 
     // 목표 칼로리 계산(활동계수 고정)
-    public double calculateGoalCalories(User user, DietGoalType goalType) {
+    public double calculateGoalCalories(User user, MealGoalType goalType) {
         int age = calculateAge(user.getBirthDate());
 
         // BMR 계산 (Mifflin-St Jeor 공식)
@@ -88,20 +91,27 @@ public class MealEvaluationService {
         return 0;
     }
 
-
     // 나이 계산
     private int calculateAge(Date birthDate) {
-        Calendar today = Calendar.getInstance();
-        Calendar birthCal = Calendar.getInstance();
-        birthCal.setTime(birthDate);
-
-        int age = today.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR);
-
-        // 생일이 아직 안 지났으면 -1
-        if (today.get(Calendar.DAY_OF_YEAR) < birthCal.get(Calendar.DAY_OF_YEAR)) {
-            age--;
-        }
-        return age;
+        LocalDate birthLocalDate = birthDate.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        return Period.between(birthLocalDate, LocalDate.now()).getYears();
     }
+
+//    // 나이 계산
+//    private int calculateAge(Date birthDate) {
+//        Calendar today = Calendar.getInstance();
+//        Calendar birthCal = Calendar.getInstance();
+//        birthCal.setTime(birthDate);
+//
+//        int age = today.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR);
+//
+//        // 생일이 아직 안 지났으면 -1
+//        if (today.get(Calendar.DAY_OF_YEAR) < birthCal.get(Calendar.DAY_OF_YEAR)) {
+//            age--;
+//        }
+//        return age;
+//    }
 }
 

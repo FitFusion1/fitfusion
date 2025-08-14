@@ -33,7 +33,7 @@ public class MealRecordService {
      * @param recordDate yyyy-MM-dd
      * @return Map<String, List<MealRecordDto>> (키: 끼니, 값: 해당 끼니 기록)
      */
-    public Map<MealTime, List<MealRecordDto>> getMealRecordsGroupedByMealTime(int userId, String recordDate) {
+    public Map<MealTime, List<MealRecordDto>> getMealRecordsGroupedByMealTime(int userId, Date recordDate) {
         // 1. DB에서 해당 날짜의 식단 기록 전체 조회
         List<MealRecordDto> records = mealRecordMapper.getMealRecordsByDate(userId, recordDate);
 
@@ -46,7 +46,7 @@ public class MealRecordService {
      *  특정 날짜 식단 기록 리스트 그대로 반환
      *  사용 상황 : Meal/Record 페이지 조회
      */
-    public List<MealRecordDto> getMealRecordsByDate(int userId, String recordDate) {
+    public List<MealRecordDto> getMealRecordsByDate(int userId, Date recordDate) {
         return mealRecordMapper.getMealRecordsByDate(userId, recordDate);
     }
 
@@ -128,7 +128,7 @@ public void deleteMealRecord(int mealRecordId, int userId) {
      * 사용 상황:
      * - 메인 페이지 하단: 칼로리/탄단지 합계 표시
      */
-    public Map<String, Object> calculateSummary(int userId, String recordDate) {
+    public Map<String, Object> calculateSummary(int userId, Date recordDate) {
         return mealRecordMapper.getTodayNutrientSummary(userId, recordDate);
     }
 
