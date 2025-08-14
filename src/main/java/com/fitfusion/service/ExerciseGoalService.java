@@ -44,7 +44,7 @@ public class ExerciseGoalService {
     public void updateGoal(ExerciseGoalRegisterForm form) {
         ExerciseGoal exerciseGoal = exerciseGoalMapper.getUserGoalByUserIdAndGoalId(form.getUserId(), form.getGoalId());
 
-        GoalType goalType = GoalType.valueOf(form.getGoalType());
+        GoalType goalType = toGoalType(form.getGoalType());
         exerciseGoal.setGoalType(goalType.getGoalName());
 
         exerciseGoal.setStartWeight(form.getStartWeight());
@@ -57,8 +57,13 @@ public class ExerciseGoalService {
     }
 
     @Transactional
-    public void deleteGoal(int goalId) {
-        selectedGoalService.deleteSelectedGoal(goalId);
+    public void deleteGoal(int goalId, int userId) {
+
+        ExerciseGoal selectGoal = exerciseGoalMapper.findSelectedGoalByUserId(userId);
+
+        if (selectGoal != null && selectGoal.getGoalId() == goalId) {
+            selectedGoalService.deleteSelectedGoal(userId);
+        }
         exerciseGoalMapper.deleteGoal(goalId);
     }
 
@@ -69,6 +74,16 @@ public class ExerciseGoalService {
         ExerciseGoal goal = exerciseGoalMapper.findSelectedGoalByUserId(userId);
 
         return new ExerciseGoalDto(goal);
+    }
+
+    private GoalType toGoalType(String s) {
+        if (s == null) return null;
+        String v = s.trim();
+        try{return GoalType.valueOf(v);}catch(Exception ignore){}
+        for (GoalType gt : GoalType.values()) {
+            if (gt.getGoalName().equals(v)) return gt;
+        }
+        throw new IllegalStateException("Unknown goalType: " + s);
     }
 
 }

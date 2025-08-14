@@ -61,7 +61,7 @@ public class ExerciseGoalRestController {
             selectedGoalService.deleteSelectedGoal(user.getUser().getUserId());
         }
 
-        exerciseGoalService.deleteGoal(goalId);
+        exerciseGoalService.deleteGoal(goalId, user.getUser().getUserId());
 
         return ResponseEntity.noContent().build();
     }
