@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+<head>
+    <title> 📊 식단 평가 & 영양정보</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/meal-daily-nutrient.css}">
+        <link rel="stylesheet" th:href="@{/css/meal-evaluation.css}">
+    </th:block>
+</head>
+
+<body class="bg-light">
+<div layout:fragment="content" class="container my-4">
+
+        <div th:replace="~{meal/date-nav :: date-nav(
+                                                    date=${date},
+                                                    prevDate=${prevDate},
+                                                    nextDate=${nextDate},
+                                                    titleText='식단 기록으로 돌아가기~',
+                                                    prevPath=${prevDateUrl},
+                                                    currentPath='/meal/record',
+                                                    nextPath=${nextDateUrl}
+        )}"></div>
+
+    <h1 class="meal-daily-nutrient__page-title">📊 식단 & 영양정보</h1>
+    <!-- 식단 평가 섹션 시작 -->
+    <div class="meal-evaluation-section container my-5 p-4 rounded shadow-sm">
+
+        <header class="text-center mb-4">
+            <p class="subtitle fs-5" th:text="${mainMessage}"></p>
+            <h2 class="display-6 fw-bold" th:text="${subMessage}"></h2>
+            <div class="icon mt-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/619/619034.png" alt="축하 아이콘" class="img-fluid" style="width: 80px; height: 80px;"/>
+            </div>
+        </header>
+
+        <section class="meal-info row g-3 mb-5">
+            <div class="col-md-6">
+                <div class="info-card p-3 border rounded text-center h-100 d-flex flex-column justify-content-center align-items-center">
+                    <h3 class="fs-4 mb-2" th:text="${infoCard1Title}"></h3>
+                    <p class="mb-0" th:text="${infoCard1Content}"></p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-card p-3 border rounded text-center h-100 d-flex flex-column justify-content-center align-items-center">
+                    <h3 class="fs-4 mb-2">총 섭취 칼로리</h3>
+                    <p class="mb-0 fs-3 fw-bold" th:text="${#numbers.formatInteger(actualNutrientSummary.calories, 1, 'COMMA')} + ' kcal'"></p>
+                    <h3 class="fs-4 mt-3 mb-2">목표 칼로리</h3>
+                    <p class="mb-0 fs-3 fw-bold" th:text="${#numbers.formatInteger(goalCalories, 1, 'COMMA')} + ' kcal'"></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="score-section text-center mb-5">
+            <div class="score-circle mx-auto mb-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/1046/1046759.png" alt="점수 아이콘" class="img-fluid" style="width: 100px; height: 100px;"/>
+            </div>
+            <div class="score-text">
+                <p class="score display-3 fw-bold" th:text="${mealScore} + '점'"></p>
+                <p class="score-desc text-muted fs-5" th:text="${scoreDesc}"></p>
+            </div>
+        </section>
+
+        <section class="nutrient-section p-4 bg-light rounded">
+            <h3 class="mb-4 text-center">주요 영양소 분석</h3>
+
+            <!-- 탄수화물 -->
+            <div class="nutrient mb-4 p-3 border rounded">
+                <div class="nutrient-header d-flex justify-content-between align-items-center mb-2">
+                    <span class="nutrient-name fw-bold">탄수화물</span>
+                    <span class="nutrient-value" th:text="${actualNutrientSummary.carbohydrateG} + 'g'"></span>
+                    <span class="label badge bg-warning">주의</span>
+                </div>
+                <div class="progress-bar-custom bg-secondary rounded" style="height: 10px;">
+                    <div class="progress-custom bg-warning rounded" style="width: 70%; height: 100%;"></div>
+                </div>
+<!--                <p class="top-list text-muted mt-2 mb-0">Top 식품: (개발 중)</p>-->
+            </div>
+
+            <!-- 단백질 -->
+            <div class="nutrient mb-4 p-3 border rounded">
+                <div class="nutrient-header d-flex justify-content-between align-items-center mb-2">
+                    <span class="nutrient-name fw-bold">단백질</span>
+                    <span class="nutrient-value" th:text="${actualNutrientSummary.proteinG} + 'g'"></span>
+                    <span class="label badge bg-success">적정</span>
+                </div>
+                <div class="progress-bar-custom bg-secondary rounded" style="height: 10px;">
+                    <div class="progress-custom bg-success rounded" style="width: 50%; height: 100%;"></div>
+                </div>
+<!--                <p class="top-list text-muted mt-2 mb-0">Top 식품: (개발 중)</p>-->
+            </div>
+
+            <!-- 지방 -->
+            <div class="nutrient mb-4 p-3 border rounded">
+                <div class="nutrient-header d-flex justify-content-between align-items-center mb-2">
+                    <span class="nutrient-name fw-bold">지방</span>
+                    <span class="nutrient-value" th:text="${actualNutrientSummary.fatG} + 'g'"></span>
+                    <span class="label badge bg-danger">과다</span>
+                </div>
+                <div class="progress-bar-custom bg-secondary rounded" style="height: 10px;">
+                    <div class="progress-custom bg-danger rounded" style="width: 80%; height: 100%;"></div>
+                </div>
+<!--                <p class="top-list text-muted mt-2 mb-0">Top 식품: (개발 중)</p>-->
+            </div>
+        </section>
+    </div>
+    <!-- ********** 식단 평가 섹션 끝 ********** -->
+
+    <!-- 끼니별 섹션 -->
+        <div th:each="mealTime : ${mealTimes}">
+            <div class="meal-card d-flex align-items-center">
+                <div class="form-check me-2">
+                    <input class="form-check-input meal-check" type="checkbox" th:value="${mealTime}" th:id="${mealTime}">
+                </div>
+                <div>
+                    <div class="meal-time__display-name" th:text="${mealTime.displayName}"></div>
+
+                    <th:block th:with="currentMealRecords=${mealRecords.get(mealTime)}">
+                        <th:block th:if="${not #lists.isEmpty(currentMealRecords)}">
+                            <div class="text-primary" th:each="record : ${currentMealRecords}"
+                                 th:text="${record.foodName + ' (' + record.formattedUserIntake + ' ' + record.foodServingSizeUnit.symbol + ')'}">
+                            </div>
+                        </th:block>
+                        <th:block th:unless="${not #lists.isEmpty(currentMealRecords)}">
+                            <div class="text-muted">기록된 음식이 없습니다.</div>
+                        </th:block>
+
+                        <div class="text-muted"
+                             th:if="${not #lists.isEmpty(currentMealRecords)}"
+                             th:text="${mealTimeTotalCalories.get(mealTime)} + ' 칼로리'">
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+
+        <!-- 영양소 차트 -->
+        <h5 class="mt-5">영양물 섭취</h5>
+
+        <div class="nutrient-flex mt-3">
+            <div class="chart-container">
+                <canvas id="macroChart"></canvas>
+            </div>
+            <div class="table-container">
+                <div class="alert alert-warning" role="alert">
+                    일부 목표는 달성되지 않았습니다
+                </div>
+
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>영양소</th>
+                        <th>합계</th>
+                        <th>목표</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>칼로리</td>
+                        <td th:text="${#numbers.formatDecimal(nutrientSummary['CALORIES'], 1, 1, 'POINT')}"></td>
+                        <td th:text="${#numbers.formatDecimal(nutrientSummary['caloriesGoal'], 1, 1, 'POINT')}"></td>
+                    </tr>
+                    <tr>
+                        <td>탄수화물</td>
+                        <td th:text="${#numbers.formatDecimal(nutrientSummary['CARBOHYDRATEG'], 1, 1, 'POINT') + 'g'}"></td>
+                        <td th:text="${nutrientSummary['carbohydrateGGoal'] == null || nutrientSummary['carbohydrateGGoal'] == 0.0 ? '-'
+                        : #numbers.formatDecimal(nutrientSummary['carbohydrateGGoal'], 1, 1, 'POINT') + 'g'}"></td>
+                    </tr>
+                    <tr>
+                        <td>단백질</td>
+                        <td th:text="${#numbers.formatDecimal(nutrientSummary['PROTEING'], 1, 1, 'POINT') + 'g'}"></td>
+                        <td th:text="${nutrientSummary['proteinGGoal'] == null || nutrientSummary['proteinGGoal'] == 0.0 ? '-'
+                        : #numbers.formatDecimal(nutrientSummary['proteinGGoal'], 1, 1, 'POINT') + 'g'}"></td>
+                    </tr>
+                    <tr>
+                        <td>지방</td>
+                        <td th:text="${#numbers.formatDecimal(nutrientSummary['FATG'], 1, 1, 'POINT') + 'g'}"></td>
+                        <td th:text="${nutrientSummary['fatGGoal'] == null || nutrientSummary['fatGGoal'] == 0.0 ? '-'
+                        : #numbers.formatDecimal(nutrientSummary['fatGGoal'], 1, 1, 'POINT') + 'g'}"></td>
+                    </tr>
+                    <tr>
+                        <td>섬유</td>
+                        <td th:text="${#numbers.formatDecimal(nutrientSummary['FIBERG'], 1, 1, 'POINT') + 'g'}"></td>
+                        <td th:text="${nutrientSummary['fiberGGoal'] == null || nutrientSummary['fiberGGoal'] == 0.0 ? '-'
+                        : #numbers.formatDecimal(nutrientSummary['fiberGGoal'], 1, 1, 'POINT') + 'g'}"></td>
+                    </tr>
+                    <tr>
+                        <td>나트륨</td>
+                        <td th:text="${#numbers.formatDecimal(nutrientSummary['SODIUMMG'], 1, 1, 'POINT') + 'mg'}"></td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>콜레스테롤</td>
+                        <td th:text="${#numbers.formatDecimal(nutrientSummary['CHOLESTEROLMG'], 1, 1, 'POINT') + 'mg'}"></td>
+                        <td>-</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <button id="saveMeals" class="btn btn-outline-secondary btn-sm">
+                    자세한 영양 정보
+                </button>
+            </div>
+        </div>
+
+</div>
+
+<th:block layout:fragment="script">
+    <script>
+        console.log("adfawefe");
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- 데이터를 JavaScript 전역 변수로 전달 -->
+    <script th:inline="javascript">
+        // Controller에서 전달받은 nutrientSummary 데이터
+        window.nutrientSummaryData = /*[[${nutrientSummary}]]*/ {};
+        // 필요하다면 totalCaloriesData 등 다른 데이터도 여기에 추가
+    </script>
+
+    <script th:src="@{/js/meal-daily-nutrient.js}"></script>
+</th:block>
+</body>
+</html>

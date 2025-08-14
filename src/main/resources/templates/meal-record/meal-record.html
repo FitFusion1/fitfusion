@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/base}">
+<head>
+    <title>식단 기록</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/meal-record.css}">
+    </th:block>
+</head>
+
+<body class="meal-record__body">
+<div layout:fragment="content" class="meal-record__container">
+
+    <!-- 날짜 네비게이션 -->
+    <div th:replace="~{meal/date-nav :: date-nav(
+                                                    date=${date},
+                                                    prevDate=${prevDate},
+                                                    nextDate=${nextDate},
+                                                    titleText='오늘의 식단을 평가해보세요!',
+                                                    prevPath='/meal/record',
+                                                    currentPath='/meal/evaluation',
+                                                    nextPath='/meal/record')}">
+    </div>
+
+    <!-- 페이지 제목 -->
+    <h1 class="meal-record__page-title">🍽️ 식단 기록</h1>
+
+<!-- 끼니별 섹션 -->
+<th:block th:each="mealTime : ${mealTimes}">
+    <div class="meal-record__card">
+        <div class="meal-record__card-header">
+            <h5 class="meal-record__card-title" th:text="${mealTime.displayName}">아침</h5>
+            <button type="button" class="meal-record__btn-add-meal"
+                    data-bs-toggle="modal"
+                    th:attr="data-bs-target='#modal-food-search',
+                             data-meal=${mealTime.name()},
+                             data-meal-display=${mealTime.displayName}">
+                음식 추가
+            </button>
+        </div>
+        <div class="meal-record__card-body">
+            <ul class="meal-record__list-group" th:id="${'list-' + mealTime}">
+                <!-- mealRecords가 비어있지 않을 경우 <li>만 반복 -->
+                <th:block th:if="${not #lists.isEmpty(mealRecords.get(mealTime))}">
+                    <li th:each="record : ${mealRecords.get(mealTime)}" class="meal-record__list-group-item">
+                        <div>
+                            <div class="meal-record__food-name" th:text="${record.foodName}">음식명</div>
+                            <div class="meal-record__user-intake"
+                                 th:text="${record.formattedUserIntake + ' ' + record.foodServingSizeUnit.symbol}"></div>
+                        </div>
+
+                        <!-- 영양소 상세보기 버튼 -->
+                        <button type="button" class="btn btn-link"
+                                data-bs-toggle="modal"
+                                th:attr="data-bs-target=${'#modal-nutrient-' + record.mealRecordId}">
+                            영양소 상세보기
+                        </button>
+
+                        <form th:action="@{'/meal/delete/' + ${record.mealRecordId}}" method="post">
+                            <button type="submit" class="meal-record__btn-delete-meal">삭제</button>
+                        </form>
+                    </li>
+                </th:block>
+                <!-- mealRecords가 비어있을 경우 메시지 <li> -->
+                <li th:if="${#lists.isEmpty(mealRecords.get(mealTime))}" class="meal-record__list-group-item text-center">
+                    기록된 음식이 없습니다.
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 영양소 상세보기(모달) -->
+    <th:block th:if="${not #lists.isEmpty(mealRecords.get(mealTime))}">
+        <th:block th:each="record : ${mealRecords.get(mealTime)}">
+            <div class="modal fade" th:id="${'modal-nutrient-' + record.mealRecordId}" tabindex="-1" aria-hidden="true" aria-labelledby="modalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:text="${record.foodName} + ' 영양소 정보'">영양소 정보</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form th:action="@{'/meal/update/' + ${record.mealRecordId}}" method="post">
+                            <input type="hidden" name="mealRecordId" th:value="${record.mealRecordId}" />
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label th:for="${'user-intake-input-' + record.mealRecordId}" class="form-label">섭취량 (g)</label>
+                                    <input type="number"
+                                           th:id="${'user-intake-input-' + record.mealRecordId}"
+                                           class="form-control"
+                                           name="userIntake"
+                                           min="1"
+                                           th:value="${record.formattedServingSize}"
+                                           required>
+                                </div>
+                                <div>
+                                    <p>
+                                        열량:
+                                        <span data-nutrient="calories" th:text="${record.calories}" th:if="${record.calories != null}"></span>
+                                        <span th:if="${record.calories != null}">kcal</span>
+                                    </p>
+                                    <p>
+                                        탄수화물:
+                                        <span data-nutrient="carbohydrateG" th:text="${record.carbohydrateG}" th:if="${record.carbohydrateG != null}"></span>
+                                        <span th:if="${record.carbohydrateG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        당류:
+                                        <span data-nutrient="sugarG" th:text="${record.sugarG}" th:if="${record.sugarG != null}"></span>
+                                        <span th:if="${record.sugarG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        당알콜:
+                                        <span data-nutrient="sugarAlcoholG" th:text="${record.sugarAlcoholG}" th:if="${record.sugarAlcoholG != null}"></span>
+                                        <span th:if="${record.sugarAlcoholG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        식이섬유:
+                                        <span data-nutrient="fiberG" th:text="${record.fiberG}" th:if="${record.fiberG != null}"></span>
+                                        <span th:if="${record.fiberG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        단백질:
+                                        <span data-nutrient="proteinG" th:text="${record.proteinG}" th:if="${record.proteinG != null}"></span>
+                                        <span th:if="${record.proteinG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        지방:
+                                        <span data-nutrient="fatG" th:text="${record.fatG}" th:if="${record.fatG != null}"></span>
+                                        <span th:if="${record.fatG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        포화지방:
+                                        <span data-nutrient="saturatedFatG" th:text="${record.saturatedFatG}" th:if="${record.saturatedFatG != null}"></span>
+                                        <span th:if="${record.saturatedFatG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        트랜스지방:
+                                        <span data-nutrient="transFatG" th:text="${record.transFatG}" th:if="${record.transFatG != null}"></span>
+                                        <span th:if="${record.transFatG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        콜레스테롤:
+                                        <span data-nutrient="cholesterolMg" th:text="${record.cholesterolMg}" th:if="${record.cholesterolMg != null}"></span>
+                                        <span th:if="${record.cholesterolMg != null}">mg</span>
+                                    </p>
+                                    <p>
+                                        불포화지방산:
+                                        <span data-nutrient="unsaturatedFatG" th:text="${record.unsaturatedFatG}" th:if="${record.unsaturatedFatG != null}"></span>
+                                        <span th:if="${record.unsaturatedFatG != null}">g</span>
+                                    </p>
+                                    <p>
+                                        나트륨:
+                                        <span data-nutrient="sodiumMg" th:text="${record.sodiumMg}" th:if="${record.sodiumMg != null}"></span>
+                                        <span th:if="${record.sodiumMg != null}">mg</span>
+                                    </p>
+                                    <p>
+                                        카페인:
+                                        <span data-nutrient="caffeineMg" th:text="${record.caffeineMg}" th:if="${record.caffeineMg != null}"></span>
+                                        <span th:if="${record.caffeineMg != null}">mg</span>
+                                    </p>
+                                    <p>
+                                        칼슘:
+                                        <span data-nutrient="calciumMg" th:text="${record.calciumMg}" th:if="${record.calciumMg != null}"></span>
+                                        <span th:if="${record.calciumMg != null}">mg</span>
+                                    </p>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">입력</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </th:block>
+</th:block>
+<div th:replace="~{meal-record/modal-food-search :: modal-food-search}"></div>
+
+</div>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/meal-record.js}"></script>
+</th:block>
+</body>
+</html>

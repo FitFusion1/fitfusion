@@ -1,0 +1,531 @@
+/* ======================================================== */
+/*       meal-record 관련 스타일 시작                         */
+/* ======================================================== */
+.meal-record__body {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.meal-record__container {
+    margin-top: 20px;
+    margin-bottom: 1.5rem; /* 약 24px */
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px; /* container의 좌우 패딩 */
+    padding-right: 15px; /* container의 좌우 패딩 */
+}
+
+/*!* 날짜 네비게이션 *!*/
+/*.meal-record__date-nav {*/
+/*    display: flex;*/
+/*    justify-content: space-between; !* 자식 요소들을 양쪽 끝으로 벌려 배치합니다. *!*/
+/*    align-items: center; !* 자식 요소들을 세로 방향 가운데에 정렬합니다. *!*/
+/*    margin-bottom: 1rem; !* 하단에 여백을 16px (기본 폰트 크기 기준) 정도 줍니다. *!*/
+/*}*/
+
+/*.meal-record__current-date {*/
+/*    font-weight: 700;*/
+/*    font-size: 1.5rem;*/
+/*}*/
+
+/*.meal-record__btn-date-nav {*/
+/*    color: #00d084;*/
+/*    background-color: transparent;*/
+/*    border: 1px solid #6c757d;*/
+/*    padding: 0.375rem 0.75rem;*/
+/*    border-radius: 0.25rem;*/
+/*    font-weight: 600;*/
+/*    cursor: pointer;*/
+/*    text-decoration: none;*/
+/*    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;*/
+/*    display: inline-block; !* 부트스트랩 버튼 기본 display *!*/
+/*    text-align: center;*/
+/*    vertical-align: middle;*/
+/*    user-select: none;*/
+/*    line-height: 1.5;*/
+/*}*/
+
+/*.meal-record__btn-date-nav:hover{*/
+/*    color: white;*/
+/*    background-color: #00af73;*/
+/*    outline: none;*/
+/*}*/
+
+/*.meal-record__btn-date-nav:focus {*/
+/*    outline: 0;*/
+/*    box-shadow: 0 0 0 0.25rem rgba(0, 208, 132, 0.5); !* #00d084에 50% 투명도 적용 *!*/
+/*}*/
+
+.meal-record__page-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-align: center; /* 글자 가로 중앙 정렬 */
+}
+
+/* meal-record__card (카드) 스타일 */
+.meal-record__card {
+    position: relative;
+    display: flex; /* 자식 요소들을 flexbox로 배치 */
+    flex-direction: column; /* 카드의 내용물(헤더, 바디)을 세로로 쌓기 */
+    min-width: 0;
+    word-wrap: break-word; /* 긴 단어의 줄 바꿈 처리 */
+    background-color: #fff; /* 배경색: 흰색 */
+    background-clip: border-box; /* 배경이 테두리 상자까지 채워지도록 */
+    border: 1px solid rgba(0, 0, 0, 0.125); /* 테두리: 옅은 회색 */
+    border-radius: 0.25rem; /* 모서리 둥글게 */
+    margin-bottom: 1rem; /* 카드 하단에 여백 */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* 그림자 추가 */
+}
+
+/* meal-record__card-header (카드 헤더) 스타일 */
+.meal-record__card-header {
+    padding: 0.75rem 1.25rem; /* 내부 여백 */
+    margin-bottom: 0; /* 하단 여백 없음 */
+    background-color: rgba(0, 0, 0, 0.03); /* 배경색: 아주 옅은 회색 */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125); /* 하단 테두리 */
+    /* 카드의 상단 모서리와 일치하도록 둥글게 처리 */
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+
+    display: flex; /* 헤더 내부 요소들을 flexbox로 배치 */
+    justify-content: space-between; /* 요소들을 양 끝으로 정렬 */
+    align-items: center; /* 요소들을 수직 중앙으로 정렬 */
+}
+
+/* meal-record__card-body (카드 바디) 스타일 */
+.meal-record__card-body {
+    flex: 1 1 auto; /* 남은 공간을 채우도록 설정 */
+    min-height: 1px;
+    padding: 1.25rem; /* 내부 여백 */
+}
+
+/* 음식 추가 버튼 */
+.meal-record__btn-add-meal {
+    background-color: #00d084;
+    color: #fff;
+    padding: 6px 12px;
+    border: 1px solid #6c757d;
+    font-size: 17px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.meal-record__btn-add-meal:hover {
+    color: #fff;
+    background-color: #00af73;
+    border-color: #009c66;
+}
+
+.meal-record__btn-add-meal:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(0, 208, 132, 0.5); /* #00d084에 50% 투명도 적용 */
+}
+
+/* 음식 삭제 버튼 */
+.meal-record__btn-delete-meal {
+    background-color: transparent; /* 평소에는 배경 투명 (흰색 배경처럼 보임) */
+    color: #dc3545;             /* 글자색은 빨간색 */
+    border: 1px solid #dc3545;  /* 테두리도 빨간색 (글자색과 맞춤) */
+    padding: 3px 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; /* 모든 변화에 트랜지션 적용 */
+    min-width: 40px;
+}
+
+/* 마우스 호버 시 스타일 */
+.meal-record__btn-delete-meal:hover {
+    background-color: #dc3545; /* 호버 시 배경 빨간색 */
+    color: white;             /* 호버 시 글자색 흰색 */
+    border-color: #dc3545;    /* 호버 시 테두리 색상도 빨간색 (변화 없으면 굳이 안 써도 되지만 명시적으로) */
+}
+
+/* 버튼 클릭(활성화) 시 스타일 */
+.meal-record__btn-delete-meal:active {
+    background-color: #bd2130; /* 더 어두운 빨간색 */
+    color: white;             /* 글자색 흰색 유지 */
+    transform: translateY(1px); /* 살짝 눌리는 효과 */
+    border-color: #bd2130;    /* 테두리 색상도 함께 변화 */
+}
+
+/* 비활성화된 버튼 스타일 (필요시) */
+.meal-record__btn-delete-meal:disabled {
+    background-color: #e0e0e0; /* 비활성화 시 연한 회색 배경 */
+    color: #a0a0a0;             /* 비활성화 시 회색 글자 */
+    border-color: #d0d0d0;     /* 비활성화 시 테두리 색상 */
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* meal-record__list-group (리스트 그룹) 스타일 */
+.meal-record__list-group {
+    display: flex;
+    flex-direction: column; /* 아이템들을 세로로 쌓기 */
+    padding-left: 0; /* 기본 목록 패딩 제거 */
+    margin-bottom: 0; /* 기본 목록 마진 제거 */
+    border-radius: 0.5rem; /* 모서리 둥글게 */
+}
+
+/* meal-record__list-group-item (리스트 그룹 아이템) 스타일 */
+.meal-record__list-group-item {
+    position: relative;
+    /*display: block; !* 블록 요소로 설정 *!*/
+
+    display: flex;
+    justify-content: space-between;  /* 양 끝 정렬 */
+    align-items: center;         /* 세로 중앙 정렬 */
+
+    padding: 0.75rem 1.25rem; /* 내부 여백 */
+    background-color: #fff; /* 배경색: 흰색 */
+    border: 1px solid rgba(0, 0, 0, 0.125); /* 테두리 */
+
+    /*cursor: pointer;*/
+}
+
+.meal-record__list-group-item > div {
+    display: flex;
+    flex-direction: column;      /* 음식명, 섭취량 세로 배치 */
+    gap: 4px;                    /* 필요하면 간격 추가 */
+}
+
+.meal-record__food-name {
+    font-size: 1.2rem; /* 원하는 크기로 조절 */
+    font-weight: 500;  /* 진하게 할 수도 있음 */
+}
+
+.meal-record__list-group-item:first-child { /* 첫 번째 아이템의 상단 모서리 둥글게 */
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+}
+
+.meal-record__list-group-item:last-child { /* 마지막 아이템의 하단 모서리 둥글게 */
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
+
+.meal-record__list-group-item + .meal-record__list-group-item { /* 아이템들 사이의 상단 테두리 중첩 제거 */
+    border-top-width: 0;
+}
+
+/* ======================================================== */
+/*       modal-food-search.html*모달 관련 스타일 시작          */
+/* ======================================================== */
+
+/* 하단 고정 저장 버튼 (fixed-bottom-bar) */
+.fixed-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-top: 2px solid #ccc;
+}
+
+.fixed-bottom-bar .btn-lg {
+    font-size: 1.2rem;
+    padding: 10px 30px;
+}
+
+/** 모달 **/
+/* 검색 모달 스타일 */
+.modal-dialog {
+    max-width: 800px;
+}
+
+.modal-content {
+    border-radius: 8px;
+}
+
+.modal-header {
+    background-color: #00af73;
+    color: white;
+}
+
+.modal-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.form-control {
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.list-group-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.mt-3 {
+    margin-top: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 추가 버튼 스타일 */
+.modal-footer .btn {
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 8px 20px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .meal-record__card-header { /* 이전 .card-header */
+        font-size: 1rem;
+    }
+
+    .list-group-item {
+        font-size: 0.9rem;
+    }
+
+    .fixed-bottom-bar .btn-lg {
+        font-size: 1rem;
+    }
+}
+
+/* 부트스트랩 기본 btn-primary, btn-outline-primary 색상 초록색으로 재정의 */
+.btn-primary {
+    background-color: #00d084 !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background-color: #00af73 !important;
+    border-color: #009c66 !important;
+    color: #fff !important;
+}
+
+.btn-outline-primary {
+    color: #00d084 !important;
+    border-color: #6c757d !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: #00af73 !important;
+    color: #fff !important;
+    border-color: #009c66 !important;
+}
+
+/* ======================================================== */
+/*       modal-detail-nutrient*모달 관련 스타일 시작          */
+/* ======================================================== */
+/* 모달 백드롭 */
+.modal-detail-nutrient__modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none; /* 숨김 상태 */
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+/* 모달 보일 때 */
+.modal-detail-nutrient__modal.show {
+    display: flex;
+}
+
+/* 모달 다이얼로그 */
+.modal-detail-nutrient__dialog {
+    background-color: #fff;
+    border-radius: 0.3rem;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+}
+
+/* 스크롤 가능 영역 */
+.modal-detail-nutrient__dialog--scrollable .modal-detail-nutrient__body {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding: 1rem;
+}
+
+/* 모달 콘텐츠 구조 */
+.modal-detail-nutrient__header,
+.modal-detail-nutrient__footer {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-detail-nutrient__footer {
+    border-top: 1px solid #dee2e6;
+    border-bottom: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.modal-detail-nutrient__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+/* 닫기 버튼 */
+.modal-detail-nutrient__header .btn-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.modal-detail-nutrient__header .btn-close:hover {
+    opacity: 1;
+}
+
+/* 모달의 저장하기 버튼에 쓸 수 있을지도*/
+/* 하단 고정 저장 버튼 (fixed-bottom-bar) */
+.fixed-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-top: 2px solid #ccc;
+}
+
+.fixed-bottom-bar .btn-lg {
+    font-size: 1.2rem;
+    padding: 10px 30px;
+}
+
+/** 모달 **/
+/* 검색 모달 스타일 */
+.modal-dialog {
+    max-width: 800px;
+}
+
+.modal-content {
+    border-radius: 8px;
+}
+
+.modal-header {
+    background-color: #00af73;
+    color: white;
+}
+
+.modal-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.form-control {
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.list-group-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.mt-3 {
+    margin-top: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 추가 버튼 스타일 */
+.modal-footer .btn {
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 8px 20px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .meal-record__card-header { /* 이전 .card-header */
+        font-size: 1rem;
+    }
+
+    .list-group-item {
+        font-size: 0.9rem;
+    }
+
+    .fixed-bottom-bar .btn-lg {
+        font-size: 1rem;
+    }
+}
+
+/* 부트스트랩 기본 btn-primary, btn-outline-primary 색상 초록색으로 재정의 */
+.btn-primary {
+    background-color: #00d084 !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background-color: #00af73 !important;
+    border-color: #009c66 !important;
+    color: #fff !important;
+}
+
+.btn-outline-primary {
+    color: #00d084 !important;
+    border-color: #6c757d !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: #00af73 !important;
+    color: #fff !important;
+    border-color: #009c66 !important;
+}
+
+/*.btn-close {*/
+/*    background: transparent;*/
+/*    border: 0;*/
+/*    font-size: 1.5rem;*/
+/*    line-height: 1;*/
+/*    cursor: pointer;*/
+/*    opacity: 0.5;*/
+/*    transition: opacity 0.15s ease-in-out;*/
+/*}*/
+
+.btn-close:hover {
+    opacity: 0.75;
+}
+
+

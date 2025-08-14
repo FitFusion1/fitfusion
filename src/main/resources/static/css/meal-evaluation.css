@@ -1,0 +1,168 @@
+/* meal-evaluation-styles.css */
+
+.meal-evaluation-section {
+    background-color: #ffffff; /* 하얀 배경 */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
+    padding: 30px;
+    margin-bottom: 30px; /* 기존 컨텐츠와 간격 주기 */
+}
+
+.meal-evaluation-section header {
+    background-color: transparent;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.meal-evaluation-section header .subtitle {
+    color: #888;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.meal-evaluation-section header h2 {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.meal-evaluation-section .icon img {
+    width: 80px; /* 아이콘 크기 조정 */
+    height: 80px;
+    object-fit: contain;
+}
+
+.meal-info .info-card {
+    background-color: #f8f9fa; /* 카드 배경색 */
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.meal-info .info-card h3 {
+    color: #555;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.score-section {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    background-color: #e0f2f7; /* 배경색 */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.score-circle img {
+    width: 100px;
+    height: 100px;
+}
+
+.score-text .score {
+    font-size: 4em;
+    font-weight: bold;
+    color: #28a745; /* 점수 색상 - 초록 */
+    margin-bottom: 5px;
+}
+/* 점수에 따른 색상 변화 (선택 사항: 컨트롤러에서 클래스를 넘겨줄 경우) */
+.score-text .score.score-bad { color: #dc3545; } /* 빨강 */
+.score-text .score.score-normal { color: #ffc107; } /* 주황 */
+.score-text .score.score-good { color: #007bff; } /* 파랑 */
+.score-text .score.score-excellent { color: #28a745; } /* 초록 */
+
+
+.score-text .score-desc {
+    color: #6c757d;
+    font-size: 1.2em;
+}
+
+.nutrient-section {
+    background-color: #f2f7fa; /* 영양소 섹션 배경색 */
+    border-radius: 8px;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.nutrient-section h3 {
+    color: #444;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.nutrient {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+}
+
+.nutrient-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.nutrient-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+}
+
+.nutrient-value {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #007bff; /* 값 색상 */
+}
+
+/* 라벨 스타일 (부트스트랩 badge 클래스 활용) */
+.label.badge {
+    font-size: 0.8em;
+    padding: 0.4em 0.8em;
+    border-radius: 12px;
+}
+
+/* 진행바 커스텀 */
+.progress-bar-custom {
+    height: 10px;
+    background-color: #e9ecef; /* 배경색 */
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-custom {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.6s ease; /* 애니메이션 효과 */
+}
+
+/* 진행바 색상 */
+.progress-custom.bg-primary { background-color: #007bff !important; }
+.progress-custom.bg-success { background-color: #28a745 !important; }
+.progress-custom.bg-warning { background-color: #ffc107 !important; }
+.progress-custom.bg-danger { background-color: #dc3545 !important; }
+
+
+.top-list {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-top: 10px;
+}
+
+/* 부트스트랩 그리드 시스템을 위한 기본 스타일 */
+.row.g-3 {
+    --bs-gutter-x: 1.5rem; /* 기본 값 유지 */
+    --bs-gutter-y: 1.5rem;
+}

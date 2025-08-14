@@ -1,0 +1,148 @@
+<div th:fragment="modal-food-search">
+    <div class="modal fade" id="modal-food-search"
+         th:classappend="${!#strings.isEmpty(keyword)} ? ' show d-block' : ''"
+         style="background: rgba(0,0,0,0.5);" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+
+            <!-- 여기서 한 번만 공통 변수 계산 -->
+            <div class="modal-content"
+                 th:with="
+                         effMealTime=${param.mealTime != null ? param.mealTime : (selectedMealTime != null ? selectedMealTime.name() : null)},
+                         effKeyword=${param.keyword != null and !#strings.isEmpty(param.keyword[0]) ? param.keyword[0] : null}
+                     ">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">음식 검색</h5>
+                    <!-- 닫기 시에도 상태 유지 -->
+                    <button type="button" class="btn-close"
+                            th:onclick="|window.location.href='@{/meal/record(date=${date},mealTime=${effMealTime})}'|"
+                            aria-label="닫기"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body food-search-body">
+                    <!--  검색 폼 (GET) -->
+                    <form th:action="@{/meal/record}" method="get" class="mb-3">
+                        <input type="hidden" name="mealTime" th:if="${effMealTime != null}" th:value="${effMealTime}">
+                        <input type="hidden" name="date" th:value="${date}">
+                        <input type="hidden" name="page" value="1"> <!-- 새 검색 시 1페이지로 -->
+                        <input type="text" name="keyword" th:value="${effKeyword}" class="form-control mb-2" placeholder="음식명을 입력하세요" autocomplete="off">
+                        <button type="submit" class="btn btn-outline-primary w-100">검색</button>
+                    </form>
+
+                    <!-- 검색 결과 없음: 검색했는데 결과가 없을 때만 노출 -->
+                    <div th:if="${param.keyword != null
+                                and !#strings.isEmpty(param.keyword[0])
+                                and #lists.isEmpty(foods)}"
+                         class="text-center text-muted mt-4">
+                        검색 결과가 없습니다.
+                    </div>
+
+                    <!--  검색 결과 기록 폼 -->
+                    <form th:action="@{/meal/save}" method="post"
+                          th:if="${!#lists.isEmpty(foods)}"
+                          name="wrapper" onsubmit="return enableCheckedOnly()">
+                        <!-- Spring Security가 th:action 사용 시 CSRF hidden 자동 주입 -->
+
+                        <ul class="list-group mt-3">
+                            <li th:each="food, iterStat : ${foods}"
+                                th:attr="data-serving-size=${food.foodServingSizeValue}"
+                                class="list-group-item d-flex align-items-center justify-content-between">
+
+                                <!-- 공통 hidden (초기에 disabled; 체크 시 활성화) -->
+                                <input type="hidden"
+                                       th:name="|mealRecords[${iterStat.index}].recordDate|"
+                                       th:value="${date}"
+                                       disabled />
+
+                                <input type="hidden"
+                                       th:name="|mealRecords[${iterStat.index}].mealTime|"
+                                       th:value="${effMealTime}"
+                                       disabled />
+
+                                <!-- 체크박스: 선택된 항목만 전송 -->
+                                <input type="checkbox"
+                                       th:name="|mealRecords[${iterStat.index}].foodId|"
+                                       th:value="${food.foodId}">
+
+                                <!--  음식 정보 -->
+                                <div class="ms-2 flex-grow-1">
+                                    <div class="fw-bold" th:text="${food.foodName}"></div>
+                                    <div class="text-muted small">
+                                        <span th:text="${food.makerName ?: ''}"></span>
+                                        <span class="divider">|</span>
+                                        <span th:text="${food.formattedServingSize}"></span>  <!-- 숫자만 -->
+                                        <span th:text="${food.foodServingSizeUnitSymbol}"></span> <!-- 단위 심볼 -->
+                                    </div>
+                                </div>
+
+                                <!-- 섭취량 입력 (체크 시 기본값: 1회제공량) -->
+                                <input type="number" class="form-control w-auto"
+                                       th:name="|mealRecords[${iterStat.index}].userIntake|"
+                                       placeholder="섭취량(g)"
+                                       disabled />
+                            </li>
+                        </ul>
+                        <!--  기록 버튼 -->
+                        <div class="mt-3 text-end">
+                            <button type="submit" class="btn btn-primary">기록하기</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!--  페이지네이션 -->
+                <div th:if="${pageResult != null}" class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            <!-- 이전 -->
+                            <li class="page-item" th:classappend="${!pageResult.hasPrev} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/meal/record(
+                                             date=${date},
+                                             mealTime=${effMealTime},
+                                             keyword=${effKeyword},
+                                             page=${pageResult.startPage - 1},
+                                             size=${pageResult.pageSize}
+                                    )}">
+                                    이전
+                                </a>
+                            </li>
+
+                            <!-- 페이지 번호 -->
+                            <li th:each="p : ${#numbers.sequence(pageResult.startPage, pageResult.endPage)}"
+                                th:classappend="${p == pageResult.pageNum} ? 'active'" class="page-item">
+                                <a class="page-link"
+                                   th:text="${p}"
+                                   th:href="@{/meal/record(
+                                     date=${date},
+                                     mealTime=${effMealTime},
+                                     keyword=${effKeyword},
+                                     page=${p},
+                                     size=${pageResult.pageSize}
+                                     )}">
+                                </a>
+                            </li>
+
+                            <!-- 다음 -->
+                            <li class="page-item" th:classappend="${!pageResult.hasNext} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/meal/record(
+                                         date=${date},
+                                         mealTime=${effMealTime},
+                                         keyword=${effKeyword},
+                                         page=${pageResult.endPage + 1},
+                                         size=${pageResult.pageSize}
+                                       )}">
+                                    다음
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- modal-body -->
+
+                <!-- 부모html인 meal-record.html의 js파일이 존재함 -->
+            </div>
+        </div>
+    </div>
+</div>

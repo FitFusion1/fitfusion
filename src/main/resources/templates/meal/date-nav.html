@@ -1,0 +1,56 @@
+<!-- meal/date-nav.html -->
+<div th:fragment="date-nav(
+                        date,
+                        prevDate,
+                        nextDate,
+                        titleText,
+                        prevPath,
+                        currentPath,
+                        nextPath)"
+     class="date-nav">
+
+    <a th:href="@{${prevPath}(date=${prevDate})}" class="btn-nav">&lt; 이전</a>
+    <a th:href="@{${currentPath}(date=${date})}" class="btn-nav current-date"
+       th:text="${date}" th:title="${titleText}"></a>
+    <a th:href="@{${nextPath}(date=${nextDate})}" class="btn-nav">다음 &gt;</a>
+
+    <style>
+        /* 날짜 네비게이션 전체 */
+        .date-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        /* 공통 버튼 스타일 */
+        .btn-nav {
+            color: #00d084;
+            background-color: transparent;
+            border: 1px solid #6c757d;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+            text-align: center;
+        }
+
+        .btn-nav:hover {
+            color: white;
+            background-color: #00af73;
+        }
+
+        .btn-nav:focus {
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(0, 208, 132, 0.5);
+        }
+
+        /* 현재 날짜 버튼만 강조 */
+        .current-date {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+    </style>
+</div>
