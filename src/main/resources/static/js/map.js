@@ -281,6 +281,7 @@ crrntLocationBtn.addEventListener("click", function () {
 
     const moveMap = new kakao.maps.LatLng(userLat, userLon);
 
+    
     map.setCenter(moveMap);
 });
 
